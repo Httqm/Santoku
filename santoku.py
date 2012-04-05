@@ -6,9 +6,10 @@
 ########################################## ##########################################################
 # CONFIG
 ########################################## ##########################################################
-srcFileDir			= './config/' # TODO : name files as path/to/file
+srcFileDir			= './config/'	# TODO : name files as path/to/file
 srcFile				= 'file.csv'
-srcFileFs			= ';'
+srcFileFs			= ';'		# CSV field separator
+srcFileParamFs			= '|'		# separator used when a CSV cell contains several values
 hostFileIni			= 'host.ini'
 hostGroupFileIni		= 'hostgroup.ini'
 hostServiceDirectivesFileIni	= 'host_service_directives.ini'
@@ -48,25 +49,22 @@ csvData		= objFileInCsv.getData()
 
 
 # Load data from 'host.ini'
-objHostFileIni	= FileInIni({ 'name' : srcFileDir+hostFileIni })	# obj[ClassName] : name of instance
+objHostFileIni	= FileInIni({ 'name' : srcFileDir+hostFileIni })
 cfgDataHost	= objHostFileIni.getData()
 
 
 # Load data from 'host_service_directives.ini'
-objHostServiceDirectivesFileIni	= FileInIni({ 'name' : srcFileDir+hostServiceDirectivesFileIni })	# obj[ClassName] : name of instance
+objHostServiceDirectivesFileIni	= FileInIni({ 'name' : srcFileDir+hostServiceDirectivesFileIni })
 cfgHostDirectives		= objHostServiceDirectivesFileIni.getData()
-#print cfgHostDirectives
+
 
 
 # Load data from 'hostgroup.ini'
-objHostGroupFileIni	= FileInIni({ 'name' : srcFileDir+hostGroupFileIni })	# obj[ClassName] : name of instance
+objHostGroupFileIni	= FileInIni({ 'name' : srcFileDir+hostGroupFileIni })
 cfgDataHostGroup	= objHostGroupFileIni.getData()
 
 
 # Preparing for services. Detecting all '*:do' columns from the CSV
-#csvHeaderLine=objFileInCsv.getHeader()
-#print 'HEADER : '
-#print csvHeaderLine
 import re	# for RegExp
 services=[]
 for field in objFileInCsv.getHeader():
@@ -75,10 +73,6 @@ for field in objFileInCsv.getHeader():
 	if(match):
 #		print field+' MATCHES ---------------------------------'
 		services.append(field)
-#		services.append(field.replace(':do',''))
-
-#print '======================================'
-#print services
 
 
 ########################################## ##########################################################
@@ -86,7 +80,6 @@ for field in objFileInCsv.getHeader():
 ########################################## ##########################################################
 hostsOutput	= ''
 hostGroups	= {}	# dict : hg name => hg members
-
 servicesOutput	= ''
 
 
@@ -129,38 +122,69 @@ for host in csvData:	# 'host' is a line of the CSV data
 
 	# detecting services to register
 	for service in services:
-		print csvData[host]['host_name']+' '+service+' '+csvData[host][service]
+#		print csvData[host]['host_name']+' '+service+' '+csvData[host][service]
 
 		# if 'do', load service stuff (pattern, csv2data, fields, values) and cook them together
 		if(csvData[host][service]=='1'):
-			serviceName=service.replace(':do','')
-			print 'Loading '+serviceName
+			serviceName=service.replace(':do','')	# <== HARDCODED. bad!
+#			print '+++++++Loading '+serviceName
 
-			# retrievig service fields and values for this host from CSV
-			champsValeurs			= {}
-			champsValeurs['host_name']	= csvData[host]['host_name']
-			champsValeurs['use']		= 'generic_service'	# <== Default value just in case no 'use' value is provided
-			
+			# retrieving service fields and values for this host from CSV
+			champsValeurs	= {}
+			serviceCsvData={} # temporary dict
+
+			# storing CSV data in a dict to play with it later
 			for field in objFileInCsv.getHeader():
 				match=re.search(serviceName+':.*', field)
 				if(match):
-					print field
-					champsValeurs[field.replace(serviceName+':','')]=csvData[host][field]
+					# parsing all CSV columns related to this service
+					serviceCsvData[field.replace(serviceName+':','')]=csvData[host][field]
+
+#			print serviceCsvData
+
+			# Parsing data stored in dict to register as many services as the number of values in mutli-valued cells
+			maxRounds	= 1
+			currentRound	= 0
+
+			while currentRound < maxRounds:
+				champsValeurs[currentRound]	= {
+					'host_name'	: csvData[host]['host_name'],
+					'use'		: 'generic_service'
+					}
+				for serviceField in serviceCsvData:
+#					print 'FIELD : DATA         '+serviceField+' '+serviceCsvData[serviceField]
+					valuesOfMultiValuedCell	= serviceCsvData[serviceField].split(srcFileParamFs)
+					maxRounds		= len(valuesOfMultiValuedCell) if (len(valuesOfMultiValuedCell)>maxRounds) else maxRounds
+					try:
+						tmpValue	= valuesOfMultiValuedCell[currentRound]
+					except IndexError:
+						tmpValue	= valuesOfMultiValuedCell[0]
+#					print 'valuesOfMultiValuedCell['+str(currentRound)+'] = '+tmpValue+', '+str(len(valuesOfMultiValuedCell))
+					print serviceField+' : '+tmpValue
+
+					champsValeurs[currentRound][serviceField]=tmpValue
+
+				currentRound+=1
+			print champsValeurs
+
+
 
 
 			# Load service data from './config/"serviceName".ini'
-			objServiceFileIni	= FileInIni({ 'name' : srcFileDir+serviceName+'.ini' })	# obj[ClassName] : name of instance
+			objServiceFileIni	= FileInIni({ 'name' : srcFileDir+serviceName+'.ini' })
 			cfgDataService		= objServiceFileIni.getData()
 
 			objPatternService	= Pattern({ 'pattern' : cfgDataService['pattern'], 'variable2tag' : cfgDataService['VARIABLE2TAG'] })
 
-			# finally apply service pattern
-			servicesOutput+=objPatternService.apply(champsValeurs)
+			# finally apply service pattern as many time as the maximum number of values in multi-valued CSV cells
+			for i in xrange(maxRounds):
+				servicesOutput+=objPatternService.apply(champsValeurs[i])
 
+"""
 print '++++++++++++++++++++'
 print servicesOutput
 print '++++++++++++++++++++'
-
+"""
 
 #print 'HOSTGROUPS'
 #print hostGroups
