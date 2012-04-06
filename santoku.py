@@ -1,24 +1,6 @@
 #!/usr/bin/python
 
-
 # Python basics : http://www.astro.ufl.edu/~warner/prog/python.html
-
-########################################## ##########################################################
-# CONFIG
-########################################## ##########################################################
-srcFileDir			= './config/'	# TODO : name files as path/to/file
-srcFile				= 'file.csv'
-srcFileFs			= ';'		# CSV field separator
-srcFileParamFs			= '|'		# separator used when a CSV cell contains several values
-hostFileIni			= 'host.ini'
-hostGroupFileIni		= 'hostgroup.ini'
-hostServiceDirectivesFileIni	= 'host_service_directives.ini'
-#objHostGroupFileIni
-
-outFileDir		= './output/'
-outFileHosts		= 'hosts.cfg'
-outFileServices		= 'services.cfg'
-
 
 ########################################## ##########################################################
 # IMPORTS
@@ -26,7 +8,7 @@ outFileServices		= 'services.cfg'
 # http://www.sthurlow.com/python/lesson09/
 # source : http://stackoverflow.com/questions/279237/python-import-a-module-from-a-folder
 
-#from modules import config as c	# will be used later
+from modules import config as c
 
 from modules import myClasses	# imported from ./modules/myClasses.py
 from modules import fichier
@@ -49,23 +31,23 @@ Service		= services.Service
 ########################################## ##########################################################
 
 # Load host data from CSV
-objFileInCsv	= FileInCsv({ 'name' : srcFile, 'fs' : srcFileFs })	# obj[ClassName] : name of instance
+objFileInCsv	= FileInCsv({ 'name' : c.srcFile, 'fs' : c.srcFileFs })	# obj[ClassName] : name of instance
 csvData		= objFileInCsv.getData()
 
 
 # Load data from 'host.ini'
-objHostFileIni	= FileInIni({ 'name' : srcFileDir+hostFileIni })
+objHostFileIni	= FileInIni({ 'name' : c.srcFileDir+c.hostFileIni })
 cfgDataHost	= objHostFileIni.getData()
 
 
 # Load data from 'host_service_directives.ini'
-objHostServiceDirectivesFileIni	= FileInIni({ 'name' : srcFileDir+hostServiceDirectivesFileIni })
+objHostServiceDirectivesFileIni	= FileInIni({ 'name' : c.srcFileDir+c.hostServiceDirectivesFileIni })
 cfgHostDirectives		= objHostServiceDirectivesFileIni.getData()
 
 
 
 # Load data from 'hostgroup.ini'
-objHostGroupFileIni	= FileInIni({ 'name' : srcFileDir+hostGroupFileIni })
+objHostGroupFileIni	= FileInIni({ 'name' : c.srcFileDir+c.hostGroupFileIni })
 cfgDataHostGroup	= objHostGroupFileIni.getData()
 
 
@@ -138,7 +120,7 @@ for host in csvData:	# 'host' is a line of the CSV data
 					'host'			: host,
 					'csvHeader'		: objFileInCsv.getHeader(),
 					'csvDataLine'		: csvData[host],
-					'fieldSeparator'	: srcFileParamFs
+					'fieldSeparator'	: c.srcFileParamFs
 					})
 
 			result	= objService.buildArrayOfServices()
@@ -171,7 +153,7 @@ for host in csvData:	# 'host' is a line of the CSV data
 					}
 				for serviceField in serviceCsvData:
 #					print 'FIELD : DATA         '+serviceField+' '+serviceCsvData[serviceField]
-					valuesOfMultiValuedCell	= serviceCsvData[serviceField].split(srcFileParamFs)
+					valuesOfMultiValuedCell	= serviceCsvData[serviceField].split(c.srcFileParamFs)
 					maxRounds		= len(valuesOfMultiValuedCell) if (len(valuesOfMultiValuedCell)>maxRounds) else maxRounds
 					try:
 						tmpValue	= valuesOfMultiValuedCell[currentRound]
@@ -189,7 +171,7 @@ for host in csvData:	# 'host' is a line of the CSV data
 
 
 			# Load service data from './config/"serviceName".ini'
-			objServiceFileIni	= FileInIni({ 'name' : srcFileDir+objService.getName()+'.ini' })
+			objServiceFileIni	= FileInIni({ 'name' : c.srcFileDir+objService.getName()+'.ini' })
 
 			cfgDataService		= objServiceFileIni.getData()
 
@@ -227,18 +209,18 @@ for hostgroup_name in hostGroups:
 ########################################## ##########################################################
 
 # Hosts
-objFileOut	= FileOut({ 'name' : outFileDir+outFileHosts })	# obj[ClassName] : name of instance
+objFileOut	= FileOut({ 'name' : c.outFileDir+c.outFileHosts })	# obj[ClassName] : name of instance
 objFileOut.write(hostsOutput)
 
 # Services
-objFileOut	= FileOut({ 'name' : outFileDir+outFileServices })	# obj[ClassName] : name of instance
+objFileOut	= FileOut({ 'name' : c.outFileDir+c.outFileServices })	# obj[ClassName] : name of instance
 objFileOut.write(servicesOutput)
 
 """
 
 # for services
 paramsOutServices={
-	'name'	: outFileDir+outFileServices,
+	'name'	: c.outFileDir+outFileServices,
 	}
 """
 
