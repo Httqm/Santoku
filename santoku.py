@@ -131,9 +131,9 @@ for host in csvData:	# 'host' is a line of the CSV data
 
 		# if 'do', load service stuff (pattern, csv2data, fields, values) and cook them together
 		if(csvData[host][service]=='1'):
-			serviceName=service.replace(':do','')	# <== HARDCODED. bad!
+#			serviceName	= service.replace(':do','')	# <== HARDCODED. bad!
 
-			objService=Service({
+			objService	= Service({
 					'name'			: service.replace(':do',''),
 					'host'			: host,
 					'csvHeader'		: objFileInCsv.getHeader(),
@@ -141,7 +141,7 @@ for host in csvData:	# 'host' is a line of the CSV data
 					'fieldSeparator'	: srcFileParamFs
 					})
 
-			result=objService.buildArrayOfServices()
+			result	= objService.buildArrayOfServices()
 
 
 			"""
@@ -189,7 +189,8 @@ for host in csvData:	# 'host' is a line of the CSV data
 
 
 			# Load service data from './config/"serviceName".ini'
-			objServiceFileIni	= FileInIni({ 'name' : srcFileDir+serviceName+'.ini' })
+			objServiceFileIni	= FileInIni({ 'name' : srcFileDir+objService.getName()+'.ini' })
+
 			cfgDataService		= objServiceFileIni.getData()
 
 			objPatternService	= Pattern({ 'pattern' : cfgDataService['pattern'], 'variable2tag' : cfgDataService['VARIABLE2TAG'] })
