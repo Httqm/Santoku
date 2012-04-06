@@ -10,7 +10,7 @@
 
 from modules import config as c
 
-from modules import myClasses	# imported from ./modules/myClasses.py
+from modules import pattern	# imported from ./modules/pattern.py
 from modules import fichier
 from modules import hosts
 from modules import services
@@ -20,7 +20,7 @@ from modules import services
 FileInCsv	= fichier.FileInCsv
 FileInIni	= fichier.FileInIni
 FileOut		= fichier.FileOut
-Pattern		= myClasses.Pattern
+Pattern		= pattern.Pattern
 
 Host		= hosts.Host
 Service		= services.Service
