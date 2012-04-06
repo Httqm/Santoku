@@ -26,9 +26,13 @@ outFileServices		= 'services.cfg'
 # http://www.sthurlow.com/python/lesson09/
 # source : http://stackoverflow.com/questions/279237/python-import-a-module-from-a-folder
 
+#from modules import config as c	# will be used later
+
 from modules import myClasses	# imported from ./modules/myClasses.py
 from modules import fichier
 from modules import hosts
+from modules import services
+
 
 # making local names for imported classes
 FileInCsv	= fichier.FileInCsv
@@ -37,6 +41,7 @@ FileOut		= fichier.FileOut
 Pattern		= myClasses.Pattern
 
 Host		= hosts.Host
+Service		= services.Service
 
 
 ########################################## ##########################################################
@@ -121,12 +126,25 @@ for host in csvData:	# 'host' is a line of the CSV data
 	################################## ##########################################################
 
 	# detecting services to register
+	# services is the list of all '*:do' CSV columns : ['check_filesystem:do', 'check_bidule:do']
 	for service in services:
-#		print csvData[host]['host_name']+' '+service+' '+csvData[host][service]
 
 		# if 'do', load service stuff (pattern, csv2data, fields, values) and cook them together
 		if(csvData[host][service]=='1'):
 			serviceName=service.replace(':do','')	# <== HARDCODED. bad!
+
+			objService=Service({
+					'name'			: service.replace(':do',''),
+					'host'			: host,
+					'csvHeader'		: objFileInCsv.getHeader(),
+					'csvDataLine'		: csvData[host],
+					'fieldSeparator'	: srcFileParamFs
+					})
+
+			result=objService.buildArrayOfServices()
+
+
+			"""
 #			print '+++++++Loading '+serviceName
 
 			# retrieving service fields and values for this host from CSV
@@ -166,7 +184,7 @@ for host in csvData:	# 'host' is a line of the CSV data
 
 				currentRound+=1
 			print champsValeurs
-
+			"""
 
 
 
@@ -177,8 +195,8 @@ for host in csvData:	# 'host' is a line of the CSV data
 			objPatternService	= Pattern({ 'pattern' : cfgDataService['pattern'], 'variable2tag' : cfgDataService['VARIABLE2TAG'] })
 
 			# finally apply service pattern as many time as the maximum number of values in multi-valued CSV cells
-			for i in xrange(maxRounds):
-				servicesOutput+=objPatternService.apply(champsValeurs[i])
+			for i in xrange(result['maxRounds']):
+				servicesOutput+=objPatternService.apply(result['champsValeurs'][i])
 
 """
 print '++++++++++++++++++++'
