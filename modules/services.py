@@ -13,9 +13,6 @@ class Service(object):	# 'object' : ancestor of all classes
 		self.params	= params
 		self.cleanName	= self.params['name'].replace(':do','')	# <== HARDCODED. bad! The name without the ':do'
 
-#		print 'THE SERVICE NAME IS '+params['name']
-#		print 'THE HOST NAME IS '+params['host']
-
 	def getName(self):
 		return self.cleanName
 
@@ -35,9 +32,6 @@ class Service(object):	# 'object' : ancestor of all classes
 				# parsing all CSV columns related to this service
 				serviceCsvData[field.replace(self.cleanName+':','')]=self.params['csvDataLine'][field]
 
-#		print '||||||||||||||||||||||||||||||||||||||||||||'
-#		print serviceCsvData
-#		print '||||||||||||||||||||||||||||||||||||||||||||'
 		return serviceCsvData
 
 
@@ -59,20 +53,16 @@ class Service(object):	# 'object' : ancestor of all classes
 				'use'		: 'generic_service'
 				}
 			for serviceField in serviceCsvData:
-#				print 'FIELD : DATA         '+serviceField+' '+serviceCsvData[serviceField]
 				valuesOfMultiValuedCell	= serviceCsvData[serviceField].split(self.params['fieldSeparator'])
 				maxRounds		= len(valuesOfMultiValuedCell) if (len(valuesOfMultiValuedCell)>maxRounds) else maxRounds
 				try:
 					tmpValue	= valuesOfMultiValuedCell[currentRound]
 				except IndexError:
 					tmpValue	= valuesOfMultiValuedCell[0]
-#				print 'valuesOfMultiValuedCell['+str(currentRound)+'] = '+tmpValue+', '+str(len(valuesOfMultiValuedCell))
-#				print serviceField+' : '+tmpValue
 
 				champsValeurs[currentRound][serviceField]=tmpValue
 
 			currentRound+=1
-#		print champsValeurs
 		result={
 			'champsValeurs'	: champsValeurs,
 			'maxRounds'	: maxRounds

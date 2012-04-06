@@ -3,11 +3,11 @@
 ########################################## ##########################################################
 class Fichier(object):	# 'object' : ancestor of all classes
 	def __init__(self,name):
-		"""==> Just a file"""
+		""" Any file """
 		self.name='noName'
 
 	def getData(self):
-		"""==> Used by CSV and CFG extensions of Fichier."""
+		""" Used by CSV and CFG extensions of Fichier. """
 		result=self.loadData()
 		if(result):
 			print str(result)
@@ -16,9 +16,6 @@ class Fichier(object):	# 'object' : ancestor of all classes
 		else:
 			return self.data
 
-	def printName(self):	# 'self' : mandatory argument of a method refering to its instance (p181)
-		print 'File name : '+self.name
-
 
 ########################################## ##########################################################
 # 
@@ -26,13 +23,13 @@ class Fichier(object):	# 'object' : ancestor of all classes
 # n CFG files contain config data : patterns, tags, ...
 class FileInIni(Fichier):
 	def __init__(self,params):
-		"""==> extends class 'fichier'. Specializes on CFG files."""
+		""" Extends class 'fichier'. Specializes on CFG files. """
 		#self.dir	= params['dir']
 		self.name	= params['name']
 		self.data	= None
 
 	def loadData(self):
-		"""Read data from config file"""
+		""" Read data from config file """
 		# http://docs.python.org/tutorial/inputoutput.html
 		try:
 			cfgFile = open(self.name, 'r')
@@ -54,14 +51,10 @@ class FileInIni(Fichier):
 
 		sectionType	= ''
 		for line in cfgFile:
-#			print line
-
 			# skip comments line in cfg file
 			match=re.search('^#', line)
 			if(match):
 				continue
-
-#			print 'Ligne : ',line
 			# switch-case in Python : http://bytebaker.com/2008/11/03/switch-case-statement-in-python/
 
 			# searching a '[...]' section
@@ -92,11 +85,6 @@ class FileInIni(Fichier):
 						#srcData[sectionType][match.group(1)]=match.group(2)
 						# tag ==> csvField
 						srcData[sectionType][match.group(2)]=match.group(1)
-		"""
-		print 'SRCDATA'
-		print srcData
-		print '/SRCDATA'
-		"""
 		self.data	= srcData
 		return 		0	# Unix-style : 0 is OK
 
@@ -118,7 +106,7 @@ class FileInCsv(Fichier):
 	# read file line by line without loading it in memory first. the fileinput.input() call reads lines sequentially,
 	# but doesn't keep them in memory after they've been read.
 	def loadData(self):
-		"""Load data from CSV file into a dictionary"""
+		""" Load data from CSV file into a dictionary """
 		import fileinput
 
 		srcData={}
@@ -141,13 +129,6 @@ class FileInCsv(Fichier):
 		for key, val in colNb2Text.items():
 			colText2Nb[val] = key
 
-		"""
-		print colNb2Text
-		print colNb2Text[2]
-		print colText2Nb
-		print colText2Nb['ip']
-		"""
-
 		# read CSV file data
 		lineNb=0
 		for line in fileinput.input([self.name]):
@@ -157,11 +138,9 @@ class FileInCsv(Fichier):
 			if(lineNb==1):
 				continue
 
-#			print 'ligne : '+line
 			ligne		= line.split(self.fs)
 			host_name	= ligne[colText2Nb['host_name']].strip('"')
-#			print 'host_name : '+host_name
-			hostFields={}
+			hostFields	= {}
 
 			for clefs in colNb2Text.keys():
 				hostFields[colNb2Text[clefs]]=ligne[clefs].strip('"')
@@ -191,12 +170,12 @@ class FileInCsv(Fichier):
 ########################################## ##########################################################
 class FileOut(Fichier):
 	def __init__(self,params):
-		"""==> extends class 'fichier'"""
+		""" Extends class 'fichier' """
 		self.name	= params['name']
 
 
 	def makeHeader(self):
-		"""Generate a basic header for output files showing generation date + 'do not modify manually' warning"""
+		""" Generate a basic header for output files showing generation date + 'do not modify manually' warning """
 
 		# http://www.saltycrane.com/blog/2008/06/how-to-get-current-date-and-time-in/
 		import datetime
@@ -209,14 +188,14 @@ class FileOut(Fichier):
 
 		
 	def getHeader(self):
-		"""Return the output file header"""
+		""" Return the output file header """
 		if(self.makeHeader()):
 			raise Exception, 'Can not get header for output file'
 		else:
 			return self.header
 
 	def write(self, data):
-		"""Write data to file"""
+		""" Write data to file """
 		try:
 			outFile	= open(self.name,'w')
 			outFile.write(self.getHeader())
