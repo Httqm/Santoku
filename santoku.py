@@ -106,12 +106,40 @@ for host in csvData:	# 'host' is the key of the 'csvData' dict
 
 		# if 'do', load service stuff (pattern, csv2data, fields, values) and cook them together
 		if(csvData[host][service]=='1'):
+
+			serviceName=service.replace(':do','')
+
+			################## ##########################################################
+			# service directives
+			################## ##########################################################
+			# Making sure the current service has directives (names + values cells exist and are not empty)
+			notEmpty=1
+			for columnName in [serviceName+':serviceDirectivesNames', serviceName+':serviceDirectivesValues']:
+				if(objFileInCsv.columnExists(columnName)):
+					notEmpty=notEmpty and csvData[host][columnName]
+
+			if(notEmpty):
+				# loading service directives from CSV data
+				serviceDirectives	= ''
+				directivesNames		= csvData[host][serviceName+':serviceDirectivesNames'].split('|')
+				directivesValues	= csvData[host][serviceName+':serviceDirectivesValues'].split('|')
+				# applying the serviceDirectives pattern
+				for name,value in enumerate(directivesNames):
+					serviceDirectives+=objPatternDirectives.apply({
+						'directiveName'		: directivesNames[name],
+						'directiveValue'	: directivesValues[name]
+						})
+			################## ##########################################################
+			# /service directives
+			################## ##########################################################
+
 			objService	= Service({
-					'name'			: service.replace(':do',''),
+					'name'			: serviceName,
 					'host'			: host,
 					'csvHeader'		: objFileInCsv.getHeader(),
 					'csvDataLine'		: csvData[host],
-					'fieldSeparator'	: c.srcFileParamFs
+					'fieldSeparator'	: c.srcFileParamFs,
+					'serviceDirectives'	: serviceDirectives
 					})
 
 			result	= objService.buildArrayOfServices()

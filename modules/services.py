@@ -1,9 +1,5 @@
 #!/usr/bin/python
 
-"""
-http://www.python.org/dev/peps/pep-0257/#multi-line-docstrings
-"""
-
 ########################################## ##########################################################
 # 
 ########################################## ##########################################################
@@ -31,6 +27,10 @@ class Service(object):	# 'object' : ancestor of all classes
 			if(match):
 				# parsing all CSV columns related to this service
 				serviceCsvData[field.replace(self.cleanName+':','')]=self.params['csvDataLine'][field]
+
+		# appending 'serviceDirectives'
+		# serviceCsvData contains 2 useless keys : 'serviceDirectivesNames' and 'serviceDirectivesValues'
+		serviceCsvData['serviceDirectives']=self.params['serviceDirectives']
 
 		return serviceCsvData
 
