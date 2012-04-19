@@ -163,6 +163,10 @@ class FileInCsv(Fichier):
 		return self.header.replace('"', '').split(self.fs)
 
 
+	def columnExists(self,columnHeader):
+		""" Return 'true' if the specified column name exists (found in CSV headers). """
+		return 1 if columnHeader in self.getHeader() else 0
+
 
 
 ########################################## ##########################################################
