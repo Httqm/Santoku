@@ -50,7 +50,7 @@ cfgDataHostGroup	= objHostGroupFileIni.getData()
 import re	# for RegExp
 services=[]
 for field in objFileInCsv.getHeader():
-	match=re.search('.*:do$', field)
+	match=re.search('.*:'+c.csvHeaderDo+'$', field)
 	if(match):
 		services.append(field)
 
@@ -77,8 +77,11 @@ for host in csvData:	# 'host' is the key of the 'csvData' dict
 
 	# load host directives for injection into csvData[host]
 	hostDirectives		= ''
-	directivesNames		= csvData[host]['hostDirective_name'].split('|')
-	directivesValues	= csvData[host]['hostDirective_value'].split('|')
+	directivesNames		= csvData[host]['hostDirective_name'].split(c.csvMultiValuedCellFS)
+	directivesValues	= csvData[host]['hostDirective_value'].split(c.csvMultiValuedCellFS)
+
+
+
 
 	for index,value in enumerate(directivesNames):
 		hostDirectives	+= objPatternDirectives.apply({	'directiveName' : directivesNames[index], 'directiveValue' : directivesValues[index]})
@@ -107,7 +110,7 @@ for host in csvData:	# 'host' is the key of the 'csvData' dict
 		# if 'do', load service stuff (pattern, csv2data, fields, values) and cook them together
 		if(csvData[host][service]=='1'):
 
-			serviceName=service.replace(':do','')
+			serviceName=service.replace(':'+c.csvHeaderDo,'')
 
 			################## ##########################################################
 			# service directives
@@ -121,8 +124,8 @@ for host in csvData:	# 'host' is the key of the 'csvData' dict
 			if(notEmpty):
 				# loading service directives from CSV data
 				serviceDirectives	= ''
-				directivesNames		= csvData[host][serviceName+':serviceDirectivesNames'].split('|')
-				directivesValues	= csvData[host][serviceName+':serviceDirectivesValues'].split('|')
+				directivesNames		= csvData[host][serviceName+':serviceDirectivesNames'].split(c.csvMultiValuedCellFS)
+				directivesValues	= csvData[host][serviceName+':serviceDirectivesValues'].split(c.csvMultiValuedCellFS)
 				# applying the serviceDirectives pattern
 				for name,value in enumerate(directivesNames):
 					serviceDirectives+=objPatternDirectives.apply({
