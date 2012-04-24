@@ -77,8 +77,8 @@ for host in csvData:	# 'host' is the key of the 'csvData' dict
 
 	# load host directives for injection into csvData[host]
 	hostDirectives		= ''
-	directivesNames		= csvData[host]['hostDirective_name'].split(c.csvMultiValuedCellFS)
-	directivesValues	= csvData[host]['hostDirective_value'].split(c.csvMultiValuedCellFS)
+	directivesNames		= csvData[host][c.csvHostDirectivesNames].split(c.csvMultiValuedCellFS)
+	directivesValues	= csvData[host][c.csvHostDirectivesValues].split(c.csvMultiValuedCellFS)
 
 
 

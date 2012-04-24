@@ -6,7 +6,7 @@
 # FILES AND FOLDERS
 ########################################## ##########################################################
 srcFileDir			= './config/'	# TODO : name files as path/to/file
-srcFile				= 'file.csv'
+srcFile				= 'hosts.csv'
 srcFileFs			= ';'		# CSV field separator
 srcFileParamFs			= '|'		# separator used when a CSV cell contains several values
 hostFileIni			= 'host.ini'
@@ -19,6 +19,13 @@ outFileHosts		= 'hosts.cfg'
 outFileServices		= 'services.cfg'
 
 ########################################## ##########################################################
+# FILES AND FOLDERS
+########################################## ##########################################################
+messageFatalError	= 'Tennoheika, banzai !!! (seppuku...)'
+# https://en.wikipedia.org/wiki/Seppuku
+# http://www.squidoo.com/seppuku
+
+########################################## ##########################################################
 # CSV COSMETICS
 # You needn't change these values : Santoku works fine as is. But just in case you don't like
 # the way they are (cosmetics) or need a workaround for any reason : have fun !
@@ -26,3 +33,5 @@ outFileServices		= 'services.cfg'
 # do : 
 csvMultiValuedCellFS	= '|'
 csvHeaderDo		= 'do'
+csvHostDirectivesNames	= 'hostDirectives_names'
+csvHostDirectivesValues	= 'hostDirectives_values'

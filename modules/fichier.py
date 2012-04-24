@@ -1,5 +1,7 @@
+from modules import config as c
+
 ########################################## ##########################################################
-# 
+# Generic
 ########################################## ##########################################################
 class Fichier(object):	# 'object' : ancestor of all classes
 	def __init__(self,name):
@@ -18,7 +20,7 @@ class Fichier(object):	# 'object' : ancestor of all classes
 
 
 ########################################## ##########################################################
-# 
+# .ini files (input)
 ########################################## ##########################################################
 # n CFG files contain config data : patterns, tags, ...
 class FileInIni(Fichier):
@@ -38,6 +40,7 @@ class FileInIni(Fichier):
 #			print str(e)	# IOError: [Errno 2] No such file or directory: './config/hosts.ini'
 #			print e.args[1]
 #			return 1
+			print c.messageFatalError
 			return e
 		# finally : http://docs.python.org/reference/compound_stmts.html#finally
 		"""
