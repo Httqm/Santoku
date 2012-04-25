@@ -4,7 +4,7 @@ from modules import config as c
 # Generic
 ########################################## ##########################################################
 class Fichier(object):	# 'object' : ancestor of all classes
-	def __init__(self,name):
+	def __init__(self,params):
 		""" Any file """
 		self.name='noName'
 
@@ -26,22 +26,24 @@ class Fichier(object):	# 'object' : ancestor of all classes
 class FileInIni(Fichier):
 	def __init__(self,params):
 		""" Extends class 'fichier'. Specializes on CFG files. """
-		#self.dir	= params['dir']
 		self.name	= params['name']
 		self.data	= None
+		self.controller=params['controller']
 
 	def loadData(self):
 		""" Read data from config file """
 		# http://docs.python.org/tutorial/inputoutput.html
 		try:
 			cfgFile = open(self.name, 'r')
-#		except IOError, e:	# trap IOError only
+		except IOError, e:	# trap IOError only
+			self.controller.die({ 'exitMessage' : 'File "'+self.name+'" specified in config file not found.'})
+
 		except Exception, e :	# trap all exceptions
 #			print str(e)	# IOError: [Errno 2] No such file or directory: './config/hosts.ini'
 #			print e.args[1]
-#			return 1
-			print c.messageFatalError
-			return e
+
+			# no specific error message so far
+			self.controller.die({ 'exitMessage' : str(e)})
 		# finally : http://docs.python.org/reference/compound_stmts.html#finally
 		"""
 		except:

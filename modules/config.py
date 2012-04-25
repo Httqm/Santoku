@@ -21,7 +21,7 @@ outFileServices		= 'services.cfg'
 ########################################## ##########################################################
 # FILES AND FOLDERS
 ########################################## ##########################################################
-messageFatalError	= 'Tennoheika, banzai !!! (seppuku...)'
+messageDie		= 'Tennoheika, banzai !!! (seppuku...)'
 # https://en.wikipedia.org/wiki/Seppuku
 # http://www.squidoo.com/seppuku
 

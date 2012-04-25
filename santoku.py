@@ -14,12 +14,14 @@ from modules import pattern	# imported from ./modules/pattern.py
 from modules import fichier
 from modules import hosts
 from modules import services
+from modules import controller
 
 # making local names for imported classes
 FileInCsv	= fichier.FileInCsv
 FileInIni	= fichier.FileInIni
 FileOut		= fichier.FileOut
 Pattern		= pattern.Pattern
+Controller	= controller.Controller
 
 Host		= hosts.Host
 Service		= services.Service
@@ -29,20 +31,23 @@ Service		= services.Service
 # main()
 ########################################## ##########################################################
 
+controller=Controller()
+
+
 # Load host data from CSV
 objFileInCsv	= FileInCsv({ 'name' : c.srcFile, 'fs' : c.srcFileFs })	# obj[ClassName] : name of instance
 csvData		= objFileInCsv.getData()
 
 # Load data from 'host.ini'
-objHostFileIni	= FileInIni({ 'name' : c.srcFileDir+c.hostFileIni })
+objHostFileIni	= FileInIni({ 'name' : c.srcFileDir+c.hostFileIni, 'controller' : controller })
 cfgDataHost	= objHostFileIni.getData()
 
 # Load data from 'host_service_directives.ini'
-objHostServiceDirectivesFileIni	= FileInIni({ 'name' : c.srcFileDir+c.hostServiceDirectivesFileIni })
+objHostServiceDirectivesFileIni	= FileInIni({ 'name' : c.srcFileDir+c.hostServiceDirectivesFileIni, 'controller' : controller })
 cfgHostDirectives		= objHostServiceDirectivesFileIni.getData()
 
 # Load data from 'hostgroup.ini'
-objHostGroupFileIni	= FileInIni({ 'name' : c.srcFileDir+c.hostGroupFileIni })
+objHostGroupFileIni	= FileInIni({ 'name' : c.srcFileDir+c.hostGroupFileIni, 'controller' : controller })
 cfgDataHostGroup	= objHostGroupFileIni.getData()
 
 
@@ -148,7 +153,7 @@ for host in csvData:	# 'host' is the key of the 'csvData' dict
 			result	= objService.buildArrayOfServices()
 
 			# Load service data from './config/"serviceName".ini'
-			objServiceFileIni	= FileInIni({ 'name' : c.srcFileDir+objService.getName()+'.ini' })
+			objServiceFileIni	= FileInIni({ 'name' : c.srcFileDir+objService.getName()+'.ini', 'controller' : controller })
 			cfgDataService		= objServiceFileIni.getData()
 			objPatternService	= Pattern({ 'pattern' : cfgDataService['pattern'], 'variable2tag' : cfgDataService['VARIABLE2TAG'] })
 
