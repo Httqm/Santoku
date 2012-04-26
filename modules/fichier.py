@@ -42,6 +42,7 @@ class FileInIni(Fichier):
 #			print str(e)	# IOError: [Errno 2] No such file or directory: './config/hosts.ini'
 #			print e.args[1]
 
+
 			# no specific error message so far
 			self.controller.die({ 'exitMessage' : str(e)})
 		# finally : http://docs.python.org/reference/compound_stmts.html#finally
