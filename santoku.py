@@ -44,15 +44,15 @@ cfgDataHost	= objHostFileIni.getData()
 
 # Load data from 'host_service_directives.ini'
 objHostServiceDirectivesFileIni	= FileInIni({
-		'name' : c.srcFileDir+c.hostServiceDirectivesFileIni,
-		'controller' : controller
+		'name'		: c.srcFileDir+c.hostServiceDirectivesFileIni,
+		'controller'	: controller
 		})
 cfgHostDirectives		= objHostServiceDirectivesFileIni.getData()
 
 # Load data from 'hostgroup.ini'
 objHostGroupFileIni	= FileInIni({
-		'name' : c.srcFileDir+c.hostGroupFileIni,
-		'controller' : controller })
+		'name'		: c.srcFileDir+c.hostGroupFileIni,
+		'controller'	: controller })
 cfgDataHostGroup	= objHostGroupFileIni.getData()
 
 
@@ -73,35 +73,27 @@ hostGroups	= {}	# dict : hg name => hg members
 servicesOutput	= ''
 
 
-
-
+try:
+	cfgDataHost[c.iniPatternString]
+except KeyError:
+	controller.die({ 'exitMessage' : 'Key error  : key "'+c.iniPatternString+'" not found in "'+objHostFileIni.name})
 
 try:
-	objPatternHost	= Pattern({
-			'pattern' : cfgDataHost[c.iniPatternString],
-			'variable2tag' : cfgDataHost[c.iniVarToTagString]
-			})
+	cfgDataHost[c.iniVarToTagString]
 except KeyError:
-	controller.die({ 'exitMessage' : 'Key error  : key "'+c.iniPatternString+'" doesn\'t exist in "'+objHostFileIni.name+'"'})
-except AttributeError,e:
-	controller.die({ 'exitMessage' : 'Attribute error : '+str(e)})
+	controller.die({ 'exitMessage' : 'Key error  : key "'+c.iniVarToTagString+'" not found in "'+objHostFileIni.name})
 
 
-try:
-	objPatternDirectives	= Pattern({
-			'pattern' : cfgHostDirectives[c.iniPatternString],
-			'variable2tag' : cfgHostDirectives[c.iniVarToTagString]
-			})
-
-except KeyError:
-	controller.die({ 'exitMessage' : 'Key error  : key "'+c.iniPatternString+'" doesn\'t exist in "'+objHostServiceDirectivesFileIni.name+'"'})
+objPatternHost	= Pattern({
+		'pattern' : cfgDataHost[c.iniPatternString],
+		'variable2tag' : cfgDataHost[c.iniVarToTagString]
+		})
 
 
-
-
-
-
-
+objPatternDirectives	= Pattern({
+		'pattern' : cfgHostDirectives[c.iniPatternString],
+		'variable2tag' : cfgHostDirectives[c.iniVarToTagString]
+		})
 
 
 for host in csvData:	# 'host' is the key of the 'csvData' dict
@@ -191,13 +183,22 @@ for host in csvData:	# 'host' is the key of the 'csvData' dict
 
 
 
+
 			try:
-				objPatternService	= Pattern({
-						'pattern' : cfgDataService[c.iniPatternString],
-						'variable2tag' : cfgDataService[c.iniVarToTagString]
-						})
+				cfgDataService[c.iniPatternString]
 			except KeyError:
-				controller.die({ 'exitMessage' : 'Key error  : key "'+c.iniPatternString+'" doesn\'t exist in "'+objServiceFileIni.name+'"'})
+				controller.die({ 'exitMessage' : 'Key error  : key "'+c.iniPatternString+'" not found in "'+objServiceFileIni.name})
+
+			try:
+				cfgDataService[c.iniVarToTagString]
+			except KeyError:
+				controller.die({ 'exitMessage' : 'Key error  : key "'+c.iniVarToTagString+'" not found in "'+objServiceFileIni.name})
+
+
+			objPatternService	= Pattern({
+					'pattern' : cfgDataService[c.iniPatternString],
+					'variable2tag' : cfgDataService[c.iniVarToTagString]
+					})
 
 
 

@@ -71,15 +71,17 @@ class FileInIni(Fichier):
 				sectionType=match.group(1)	# could be 'pattern' or 'VARIABLE2TAG', or ...
 				if(sectionType==c.iniPatternString):
 					srcData[sectionType]=''		# create key in data hash
-				elif(sectionType=='VARIABLE2TAG'):
+#				elif(sectionType=='VARIABLE2TAG'):
+				elif(sectionType==c.iniVarToTagString):
 					srcData[sectionType]={}		# create key in data hash
 
 			else:
 				# loading data from section
-				if(sectionType=='pattern'):
+#				if(sectionType=='pattern'):
+				if(sectionType==c.iniPatternString):
 					srcData[sectionType]+=line
 
-				elif(sectionType=='VARIABLE2TAG'):
+				elif(sectionType==c.iniVarToTagString):
 					# trim file content
 					line=line.replace(' ', '')
 					line=line.replace("\t", '')	# UGLY !!!
