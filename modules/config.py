@@ -6,7 +6,8 @@
 # FILES AND FOLDERS
 ########################################## ##########################################################
 srcFileDir			= './config/'	# TODO : name files as path/to/file
-srcFile				= 'hosts.csv'
+#srcFile				= 'hosts.csv'
+srcFile				= 'file.csv'
 srcFileFs			= ';'		# CSV field separator
 srcFileParamFs			= '|'		# separator used when a CSV cell contains several values
 hostFileIni			= 'host.ini'
@@ -27,11 +28,22 @@ messageDie		= 'Tennoheika, banzai !!! (seppuku...)'
 
 ########################################## ##########################################################
 # CSV COSMETICS
-# You needn't change these values : Santoku works fine as is. But just in case you don't like
-# the way they are (cosmetics) or need a workaround for any reason : have fun !
+# You needn't change these values : Santoku works fine as is.
+# Values are defined here to avoid hardcoded string in the code.
+# But just in case you don't like the way they are (cosmetics) or need a workaround for any reason :
+# HAVE FUN !
 ########################################## ##########################################################
-# do : 
 csvMultiValuedCellFS	= '|'
 csvHeaderDo		= 'do'
 csvHostDirectivesNames	= 'hostDirectives_names'
 csvHostDirectivesValues	= 'hostDirectives_values'
+
+########################################## ##########################################################
+# INI COSMETICS
+# You needn't change these values : Santoku works fine as is.
+# Values are defined here to avoid hardcoded string in the code.
+# But just in case you don't like the way they are (cosmetics) or need a workaround for any reason :
+# HAVE FUN !
+########################################## ##########################################################
+iniPatternString	= 'pattern'
+iniVarToTagString	= 'VARIABLE2TAG'

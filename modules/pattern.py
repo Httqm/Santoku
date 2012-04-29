@@ -16,6 +16,7 @@ class Pattern(object):	# 'object' : ancestor of all classes
 		- variable2tag : dictionary with key = variable name, and value = tag name. This is defined in the [VARIABLE2TAG] section of .ini files
 		- values : dictionary with key = variable name, and value = ... value ;-)
 		"""
+
 		self.pattern		= params['pattern']
 		self.variable2tag	= params['variable2tag']
 

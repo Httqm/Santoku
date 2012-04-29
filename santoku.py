@@ -31,7 +31,7 @@ Service		= services.Service
 # main()
 ########################################## ##########################################################
 
-controller=Controller()
+controller	= Controller()
 
 
 # Load host data from CSV
@@ -43,11 +43,16 @@ objHostFileIni	= FileInIni({ 'name' : c.srcFileDir+c.hostFileIni, 'controller' :
 cfgDataHost	= objHostFileIni.getData()
 
 # Load data from 'host_service_directives.ini'
-objHostServiceDirectivesFileIni	= FileInIni({ 'name' : c.srcFileDir+c.hostServiceDirectivesFileIni, 'controller' : controller })
+objHostServiceDirectivesFileIni	= FileInIni({
+		'name' : c.srcFileDir+c.hostServiceDirectivesFileIni,
+		'controller' : controller
+		})
 cfgHostDirectives		= objHostServiceDirectivesFileIni.getData()
 
 # Load data from 'hostgroup.ini'
-objHostGroupFileIni	= FileInIni({ 'name' : c.srcFileDir+c.hostGroupFileIni, 'controller' : controller })
+objHostGroupFileIni	= FileInIni({
+		'name' : c.srcFileDir+c.hostGroupFileIni,
+		'controller' : controller })
 cfgDataHostGroup	= objHostGroupFileIni.getData()
 
 
@@ -68,8 +73,36 @@ hostGroups	= {}	# dict : hg name => hg members
 servicesOutput	= ''
 
 
-objPatternHost		= Pattern({ 'pattern' : cfgDataHost['pattern'], 'variable2tag' : cfgDataHost['VARIABLE2TAG'] })
-objPatternDirectives	= Pattern({ 'pattern' : cfgHostDirectives['pattern'], 'variable2tag' : cfgHostDirectives['VARIABLE2TAG'] })
+
+
+
+try:
+	objPatternHost	= Pattern({
+			'pattern' : cfgDataHost[c.iniPatternString],
+			'variable2tag' : cfgDataHost[c.iniVarToTagString]
+			})
+except KeyError:
+	controller.die({ 'exitMessage' : 'Key error  : key "'+c.iniPatternString+'" doesn\'t exist in "'+objHostFileIni.name+'"'})
+except AttributeError,e:
+	controller.die({ 'exitMessage' : 'Attribute error : '+str(e)})
+
+
+try:
+	objPatternDirectives	= Pattern({
+			'pattern' : cfgHostDirectives[c.iniPatternString],
+			'variable2tag' : cfgHostDirectives[c.iniVarToTagString]
+			})
+
+except KeyError:
+	controller.die({ 'exitMessage' : 'Key error  : key "'+c.iniPatternString+'" doesn\'t exist in "'+objHostServiceDirectivesFileIni.name+'"'})
+
+
+
+
+
+
+
+
 
 for host in csvData:	# 'host' is the key of the 'csvData' dict
 
@@ -155,7 +188,20 @@ for host in csvData:	# 'host' is the key of the 'csvData' dict
 			# Load service data from './config/"serviceName".ini'
 			objServiceFileIni	= FileInIni({ 'name' : c.srcFileDir+objService.getName()+'.ini', 'controller' : controller })
 			cfgDataService		= objServiceFileIni.getData()
-			objPatternService	= Pattern({ 'pattern' : cfgDataService['pattern'], 'variable2tag' : cfgDataService['VARIABLE2TAG'] })
+
+
+
+			try:
+				objPatternService	= Pattern({
+						'pattern' : cfgDataService[c.iniPatternString],
+						'variable2tag' : cfgDataService[c.iniVarToTagString]
+						})
+			except KeyError:
+				controller.die({ 'exitMessage' : 'Key error  : key "'+c.iniPatternString+'" doesn\'t exist in "'+objServiceFileIni.name+'"'})
+
+
+
+
 
 			# finally apply service pattern as many time as the maximum number of values in multi-valued CSV cells
 			for i in xrange(result['maxRounds']):
@@ -163,7 +209,14 @@ for host in csvData:	# 'host' is the key of the 'csvData' dict
 
 
 # host loop done : we've seen all hosts. Let's build hostgroups
-objPatternHost=Pattern({ 'pattern' : cfgDataHostGroup['pattern'], 'variable2tag' : cfgDataHostGroup['VARIABLE2TAG'] })
+try:
+	objPatternHost=Pattern({
+			'pattern' : cfgDataHostGroup[c.iniPatternString],
+			'variable2tag' : cfgDataHostGroup[c.iniVarToTagString]
+			})
+except KeyError:
+	controller.die({ 'exitMessage' : 'Key error  : key "'+c.iniPatternString+'" doesn\'t exist in "'+objHostGroupFileIni.name+'"' })
+
 
 
 for hostgroup_name in hostGroups:

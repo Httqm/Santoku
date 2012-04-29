@@ -69,7 +69,7 @@ class FileInIni(Fichier):
 				# found a section. Let's detect which kind of section it is
 #				print 'found section :'+match.group(1)
 				sectionType=match.group(1)	# could be 'pattern' or 'VARIABLE2TAG', or ...
-				if(sectionType=='pattern'):
+				if(sectionType==c.iniPatternString):
 					srcData[sectionType]=''		# create key in data hash
 				elif(sectionType=='VARIABLE2TAG'):
 					srcData[sectionType]={}		# create key in data hash
