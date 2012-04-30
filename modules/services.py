@@ -1,5 +1,7 @@
 #!/usr/bin/python
 
+from modules import config as c
+
 ########################################## ##########################################################
 # 
 ########################################## ##########################################################
@@ -41,6 +43,12 @@ class Service(object):	# 'object' : ancestor of all classes
 		This method handle multi-valued CSV cells
 		"""
 		serviceCsvData	= self.loadServiceData()
+
+		"""
+		print '-----------------------'
+		print serviceCsvData
+		print '-----------------------'
+		"""
 		champsValeurs	= {}
 
 		# Parsing data stored in dict to register as many services as the number of values in mutli-valued cells
@@ -49,12 +57,19 @@ class Service(object):	# 'object' : ancestor of all classes
 
 		while currentRound < maxRounds:
 			champsValeurs[currentRound]	= {
-				'host_name'	: self.params['host'],
-				'use'		: 'generic_service'
+				c.csvHeaderHostName	: self.params['host'],
+				c.csvHeaderUse		: c.csvGenericService
 				}
 			for serviceField in serviceCsvData:
+				
+				#print 'serviceField : '+serviceField
+
 				valuesOfMultiValuedCell	= serviceCsvData[serviceField].split(self.params['fieldSeparator'])
-				maxRounds		= len(valuesOfMultiValuedCell) if (len(valuesOfMultiValuedCell)>maxRounds) else maxRounds
+
+				# Excluding the service directives columns here to avoid duplicating the service definition
+				if((serviceField != c.csvServiceDirectivesNames) and (serviceField != c.csvServiceDirectivesValues)):
+					maxRounds		= len(valuesOfMultiValuedCell) if (len(valuesOfMultiValuedCell)>maxRounds) else maxRounds
+
 				try:
 					tmpValue	= valuesOfMultiValuedCell[currentRound]
 				except IndexError:

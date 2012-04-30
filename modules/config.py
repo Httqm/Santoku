@@ -33,10 +33,17 @@ messageDie		= 'Tennoheika, banzai !!! (seppuku...)'
 # But just in case you don't like the way they are (cosmetics) or need a workaround for any reason :
 # HAVE FUN !
 ########################################## ##########################################################
-csvMultiValuedCellFS	= '|'
-csvHeaderDo		= 'do'
-csvHostDirectivesNames	= 'hostDirectives_names'
-csvHostDirectivesValues	= 'hostDirectives_values'
+csvMultiValuedCellFS		= '|'
+csvHeaderDo			= 'do'
+csvHeaderHostName		= 'host_name'
+csvHeaderUse			= 'use'
+csvGenericService		= 'generic_service'
+csvHostDirectivesNames		= 'hostDirectivesNames'
+csvHostDirectivesValues		= 'hostDirectivesValues'
+csvServiceDirectivesNames	= 'serviceDirectivesNames'
+csvServiceDirectivesValues	= 'serviceDirectivesValues'
+
+
 
 ########################################## ##########################################################
 # INI COSMETICS

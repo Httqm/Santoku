@@ -106,10 +106,20 @@ for host in csvData:	# 'host' is the key of the 'csvData' dict
 		continue
 
 	# load host directives for injection into csvData[host]
+	try:
+		csvData[host][c.csvHostDirectivesNames]
+	except KeyError:
+		controller.die({ 'exitMessage' : 'Key error : key "'+c.csvHostDirectivesNames+'" not found in "'+objFileInCsv.name+'"'})
+
+	try:
+		csvData[host][c.csvHostDirectivesValues]
+	except KeyError:
+		controller.die({ 'exitMessage' : 'Key error : key "'+c.csvHostDirectivesValues+'" not found in "'+objFileInCsv.name+'"'})
+
+
 	hostDirectives		= ''
 	directivesNames		= csvData[host][c.csvHostDirectivesNames].split(c.csvMultiValuedCellFS)
 	directivesValues	= csvData[host][c.csvHostDirectivesValues].split(c.csvMultiValuedCellFS)
-
 
 
 
@@ -141,27 +151,36 @@ for host in csvData:	# 'host' is the key of the 'csvData' dict
 		if(csvData[host][service]=='1'):
 
 			serviceName=service.replace(':'+c.csvHeaderDo,'')
-
+			#print serviceName
 			################## ##########################################################
 			# service directives
 			################## ##########################################################
 			# Making sure the current service has directives (names + values cells exist and are not empty)
-			notEmpty=1
-			for columnName in [serviceName+':serviceDirectivesNames', serviceName+':serviceDirectivesValues']:
-				if(objFileInCsv.columnExists(columnName)):
-					notEmpty=notEmpty and csvData[host][columnName]
+			serviceDirectives	= ''
+			hasDirectives		= 1
 
-			if(notEmpty):
+			for columnName in [serviceName+':'+c.csvServiceDirectivesNames, serviceName+':'+c.csvServiceDirectivesValues]:
+
+				if(objFileInCsv.columnExists(columnName)):
+					hasDirectives=hasDirectives and csvData[host][columnName]
+				else:
+					hasDirectives=0
+
+			if(hasDirectives):
 				# loading service directives from CSV data
-				serviceDirectives	= ''
-				directivesNames		= csvData[host][serviceName+':serviceDirectivesNames'].split(c.csvMultiValuedCellFS)
-				directivesValues	= csvData[host][serviceName+':serviceDirectivesValues'].split(c.csvMultiValuedCellFS)
+				directivesNames		= csvData[host][serviceName+':'+c.csvServiceDirectivesNames].split(c.csvMultiValuedCellFS)
+				directivesValues	= csvData[host][serviceName+':'+c.csvServiceDirectivesValues].split(c.csvMultiValuedCellFS)
+
 				# applying the serviceDirectives pattern
 				for name,value in enumerate(directivesNames):
 					serviceDirectives+=objPatternDirectives.apply({
 						'directiveName'		: directivesNames[name],
 						'directiveValue'	: directivesValues[name]
 						})
+				#print "++++++++++++++"	
+				#print serviceDirectives
+				#print "++++++++++++++"	
+
 			################## ##########################################################
 			# /service directives
 			################## ##########################################################
@@ -176,6 +195,8 @@ for host in csvData:	# 'host' is the key of the 'csvData' dict
 					})
 
 			result	= objService.buildArrayOfServices()
+
+			#print result
 
 			# Load service data from './config/"serviceName".ini'
 			objServiceFileIni	= FileInIni({ 'name' : c.srcFileDir+objService.getName()+'.ini', 'controller' : controller })
@@ -212,8 +233,8 @@ for host in csvData:	# 'host' is the key of the 'csvData' dict
 # host loop done : we've seen all hosts. Let's build hostgroups
 try:
 	objPatternHost=Pattern({
-			'pattern' : cfgDataHostGroup[c.iniPatternString],
-			'variable2tag' : cfgDataHostGroup[c.iniVarToTagString]
+			'pattern'	: cfgDataHostGroup[c.iniPatternString],
+			'variable2tag'	: cfgDataHostGroup[c.iniVarToTagString]
 			})
 except KeyError:
 	controller.die({ 'exitMessage' : 'Key error  : key "'+c.iniPatternString+'" doesn\'t exist in "'+objHostGroupFileIni.name+'"' })

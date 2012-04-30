@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 from modules import config as c
 
 ########################################## ##########################################################
@@ -67,17 +69,14 @@ class FileInIni(Fichier):
 			match=re.search('\[(.+)\]', line)
 			if(match):
 				# found a section. Let's detect which kind of section it is
-#				print 'found section :'+match.group(1)
 				sectionType=match.group(1)	# could be 'pattern' or 'VARIABLE2TAG', or ...
 				if(sectionType==c.iniPatternString):
 					srcData[sectionType]=''		# create key in data hash
-#				elif(sectionType=='VARIABLE2TAG'):
 				elif(sectionType==c.iniVarToTagString):
 					srcData[sectionType]={}		# create key in data hash
 
 			else:
 				# loading data from section
-#				if(sectionType=='pattern'):
 				if(sectionType==c.iniPatternString):
 					srcData[sectionType]+=line
 
@@ -147,7 +146,7 @@ class FileInCsv(Fichier):
 				continue
 
 			ligne		= line.split(self.fs)
-			host_name	= ligne[colText2Nb['host_name']].strip('"')
+			host_name	= ligne[colText2Nb[c.csvHeaderHostName]].strip('"')
 			hostFields	= {}
 
 			for clefs in colNb2Text.keys():
