@@ -151,7 +151,6 @@ for host in csvData:	# 'host' is the key of the 'csvData' dict
 		if(csvData[host][service]=='1'):
 
 			serviceName=service.replace(':'+c.csvHeaderDo,'')
-			#print serviceName
 			################## ##########################################################
 			# service directives
 			################## ##########################################################
@@ -177,9 +176,6 @@ for host in csvData:	# 'host' is the key of the 'csvData' dict
 						'directiveName'		: directivesNames[name],
 						'directiveValue'	: directivesValues[name]
 						})
-				#print "++++++++++++++"	
-				#print serviceDirectives
-				#print "++++++++++++++"	
 
 			################## ##########################################################
 			# /service directives
@@ -196,11 +192,13 @@ for host in csvData:	# 'host' is the key of the 'csvData' dict
 
 			result	= objService.buildArrayOfServices()
 
-			#print result
-
 			# Load service data from './config/"serviceName".ini'
 			objServiceFileIni	= FileInIni({ 'name' : c.srcFileDir+objService.getName()+'.ini', 'controller' : controller })
+
 			cfgDataService		= objServiceFileIni.getData()
+
+			# check INI file for missing parameters
+			objServiceFileIni.check()
 
 
 

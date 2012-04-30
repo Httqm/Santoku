@@ -43,12 +43,6 @@ class Service(object):	# 'object' : ancestor of all classes
 		This method handle multi-valued CSV cells
 		"""
 		serviceCsvData	= self.loadServiceData()
-
-		"""
-		print '-----------------------'
-		print serviceCsvData
-		print '-----------------------'
-		"""
 		champsValeurs	= {}
 
 		# Parsing data stored in dict to register as many services as the number of values in mutli-valued cells
@@ -68,7 +62,7 @@ class Service(object):	# 'object' : ancestor of all classes
 
 				# Excluding the service directives columns here to avoid duplicating the service definition
 				if((serviceField != c.csvServiceDirectivesNames) and (serviceField != c.csvServiceDirectivesValues)):
-					maxRounds		= len(valuesOfMultiValuedCell) if (len(valuesOfMultiValuedCell)>maxRounds) else maxRounds
+					maxRounds	= len(valuesOfMultiValuedCell) if (len(valuesOfMultiValuedCell)>maxRounds) else maxRounds
 
 				try:
 					tmpValue	= valuesOfMultiValuedCell[currentRound]

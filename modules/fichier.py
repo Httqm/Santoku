@@ -14,6 +14,7 @@ class Fichier(object):	# 'object' : ancestor of all classes
 		""" Used by CSV and CFG extensions of Fichier. """
 		result=self.loadData()
 		if(result):
+			# TODO : leave with controller
 			print str(result)
 			import sys
 			sys.exit(1)	# http://docs.python.org/library/sys.html?highlight=sys.exit#sys.exit
@@ -24,13 +25,32 @@ class Fichier(object):	# 'object' : ancestor of all classes
 ########################################## ##########################################################
 # .ini files (input)
 ########################################## ##########################################################
-# n CFG files contain config data : patterns, tags, ...
 class FileInIni(Fichier):
 	def __init__(self,params):
 		""" Extends class 'fichier'. Specializes on CFG files. """
 		self.name	= params['name']
 		self.data	= None
-		self.controller=params['controller']
+		self.controller	= params['controller']
+
+	def check(self):
+		""" Make sure that all '$something$' tags appearing in 'pattern' also appear in 'VARIABLE2TAG'. """
+
+		# loading '$something$' from the 'pattern' block
+		patternLines	= self.data[c.iniPatternString].split("\n")
+		varToTagBlock	= str(self.data[c.iniVarToTagString])
+		for patternLine in patternLines:
+			import re	# TODO : import this once from this file
+
+			# searching '$something$' in the 'pattern' block
+			match	= re.search('\$(.+)\$', patternLine)
+			if(match):
+				# searching similar '$something$' in the 'varToTag' block
+				match2	= re.search('('+match.group(1)+')',varToTagBlock)
+				if(not match2):
+					self.controller.die({ 'exitMessage' : self.name+' : Tag "'+match.group(1)+'" found in "'+c.iniPatternString+'" block, missing in "'+c.iniVarToTagString+'" block.'})
+
+		return 0
+
 
 	def loadData(self):
 		""" Read data from config file """
