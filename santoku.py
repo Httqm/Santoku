@@ -210,11 +210,8 @@ for host in csvData:	# 'host' is the key of the 'csvData' dict
 					'controller'	: controller
 					})
 
+			# Load INI file data
 			cfgDataService		= objServiceFileIni.getData()
-
-			# check INI file for missing parameters
-			objServiceFileIni.check()
-
 
 
 

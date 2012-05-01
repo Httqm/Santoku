@@ -5,24 +5,29 @@
 ########################################## ##########################################################
 # FILES AND FOLDERS
 ########################################## ##########################################################
+
+# CSV file
 srcFileDir			= './config/'	# TODO : name files as path/to/file
 #srcFile				= 'hosts.csv'
 srcFile				= 'file.csv'
 srcFileFs			= ';'		# CSV field separator
 srcFileParamFs			= '|'		# separator used when a CSV cell contains several values
+
+# INI files
 hostFileIni			= 'host.ini'
 hostGroupFileIni		= 'hostgroup.ini'
 hostServiceDirectivesFileIni	= 'host_service_directives.ini'
 #objHostGroupFileIni
 
+# OUTPUT files
 outFileDir		= './output/'
 outFileHosts		= 'hosts.cfg'
 outFileServices		= 'services.cfg'
 
-configFile		= __file__	# This is use to point to this file in error messages, don't change it !
+configFile		= __file__	# This is used to point to this file in error messages, don't change it !
 
 ########################################## ##########################################################
-# FILES AND FOLDERS
+# OUTPUT MESSAGES
 ########################################## ##########################################################
 messageDie		= 'Tennoheika, banzai !!! (seppuku...)'
 # https://en.wikipedia.org/wiki/Seppuku
@@ -56,3 +61,4 @@ csvServiceDirectivesValues	= 'serviceDirectivesValues'
 ########################################## ##########################################################
 iniPatternString	= 'pattern'
 iniVarToTagString	= 'VARIABLE2TAG'
+iniVarToTagStanzaFs	= '='
