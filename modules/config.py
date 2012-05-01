@@ -19,6 +19,8 @@ outFileDir		= './output/'
 outFileHosts		= 'hosts.cfg'
 outFileServices		= 'services.cfg'
 
+configFile		= __file__	# This is use to point to this file in error messages, don't change it !
+
 ########################################## ##########################################################
 # FILES AND FOLDERS
 ########################################## ##########################################################

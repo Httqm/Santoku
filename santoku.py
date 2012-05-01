@@ -35,16 +35,25 @@ controller	= Controller()
 
 
 # Load host data from CSV
-objFileInCsv	= FileInCsv({ 'name' : c.srcFile, 'fs' : c.srcFileFs })	# obj[ClassName] : name of instance
+objFileInCsv	= FileInCsv({
+		'name'		: c.srcFile,
+		'fs'		: c.srcFileFs,
+		'controller'	: controller
+		})
 csvData		= objFileInCsv.getData()
 
 # Load data from 'host.ini'
-objHostFileIni	= FileInIni({ 'name' : c.srcFileDir+c.hostFileIni, 'controller' : controller })
+objHostFileIni	= FileInIni({
+		'name'		: c.srcFileDir+c.hostFileIni,
+		'fs'		: '',
+		'controller'	: controller
+		})
 cfgDataHost	= objHostFileIni.getData()
 
 # Load data from 'host_service_directives.ini'
 objHostServiceDirectivesFileIni	= FileInIni({
 		'name'		: c.srcFileDir+c.hostServiceDirectivesFileIni,
+		'fs'		: '',
 		'controller'	: controller
 		})
 cfgHostDirectives		= objHostServiceDirectivesFileIni.getData()
@@ -52,7 +61,9 @@ cfgHostDirectives		= objHostServiceDirectivesFileIni.getData()
 # Load data from 'hostgroup.ini'
 objHostGroupFileIni	= FileInIni({
 		'name'		: c.srcFileDir+c.hostGroupFileIni,
-		'controller'	: controller })
+		'fs'		: '',
+		'controller'	: controller
+		})
 cfgDataHostGroup	= objHostGroupFileIni.getData()
 
 
@@ -193,7 +204,11 @@ for host in csvData:	# 'host' is the key of the 'csvData' dict
 			result	= objService.buildArrayOfServices()
 
 			# Load service data from './config/"serviceName".ini'
-			objServiceFileIni	= FileInIni({ 'name' : c.srcFileDir+objService.getName()+'.ini', 'controller' : controller })
+			objServiceFileIni	= FileInIni({
+					'name'		: c.srcFileDir+objService.getName()+'.ini',
+					'fs'		: '',
+					'controller'	: controller
+					})
 
 			cfgDataService		= objServiceFileIni.getData()
 

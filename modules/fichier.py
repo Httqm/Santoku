@@ -7,11 +7,14 @@ from modules import config as c
 ########################################## ##########################################################
 class Fichier(object):	# 'object' : ancestor of all classes
 	def __init__(self,params):
-		""" Any file """
-		self.name='noName'
+		""" Any file. """
+		self.name	= params['name']
+		self.fs		= params['fs']
+		self.controller	= params['controller']
+		self.data	= None
 
 	def getData(self):
-		""" Used by CSV and CFG extensions of Fichier. """
+		""" Used by CSV and CFG extensions of class Fichier. """
 		result=self.loadData()
 		if(result):
 			# TODO : leave with controller
@@ -26,14 +29,20 @@ class Fichier(object):	# 'object' : ancestor of all classes
 # .ini files (input)
 ########################################## ##########################################################
 class FileInIni(Fichier):
+
+	"""
 	def __init__(self,params):
-		""" Extends class 'fichier'. Specializes on CFG files. """
+		#Extends class 'fichier'. Specializes on CFG files. 
 		self.name	= params['name']
 		self.data	= None
 		self.controller	= params['controller']
+	"""
 
 	def check(self):
-		""" Make sure that all '$something$' tags appearing in 'pattern' also appear in 'VARIABLE2TAG'. """
+		"""
+		Make sure that all '$something$' tags appearing in 'pattern' also appear in 'VARIABLE2TAG'.
+		This only checks that tags found in the 'pattern' block exist in the 'VARIABLE2TAG' block (limitation)
+		"""
 
 		# loading '$something$' from the 'pattern' block
 		patternLines	= self.data[c.iniPatternString].split("\n")
@@ -123,11 +132,13 @@ class FileInIni(Fichier):
 ########################################## ##########################################################
 # 1 CSV file contains hosts + services data
 class FileInCsv(Fichier):
+
+	"""
 	def __init__(self,params):
-		""" Extends class 'fichier'. Specializes on CSV files. """
+		# Extends class 'fichier'. Specializes on CSV files.
 		self.name	= params['name']
 		self.fs		= params['fs']
-
+	"""
 
 	# http://www.yak.net/fqa/171.html
 	# read file line by line without loading it in memory first. the fileinput.input() call reads lines sequentially,
@@ -139,8 +150,13 @@ class FileInCsv(Fichier):
 		srcData={}
 
 		# read 1st line to get column numbers
-		infile		= open(self.name,'r')
-		self.header	= infile.readline()
+		try:
+			infile		= open(self.name,'r')
+			self.header	= infile.readline()
+		except IOError:
+			self.controller.die({ 'exitMessage' : 'Source CSV file "'+self.name+'" declared in "'+c.configFile+'" not found.'})
+
+
 		champs		= self.header.split(self.fs)
 		colNb2Text	= {}
 		colNumber	= 0
