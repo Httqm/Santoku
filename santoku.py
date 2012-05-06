@@ -27,18 +27,17 @@
 # http://www.sthurlow.com/python/lesson09/
 # source : http://stackoverflow.com/questions/279237/python-import-a-module-from-a-folder
 
-from modules import config as c
-
+from modules import config
 from modules import pattern	# imported from ./modules/pattern.py
 from modules import fichier
 from modules import hosts
 from modules import services
 from modules import controller
 
-# making local names for imported classes
-FileInCsv	= fichier.FileInCsv
-FileInIni	= fichier.FileInIni
-FileOut		= fichier.FileOut
+# For code readabiliy, making local names for imported classes
+FileCsv		= fichier.FileCsv
+FileIni		= fichier.FileIni
+FileOutput	= fichier.FileOutput
 Pattern		= pattern.Pattern
 Controller	= controller.Controller
 
@@ -54,32 +53,32 @@ controller	= Controller()
 
 
 # Load host data from CSV
-objFileInCsv	= FileInCsv({
-		'name'		: c.srcFile,
-		'fs'		: c.srcFileFs,
+fileCsv	= FileCsv({
+		'name'		: config.csvFileName,
+		'fs'		: config.csvFileFs,
 		'controller'	: controller
 		})
-csvData		= objFileInCsv.getData()
+csvData		= fileCsv.getData()
 
 # Load data from 'host.ini'
-objHostFileIni	= FileInIni({
-		'name'		: c.srcFileDir+c.hostFileIni,
+objHostFileIni	= FileIni({
+		'name'		: config.configFilesPath+config.fileHostIni,
 		'fs'		: '',
 		'controller'	: controller
 		})
 cfgDataHost	= objHostFileIni.getData()
 
 # Load data from 'host_service_directives.ini'
-objHostServiceDirectivesFileIni	= FileInIni({
-		'name'		: c.srcFileDir+c.hostServiceDirectivesFileIni,
+objHostServiceDirectivesFileIni	= FileIni({
+		'name'		: config.configFilesPath+config.fileDirectivesIni,
 		'fs'		: '',
 		'controller'	: controller
 		})
 cfgHostDirectives		= objHostServiceDirectivesFileIni.getData()
 
 # Load data from 'hostgroup.ini'
-objHostGroupFileIni	= FileInIni({
-		'name'		: c.srcFileDir+c.hostGroupFileIni,
+objHostGroupFileIni	= FileIni({
+		'name'		: config.configFilesPath+config.fileHostgroupIni,
 		'fs'		: '',
 		'controller'	: controller
 		})
@@ -89,8 +88,8 @@ cfgDataHostGroup	= objHostGroupFileIni.getData()
 # Preparing for services. Detecting all '*:do' columns from the CSV
 import re	# for RegExp
 services=[]
-for field in objFileInCsv.getHeader():
-	match=re.search('.*:'+c.csvHeaderDo+'$', field)
+for field in fileCsv.getHeader():
+	match=re.search('.*:'+config.csvHeaderDo+'$', field)
 	if(match):
 		services.append(field)
 
@@ -104,25 +103,25 @@ servicesOutput	= ''
 
 
 try:
-	cfgDataHost[c.iniPatternString]
+	cfgDataHost[config.iniPatternString]
 except KeyError:
-	controller.die({ 'exitMessage' : 'Key error  : key "'+c.iniPatternString+'" not found in "'+objHostFileIni.name})
+	controller.die({ 'exitMessage' : 'Key error  : key "'+config.iniPatternString+'" not found in "'+objHostFileIni.name})
 
 try:
-	cfgDataHost[c.iniVarToTagString]
+	cfgDataHost[config.iniVarToTagString]
 except KeyError:
-	controller.die({ 'exitMessage' : 'Key error  : key "'+c.iniVarToTagString+'" not found in "'+objHostFileIni.name})
+	controller.die({ 'exitMessage' : 'Key error  : key "'+config.iniVarToTagString+'" not found in "'+objHostFileIni.name})
 
 
 objPatternHost	= Pattern({
-		'pattern' : cfgDataHost[c.iniPatternString],
-		'variable2tag' : cfgDataHost[c.iniVarToTagString]
+		'pattern' : cfgDataHost[config.iniPatternString],
+		'variable2tag' : cfgDataHost[config.iniVarToTagString]
 		})
 
 
 objPatternDirectives	= Pattern({
-		'pattern' : cfgHostDirectives[c.iniPatternString],
-		'variable2tag' : cfgHostDirectives[c.iniVarToTagString]
+		'pattern' : cfgHostDirectives[config.iniPatternString],
+		'variable2tag' : cfgHostDirectives[config.iniVarToTagString]
 		})
 
 
@@ -137,19 +136,19 @@ for host in csvData:	# 'host' is the key of the 'csvData' dict
 
 	# load host directives for injection into csvData[host]
 	try:
-		csvData[host][c.csvHostDirectivesNames]
+		csvData[host][config.csvHostDirectivesNames]
 	except KeyError:
-		controller.die({ 'exitMessage' : 'Key error : key "'+c.csvHostDirectivesNames+'" not found in "'+objFileInCsv.name+'"'})
+		controller.die({ 'exitMessage' : 'Key error : key "'+config.csvHostDirectivesNames+'" not found in "'+fileCsv.name+'"'})
 
 	try:
-		csvData[host][c.csvHostDirectivesValues]
+		csvData[host][config.csvHostDirectivesValues]
 	except KeyError:
-		controller.die({ 'exitMessage' : 'Key error : key "'+c.csvHostDirectivesValues+'" not found in "'+objFileInCsv.name+'"'})
+		controller.die({ 'exitMessage' : 'Key error : key "'+config.csvHostDirectivesValues+'" not found in "'+fileCsv.name+'"'})
 
 
 	hostDirectives		= ''
-	directivesNames		= csvData[host][c.csvHostDirectivesNames].split(c.csvMultiValuedCellFS)
-	directivesValues	= csvData[host][c.csvHostDirectivesValues].split(c.csvMultiValuedCellFS)
+	directivesNames		= csvData[host][config.csvHostDirectivesNames].split(config.csvMultiValuedCellFS)
+	directivesValues	= csvData[host][config.csvHostDirectivesValues].split(config.csvMultiValuedCellFS)
 
 
 
@@ -180,7 +179,7 @@ for host in csvData:	# 'host' is the key of the 'csvData' dict
 		# if 'do', load service stuff (pattern, csv2data, fields, values) and cook them together
 		if(csvData[host][service]=='1'):
 
-			serviceName=service.replace(':'+c.csvHeaderDo,'')
+			serviceName=service.replace(':'+config.csvHeaderDo,'')
 			################## ##########################################################
 			# service directives
 			################## ##########################################################
@@ -188,17 +187,17 @@ for host in csvData:	# 'host' is the key of the 'csvData' dict
 			serviceDirectives	= ''
 			hasDirectives		= 1
 
-			for columnName in [serviceName+':'+c.csvServiceDirectivesNames, serviceName+':'+c.csvServiceDirectivesValues]:
+			for columnName in [serviceName+':'+config.csvServiceDirectivesNames, serviceName+':'+config.csvServiceDirectivesValues]:
 
-				if(objFileInCsv.columnExists(columnName)):
+				if(fileCsv.columnExists(columnName)):
 					hasDirectives=hasDirectives and csvData[host][columnName]
 				else:
 					hasDirectives=0
 
 			if(hasDirectives):
 				# loading service directives from CSV data
-				directivesNames		= csvData[host][serviceName+':'+c.csvServiceDirectivesNames].split(c.csvMultiValuedCellFS)
-				directivesValues	= csvData[host][serviceName+':'+c.csvServiceDirectivesValues].split(c.csvMultiValuedCellFS)
+				directivesNames		= csvData[host][serviceName+':'+config.csvServiceDirectivesNames].split(config.csvMultiValuedCellFS)
+				directivesValues	= csvData[host][serviceName+':'+config.csvServiceDirectivesValues].split(config.csvMultiValuedCellFS)
 
 				# applying the serviceDirectives pattern
 				for name,value in enumerate(directivesNames):
@@ -214,17 +213,17 @@ for host in csvData:	# 'host' is the key of the 'csvData' dict
 			objService	= Service({
 					'name'			: serviceName,
 					'host'			: host,
-					'csvHeader'		: objFileInCsv.getHeader(),
+					'csvHeader'		: fileCsv.getHeader(),
 					'csvDataLine'		: csvData[host],
-					'fieldSeparator'	: c.srcFileParamFs,
+					'fieldSeparator'	: config.csvFileParamFs,
 					'serviceDirectives'	: serviceDirectives
 					})
 
 			result	= objService.buildArrayOfServices()
 
 			# Load service data from './config/"serviceName".ini'
-			objServiceFileIni	= FileInIni({
-					'name'		: c.srcFileDir+objService.getName()+'.ini',
+			objServiceFileIni	= FileIni({
+					'name'		: config.configFilesPath+objService.getName()+'.ini',
 					'fs'		: '',
 					'controller'	: controller
 					})
@@ -235,19 +234,19 @@ for host in csvData:	# 'host' is the key of the 'csvData' dict
 
 
 			try:
-				cfgDataService[c.iniPatternString]
+				cfgDataService[config.iniPatternString]
 			except KeyError:
-				controller.die({ 'exitMessage' : 'Key error  : key "'+c.iniPatternString+'" not found in "'+objServiceFileIni.name})
+				controller.die({ 'exitMessage' : 'Key error  : key "'+config.iniPatternString+'" not found in "'+objServiceFileIni.name})
 
 			try:
-				cfgDataService[c.iniVarToTagString]
+				cfgDataService[config.iniVarToTagString]
 			except KeyError:
-				controller.die({ 'exitMessage' : 'Key error  : key "'+c.iniVarToTagString+'" not found in "'+objServiceFileIni.name})
+				controller.die({ 'exitMessage' : 'Key error  : key "'+config.iniVarToTagString+'" not found in "'+objServiceFileIni.name})
 
 
 			objPatternService	= Pattern({
-					'pattern' : cfgDataService[c.iniPatternString],
-					'variable2tag' : cfgDataService[c.iniVarToTagString]
+					'pattern' : cfgDataService[config.iniPatternString],
+					'variable2tag' : cfgDataService[config.iniVarToTagString]
 					})
 
 
@@ -262,11 +261,11 @@ for host in csvData:	# 'host' is the key of the 'csvData' dict
 # host loop done : we've seen all hosts. Let's build hostgroups
 try:
 	objPatternHost=Pattern({
-			'pattern'	: cfgDataHostGroup[c.iniPatternString],
-			'variable2tag'	: cfgDataHostGroup[c.iniVarToTagString]
+			'pattern'	: cfgDataHostGroup[config.iniPatternString],
+			'variable2tag'	: cfgDataHostGroup[config.iniVarToTagString]
 			})
 except KeyError:
-	controller.die({ 'exitMessage' : 'Key error  : key "'+c.iniPatternString+'" doesn\'t exist in "'+objHostGroupFileIni.name+'"' })
+	controller.die({ 'exitMessage' : 'Key error  : key "'+config.iniPatternString+'" doesn\'t exist in "'+objHostGroupFileIni.name+'"' })
 
 
 
@@ -285,11 +284,11 @@ for hostgroup_name in hostGroups:
 ########################################## ##########################################################
 
 # Hosts
-objFileOut	= FileOut({ 'name' : c.outFileDir+c.outFileHosts })	# obj[ClassName] : name of instance
+objFileOut	= FileOutput({ 'name' : config.outputPath+config.outputFileHosts })	# obj[ClassName] : name of instance
 objFileOut.write(hostsOutput)
 
 # Services
-objFileOut	= FileOut({ 'name' : c.outFileDir+c.outFileServices })	# obj[ClassName] : name of instance
+objFileOut	= FileOutput({ 'name' : config.outputPath+config.outputFileServices })	# obj[ClassName] : name of instance
 objFileOut.write(servicesOutput)
 
 

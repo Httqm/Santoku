@@ -25,25 +25,24 @@
 # FILES AND FOLDERS
 ########################################## ##########################################################
 
+configFilesPath		= './config/'	# TODO : name files as path/to/file
+
 # CSV file
-srcFileDir			= './config/'	# TODO : name files as path/to/file
-#srcFile				= 'hosts.csv'
-srcFile				= 'file.csv'
-srcFileFs			= ';'		# CSV field separator
-srcFileParamFs			= '|'		# separator used when a CSV cell contains several values
+csvFileName		= 'file.csv'
+csvFileFs		= ';'		# CSV field separator
+csvFileParamFs		= '|'		# separator used when a CSV cell contains several values
 
 # INI files
-hostFileIni			= 'host.ini'
-hostGroupFileIni		= 'hostgroup.ini'
-hostServiceDirectivesFileIni	= 'host_service_directives.ini'
-#objHostGroupFileIni
+fileHostIni		= 'host.ini'
+fileHostgroupIni	= 'hostgroup.ini'
+fileDirectivesIni	= 'directives.ini'
 
 # OUTPUT files
-outFileDir		= './output/'
-outFileHosts		= 'hosts.cfg'
-outFileServices		= 'services.cfg'
+outputPath		= './output/'
+outputFileHosts		= 'hosts.cfg'
+outputFileServices	= 'services.cfg'
 
-configFile		= __file__	# This is used to point to this file in error messages, don't change it !
+configFile		= __file__	# This is used to point to THIS file in error messages, don't change it !
 
 ########################################## ##########################################################
 # OUTPUT MESSAGES

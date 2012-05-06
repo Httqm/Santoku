@@ -20,7 +20,7 @@
 
 
 
-from modules import config as c
+from modules import config
 import re
 
 ########################################## ##########################################################
@@ -62,7 +62,7 @@ class Fichier(object):	# 'object' : ancestor of all classes
 ########################################## ##########################################################
 # .ini files (input)
 ########################################## ##########################################################
-class FileInIni(Fichier):
+class FileIni(Fichier):
 
 	"""
 	def __init__(self,params):
@@ -77,21 +77,21 @@ class FileInIni(Fichier):
 		Make sure that all tags ( "$ANYTHING$" ) appearing in 'pattern' also appear in 'VARIABLE2TAG'.
 		"""
 		self.checkUnidirectional({
-			'needle'	: c.iniPatternString,
-			'haystack'	: c.iniVarToTagString
+			'needle'	: config.iniPatternString,
+			'haystack'	: config.iniVarToTagString
 			})
 
 		self.checkUnidirectional({
-			'needle'	: c.iniVarToTagString,
-			'haystack'	: c.iniPatternString
+			'needle'	: config.iniVarToTagString,
+			'haystack'	: config.iniPatternString
 			})
 
 
 		"""
 		# STEP 1 : make sure that ALL '$$' found in 'pattern' block exist in 'VARIABLE2TAG' block
 		# loading '$something$' from the 'pattern' block
-		patternLines	= self.data[c.iniPatternString].split("\n")
-		varToTagBlock	= str(self.data[c.iniVarToTagString])
+		patternLines	= self.data[config.iniPatternString].split("\n")
+		varToTagBlock	= str(self.data[config.iniVarToTagString])
 		for patternLine in patternLines:
 
 			# searching '$something$' in the 'pattern' block
@@ -100,15 +100,15 @@ class FileInIni(Fichier):
 				# searching similar '$something$' in the 'varToTag' block
 				match2	= re.search('('+match.group(1)+')',varToTagBlock)
 				if(not match2):
-					self.controller.die({ 'exitMessage' : self.name+' : Tag "'+match.group(1)+'" found in "'+c.iniPatternString+'" block, missing in "'+c.iniVarToTagString+'" block.'})
+					self.controller.die({ 'exitMessage' : self.name+' : Tag "'+match.group(1)+'" found in "'+config.iniPatternString+'" block, missing in "'+config.iniVarToTagString+'" block.'})
 
 		"""
 
 		"""
 		# STEP 2 : make sure that ALL '$$' found in 'VARIABLE2TAG' block exist in 'pattern' block
 		# loading '$something$' from the 'VARIABLE2TAG' block : the '$$' are the keys
-		varToTagLines=self.data[c.iniVarToTagString]
-		patternBlock= str(self.data[c.iniPatternString])
+		varToTagLines=self.data[config.iniVarToTagString]
+		patternBlock= str(self.data[config.iniPatternString])
 		for varToTagLine in varToTagLines:
 			# searching '$something$' in the 'varToTag' block
 			match	= re.search('\$([^\$]+)\$', varToTagLine)
@@ -116,7 +116,7 @@ class FileInIni(Fichier):
 				# searching similar '$something$' in the 'pattern' block
 				match2	= re.search('('+match.group(1)+')',patternBlock)
 				if(not match2):
-					self.controller.die({ 'exitMessage' : self.name+' : Tag "'+match.group(1)+'" found in "'+c.iniVarToTagString+'" block, missing in "'+c.iniPatternString+'" block.'})
+					self.controller.die({ 'exitMessage' : self.name+' : Tag "'+match.group(1)+'" found in "'+config.iniVarToTagString+'" block, missing in "'+config.iniPatternString+'" block.'})
 		"""
 		return 0
 
@@ -128,7 +128,7 @@ class FileInIni(Fichier):
 		"""
 
 		# There might be a cleaner way TODO this ;-)
-		# c.iniVarToTagStanzaFs
+		# config.iniVarToTagStanzaFs
 		#print params['needle']+' : '+str(type(self.data[params['needle']]))
 		if type(self.data[params['needle']]).__name__=='str':
 			needlesStanza	= self.data[params['needle']].split("\n")
@@ -189,26 +189,26 @@ class FileInIni(Fichier):
 			if(match):
 				# found a section. Let's detect which kind of section it is
 				sectionType=match.group(1)	# could be 'pattern' or 'VARIABLE2TAG', or ...
-				if(sectionType==c.iniPatternString):
+				if(sectionType==config.iniPatternString):
 					srcData[sectionType]=''		# create key in data hash
-				elif(sectionType==c.iniVarToTagString):
+				elif(sectionType==config.iniVarToTagString):
 					srcData[sectionType]={}		# create key in data hash
 
 			else:
 				# loading data from section
-				if(sectionType==c.iniPatternString):
+				if(sectionType==config.iniPatternString):
 					srcData[sectionType]+=line
 
-				elif(sectionType==c.iniVarToTagString):
+				elif(sectionType==config.iniVarToTagString):
 					# trim file content
 					line=line.replace(' ', '')
 					line=line.replace("\t", '')	# UGLY !!!
 #					line=''.strip(line)	# http://docs.python.org/library/string.html#string.strip DEPRECATED ?
 #					print line
 					#match=re.search('^(.+):(.+)$', line)
-					#print '============== RE = ^(.+)'+c.iniVarToTagStanzaFs+'(.+)$'
-					# TODO : make sure c.iniVarToTagStanzaFs is found here
-					match=re.search('^(.+)'+c.iniVarToTagStanzaFs+'(.+)$', line)
+					#print '============== RE = ^(.+)'+config.iniVarToTagStanzaFs+'(.+)$'
+					# TODO : make sure config.iniVarToTagStanzaFs is found here
+					match=re.search('^(.+)'+config.iniVarToTagStanzaFs+'(.+)$', line)
 					if(match):
 						# csvField => tag
 						#srcData[sectionType][match.group(1)]=match.group(2)
@@ -223,10 +223,9 @@ class FileInIni(Fichier):
 
 
 ########################################## ##########################################################
-# 
+# an input CSV file
 ########################################## ##########################################################
-# 1 CSV file contains hosts + services data
-class FileInCsv(Fichier):
+class FileCsv(Fichier):
 
 	"""
 	def __init__(self,params):
@@ -256,7 +255,7 @@ class FileInCsv(Fichier):
 			infile		= open(self.name,'r')
 			self.header	= infile.readline()
 		except IOError:
-			self.controller.die({ 'exitMessage' : 'Source CSV file "'+self.name+'" declared in "'+c.configFile+'" not found.'})
+			self.controller.die({ 'exitMessage' : 'Source CSV file "'+self.name+'" declared in "'+config.configFile+'" not found.'})
 
 
 		champs		= self.header.split(self.fs)
@@ -284,7 +283,7 @@ class FileInCsv(Fichier):
 				continue
 
 			ligne		= line.split(self.fs)
-			host_name	= ligne[colText2Nb[c.csvHeaderHostName]].strip('"')
+			host_name	= ligne[colText2Nb[config.csvHeaderHostName]].strip('"')
 			hostFields	= {}
 
 			for clefs in colNb2Text.keys():
@@ -317,7 +316,8 @@ class FileInCsv(Fichier):
 ########################################## ##########################################################
 # 
 ########################################## ##########################################################
-class FileOut(Fichier):
+#class FileOut(Fichier):
+class FileOutput(Fichier):
 	def __init__(self,params):
 		""" Extends class 'fichier' """
 		self.name	= params['name']
