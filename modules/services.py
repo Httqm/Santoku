@@ -22,6 +22,21 @@
 from modules import config
 from modules import fichier
 from modules import pattern
+import re
+
+
+class AllServices(object):
+
+	def getList(self,csvHeaders):
+		self.list=[]
+		for field in csvHeaders:
+			match=re.search('.*'+config.csvHeaderFs+config.csvHeaderDo+'$', field)
+			if(match):
+				self.list.append(field)
+
+		return self.list
+
+
 
 
 class Service2(object):
