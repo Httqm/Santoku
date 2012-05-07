@@ -19,13 +19,12 @@
 #
 
 
-# source : http://stackoverflow.com/questions/3824455/python-constants
-
 ########################################## ##########################################################
 # FILES AND FOLDERS
 ########################################## ##########################################################
-
-configFilesPath		= './config/'	# TODO : name files as path/to/file
+# common
+configFile		= __file__	# This is used to point to THIS file in error messages, don't change it !
+configFilesPath		= './config/'
 
 # CSV file
 csvFileName		= 'file.csv'
@@ -42,25 +41,25 @@ outputPath		= './output/'
 outputFileHosts		= 'hosts.cfg'
 outputFileServices	= 'services.cfg'
 
-configFile		= __file__	# This is used to point to THIS file in error messages, don't change it !
 
 ########################################## ##########################################################
 # OUTPUT MESSAGES
 ########################################## ##########################################################
 messageDie		= 'Tennoheika, banzai !!! (seppuku...)'
-# https://en.wikipedia.org/wiki/Seppuku
-# http://www.squidoo.com/seppuku
+
 
 ########################################## ##########################################################
 # CSV COSMETICS
 # You needn't change these values : Santoku works fine as is.
-# Values are defined here to avoid hardcoded string in the code.
+# Values are defined here to avoid hardcoded strings.
 # But just in case you don't like the way they are (cosmetics) or need a workaround for any reason :
 # HAVE FUN !
 ########################################## ##########################################################
 csvMultiValuedCellFS		= '|'
 csvHeaderDo			= 'do'
+csvHeaderFs			= ':'
 csvHeaderHostName		= 'host_name'
+csvHeaderIgnoreHost		= 'ignore_host'
 csvHeaderUse			= 'use'
 csvGenericService		= 'generic_service'
 csvHostDirectivesNames		= 'hostDirectivesNames'
@@ -69,11 +68,10 @@ csvServiceDirectivesNames	= 'serviceDirectivesNames'
 csvServiceDirectivesValues	= 'serviceDirectivesValues'
 
 
-
 ########################################## ##########################################################
 # INI COSMETICS
 # You needn't change these values : Santoku works fine as is.
-# Values are defined here to avoid hardcoded string in the code.
+# Values are defined here to avoid hardcoded strings.
 # But just in case you don't like the way they are (cosmetics) or need a workaround for any reason :
 # HAVE FUN !
 ########################################## ##########################################################

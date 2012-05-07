@@ -19,19 +19,114 @@
 #
 
 
-from modules import config as c
+from modules import config
+from modules import fichier
+from modules import pattern
 
-########################################## ##########################################################
-# 
-########################################## ##########################################################
-class Service(object):	# 'object' : ancestor of all classes
+
+class Service2(object):
 	def __init__(self,params):
-		""" """
-		self.params	= params
-		self.cleanName	= self.params['name'].replace(':do','')	# <== HARDCODED. bad! The name without the ':do'
+		self.currentCsvLine	= params['currentCsvLine']
+		self.csvServiceName	= params['serviceCsvName']
+		self.cleanName		= self.csvServiceName.replace(config.csvHeaderFs+config.csvHeaderDo,'')
+
+		self.loadDirectivesIni()
+		self.patternDirectives	= pattern.Pattern({
+			'pattern'	: self.cfgHostDirectives[config.iniPatternString],
+			'variable2tag'	: self.cfgHostDirectives[config.iniVarToTagString]
+		})
+
+
+	def loadDirectivesIni(self):
+
+		"""
+		objHostServiceDirectivesFileIni	= FileIni({
+			'name'		: config.configFilesPath+config.fileDirectivesIni,
+			'fs'		: '',
+			'controller'	: controller
+			})
+		cfgHostDirectives		= objHostServiceDirectivesFileIni.getData()
+		"""
+		fileDirectivesIni	= fichier.FileIni({
+			'name'		: config.configFilesPath+config.fileDirectivesIni,
+			'fs'		: ''
+			})
+		self.cfgHostDirectives		= fileDirectivesIni.getData()
+
+
+	def isEnabled(self):
+		return 1 if self.currentCsvLine[self.csvServiceName]=='1' else 0
+
 
 	def getName(self):
 		return self.cleanName
+
+
+	def hasDirectives(self,sourceCsvFile):
+		hasDirectives	= 1
+
+		for columnName in [self.cleanName+config.csvHeaderFs+config.csvServiceDirectivesNames, self.cleanName+config.csvHeaderFs+config.csvServiceDirectivesValues]:
+
+			if(sourceCsvFile.columnExists(columnName)):
+				hasDirectives	= hasDirectives and self.currentCsvLine[columnName]
+			else:
+				hasDirectives	= 0
+
+		return hasDirectives
+
+
+	def loadDirectivesFromCsvData(self):
+		"""
+		directivesNames	= csvData[hostName][serviceName+config.csvHeaderFs+config.csvServiceDirectivesNames].split(config.csvMultiValuedCellFS)
+		directivesValues= csvData[hostName][serviceName+config.csvHeaderFs+config.csvServiceDirectivesValues].split(config.csvMultiValuedCellFS)
+		"""
+		self.directives={
+			'names'		: self.currentCsvLine[self.cleanName+config.csvHeaderFs+config.csvServiceDirectivesNames].split(config.csvMultiValuedCellFS),
+			'values'	: self.currentCsvLine[self.cleanName+config.csvHeaderFs+config.csvServiceDirectivesValues].split(config.csvMultiValuedCellFS)		
+			}
+
+
+
+	def applyServiceDirectivesPattern(self):
+		"""
+		serviceDirectives	= ''
+
+		for name,value in enumerate(directivesNames):
+			serviceDirectives+=objPatternDirectives.apply({
+				'directiveName'		: directivesNames[name],
+				'directiveValue'	: directivesValues[name]
+				})
+		"""
+
+		self.serviceDirectives	= ''
+		for name,value in enumerate(self.directives['names']):
+			#self.serviceDirectives+=objPatternDirectives.apply({
+			self.serviceDirectives+=self.patternDirectives.apply({
+				'directiveName'		: self.directives['names'][name],
+				'directiveValue'	: self.directives['values'][name]
+				})
+
+
+		return self.serviceDirectives
+
+
+
+
+
+
+
+
+
+
+class Service(object):
+	def __init__(self,params):
+		self.params	= params
+		self.cleanName	= self.params['name'].replace(config.csvHeaderFs+config.csvHeaderDo,'')	# cleanName = name without ':do'
+
+
+	def getName(self):
+		return self.cleanName
+
 
 	def loadServiceData(self):
 		"""
@@ -44,10 +139,10 @@ class Service(object):	# 'object' : ancestor of all classes
 
 		# storing CSV data in a dict to play with it later
 		for field in self.params['csvHeader']:
-			match=re.search(self.cleanName+':.*', field)
+			match=re.search(self.cleanName+config.csvHeaderFs+'.*', field)
 			if(match):
 				# parsing all CSV columns related to this service
-				serviceCsvData[field.replace(self.cleanName+':','')]=self.params['csvDataLine'][field]
+				serviceCsvData[field.replace(self.cleanName+config.csvHeaderFs,'')]=self.params['csvDataLine'][field]
 
 		# appending 'serviceDirectives'
 		# serviceCsvData contains 2 useless keys : 'serviceDirectivesNames' and 'serviceDirectivesValues'
@@ -70,17 +165,14 @@ class Service(object):	# 'object' : ancestor of all classes
 
 		while currentRound < maxRounds:
 			champsValeurs[currentRound]	= {
-				c.csvHeaderHostName	: self.params['host'],
-				c.csvHeaderUse		: c.csvGenericService
+				config.csvHeaderHostName	: self.params['hostName'],
+				config.csvHeaderUse		: config.csvGenericService
 				}
 			for serviceField in serviceCsvData:
-				
-				#print 'serviceField : '+serviceField
-
 				valuesOfMultiValuedCell	= serviceCsvData[serviceField].split(self.params['fieldSeparator'])
 
 				# Excluding the service directives columns here to avoid duplicating the service definition
-				if((serviceField != c.csvServiceDirectivesNames) and (serviceField != c.csvServiceDirectivesValues)):
+				if((serviceField != config.csvServiceDirectivesNames) and (serviceField != config.csvServiceDirectivesValues)):
 					maxRounds	= len(valuesOfMultiValuedCell) if (len(valuesOfMultiValuedCell)>maxRounds) else maxRounds
 
 				try:
@@ -91,9 +183,5 @@ class Service(object):	# 'object' : ancestor of all classes
 				champsValeurs[currentRound][serviceField]=tmpValue
 
 			currentRound+=1
-		result={
-			'champsValeurs'	: champsValeurs,
-			'maxRounds'	: maxRounds
-			}
-		return result
 
+		return { 'champsValeurs' : champsValeurs, 'maxRounds' : maxRounds }

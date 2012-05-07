@@ -41,6 +41,7 @@ FileOutput	= fichier.FileOutput
 Pattern		= pattern.Pattern
 Controller	= controller.Controller
 
+AllHosts	= hosts.AllHosts
 Host		= hosts.Host
 Service		= services.Service
 
@@ -60,14 +61,20 @@ fileCsv	= FileCsv({
 		})
 csvData		= fileCsv.getData()
 
+
+"""
+#START
 # Load data from 'host.ini'
-objHostFileIni	= FileIni({
+fileIniHost	= FileIni({
 		'name'		: config.configFilesPath+config.fileHostIni,
 		'fs'		: '',
 		'controller'	: controller
 		})
-cfgDataHost	= objHostFileIni.getData()
+cfgDataHost	= fileIniHost.getData()
+#STOP
+"""
 
+"""
 # Load data from 'host_service_directives.ini'
 objHostServiceDirectivesFileIni	= FileIni({
 		'name'		: config.configFilesPath+config.fileDirectivesIni,
@@ -75,6 +82,7 @@ objHostServiceDirectivesFileIni	= FileIni({
 		'controller'	: controller
 		})
 cfgHostDirectives		= objHostServiceDirectivesFileIni.getData()
+"""
 
 # Load data from 'hostgroup.ini'
 objHostGroupFileIni	= FileIni({
@@ -87,11 +95,11 @@ cfgDataHostGroup	= objHostGroupFileIni.getData()
 
 # Preparing for services. Detecting all '*:do' columns from the CSV
 import re	# for RegExp
-services=[]
+serviceList=[]
 for field in fileCsv.getHeader():
 	match=re.search('.*:'+config.csvHeaderDo+'$', field)
 	if(match):
-		services.append(field)
+		serviceList.append(field)
 
 
 ########################################## ##########################################################
@@ -102,70 +110,94 @@ hostGroups	= {}	# dict : hg name => hg members
 servicesOutput	= ''
 
 
+"""
+#START
 try:
 	cfgDataHost[config.iniPatternString]
 except KeyError:
-	controller.die({ 'exitMessage' : 'Key error  : key "'+config.iniPatternString+'" not found in "'+objHostFileIni.name})
-
+	controller.die({ 'exitMessage' : 'Key error  : key "'+config.iniPatternString+'" not found in "'+fileIniHost.name})
 try:
 	cfgDataHost[config.iniVarToTagString]
 except KeyError:
-	controller.die({ 'exitMessage' : 'Key error  : key "'+config.iniVarToTagString+'" not found in "'+objHostFileIni.name})
+	controller.die({ 'exitMessage' : 'Key error  : key "'+config.iniVarToTagString+'" not found in "'+fileIniHost.name})
+#STOP
+"""
 
 
+"""
+#START
 objPatternHost	= Pattern({
-		'pattern' : cfgDataHost[config.iniPatternString],
-		'variable2tag' : cfgDataHost[config.iniVarToTagString]
+		'pattern'	: cfgDataHost[config.iniPatternString],
+		'variable2tag'	: cfgDataHost[config.iniVarToTagString]
 		})
-
 
 objPatternDirectives	= Pattern({
-		'pattern' : cfgHostDirectives[config.iniPatternString],
-		'variable2tag' : cfgHostDirectives[config.iniVarToTagString]
+		'pattern'	: cfgHostDirectives[config.iniPatternString],
+		'variable2tag'	: cfgHostDirectives[config.iniVarToTagString]
 		})
+#STOP
+"""
+allHosts=AllHosts()
+allHosts.loadIniFiles()
+allHosts.loadPatterns()
 
 
-for host in csvData:	# 'host' is the key of the 'csvData' dict
+for hostName in csvData:	# 'hostName' is the key of the 'csvData' dict
 
-	objHost		= Host(csvData[host])
-	listHostGroups	= objHost.getHostGroups()
+	host		= Host({
+			'data'		: csvData[hostName],
+			'csvFileName'	: fileCsv.name,
+			'controller'	: controller,
+#			'pattern'	: objPatternDirectives,
+			'allHosts'	: allHosts
+			})
 
-	# skip hosts marked as 'ignore_host'
-	if(csvData[host]['ignore_host']=='1'):
+	listHostGroups	= host.getHostGroups()
+
+	if(host.isMarkedToBeIgnored()):
 		continue
 
-	# load host directives for injection into csvData[host]
+	# load host directives for injection into csvData[hostName]
+	"""
+	#START
 	try:
-		csvData[host][config.csvHostDirectivesNames]
+		csvData[hostName][config.csvHostDirectivesNames]
 	except KeyError:
 		controller.die({ 'exitMessage' : 'Key error : key "'+config.csvHostDirectivesNames+'" not found in "'+fileCsv.name+'"'})
 
 	try:
-		csvData[host][config.csvHostDirectivesValues]
+		csvData[hostName][config.csvHostDirectivesValues]
 	except KeyError:
 		controller.die({ 'exitMessage' : 'Key error : key "'+config.csvHostDirectivesValues+'" not found in "'+fileCsv.name+'"'})
 
 
 	hostDirectives		= ''
-	directivesNames		= csvData[host][config.csvHostDirectivesNames].split(config.csvMultiValuedCellFS)
-	directivesValues	= csvData[host][config.csvHostDirectivesValues].split(config.csvMultiValuedCellFS)
+	directivesNames		= csvData[hostName][config.csvHostDirectivesNames].split(config.csvMultiValuedCellFS)
+	directivesValues	= csvData[hostName][config.csvHostDirectivesValues].split(config.csvMultiValuedCellFS)
 
 
 
 	for index,value in enumerate(directivesNames):
 		hostDirectives	+= objPatternDirectives.apply({	'directiveName' : directivesNames[index], 'directiveValue' : directivesValues[index]})
+	print '============'
+	print hostDirectives
 
 	# inject the host directives into the host data for use by the pattern
-	csvData[host]['hostDirectives']	= hostDirectives	# <== HARDCODED field name. should avoid this!
+	csvData[hostName]['hostDirectives']	= hostDirectives	# <== HARDCODED field name. should avoid this!
+	#STOP
+	"""
+	csvData[hostName]['hostDirectives']	= host.loadDirectives()
+
 
 	# 'normal' hosts data fields
-	hostsOutput	+= objPatternHost.apply(csvData[host])
+#	hostsOutput	+= objPatternHost.apply(csvData[hostName])
+	hostsOutput	+= host.applyHostPattern(csvData[hostName])
 
 	# Store hosts into hostgroups
 	for hg in listHostGroups:
 		if not hg in hostGroups:	# if 'hostGroups[hg]' doesn't exist yet, create it.
 			hostGroups[hg]=[]
-		hostGroups[hg].append(host)	# then store 'host' in it !
+		hostGroups[hg].append(hostName)	# then store 'host' in it !
 
 
 	################################## ##########################################################
@@ -173,38 +205,68 @@ for host in csvData:	# 'host' is the key of the 'csvData' dict
 	################################## ##########################################################
 
 	# detecting services to register
-	# services is the list of all '*:do' CSV columns : ['check_filesystem:do', 'check_bidule:do']
-	for service in services:
+	# serviceList is the list of all '*:do' CSV columns : ['check_filesystem:do', 'check_bidule:do']
+	for singleServiceCsvName in serviceList:
+
+		service=services.Service2({
+				'currentCsvLine'	: csvData[hostName],
+				'serviceCsvName'	: singleServiceCsvName
+				})
 
 		# if 'do', load service stuff (pattern, csv2data, fields, values) and cook them together
-		if(csvData[host][service]=='1'):
+		#if(csvData[hostName][singleServiceCsvName]=='1'):
+		if service.isEnabled():
 
-			serviceName=service.replace(':'+config.csvHeaderDo,'')
+			#serviceName=singleServiceCsvName.replace(config.csvHeaderFs+config.csvHeaderDo,'')
+			serviceName=service.getName()
 			################## ##########################################################
 			# service directives
 			################## ##########################################################
 			# Making sure the current service has directives (names + values cells exist and are not empty)
-			serviceDirectives	= ''
-			hasDirectives		= 1
 
-			for columnName in [serviceName+':'+config.csvServiceDirectivesNames, serviceName+':'+config.csvServiceDirectivesValues]:
+			if service.hasDirectives(fileCsv):
+#				print 'HAS DIRECTIVES'
 
-				if(fileCsv.columnExists(columnName)):
-					hasDirectives=hasDirectives and csvData[host][columnName]
-				else:
-					hasDirectives=0
+				"""
+				#START
+				hasDirectives		= 1
 
-			if(hasDirectives):
+				for columnName in [serviceName+config.csvHeaderFs+config.csvServiceDirectivesNames, serviceName+config.csvHeaderFs+config.csvServiceDirectivesValues]:
+
+					if(fileCsv.columnExists(columnName)):
+						hasDirectives=hasDirectives and csvData[hostName][columnName]
+					else:
+						hasDirectives=0
+
+				if(hasDirectives):
+				#END
+				"""
+
+				"""
+				#START
 				# loading service directives from CSV data
-				directivesNames		= csvData[host][serviceName+':'+config.csvServiceDirectivesNames].split(config.csvMultiValuedCellFS)
-				directivesValues	= csvData[host][serviceName+':'+config.csvServiceDirectivesValues].split(config.csvMultiValuedCellFS)
+				directivesNames	= csvData[hostName][serviceName+config.csvHeaderFs+config.csvServiceDirectivesNames].split(config.csvMultiValuedCellFS)
+				directivesValues= csvData[hostName][serviceName+config.csvHeaderFs+config.csvServiceDirectivesValues].split(config.csvMultiValuedCellFS)
 
+				#END
+				"""
+
+				service.loadDirectivesFromCsvData()
+
+				serviceDirectives=service.applyServiceDirectivesPattern()
+
+				"""
+				#START
 				# applying the serviceDirectives pattern
+				serviceDirectives	= ''
+
 				for name,value in enumerate(directivesNames):
 					serviceDirectives+=objPatternDirectives.apply({
 						'directiveName'		: directivesNames[name],
 						'directiveValue'	: directivesValues[name]
 						})
+				#END
+				"""
 
 			################## ##########################################################
 			# /service directives
@@ -212,9 +274,9 @@ for host in csvData:	# 'host' is the key of the 'csvData' dict
 
 			objService	= Service({
 					'name'			: serviceName,
-					'host'			: host,
+					'hostName'		: hostName,
 					'csvHeader'		: fileCsv.getHeader(),
-					'csvDataLine'		: csvData[host],
+					'csvDataLine'		: csvData[hostName],
 					'fieldSeparator'	: config.csvFileParamFs,
 					'serviceDirectives'	: serviceDirectives
 					})
@@ -249,10 +311,6 @@ for host in csvData:	# 'host' is the key of the 'csvData' dict
 					'variable2tag' : cfgDataService[config.iniVarToTagString]
 					})
 
-
-
-
-
 			# finally apply service pattern as many time as the maximum number of values in multi-valued CSV cells
 			for i in xrange(result['maxRounds']):
 				servicesOutput+=objPatternService.apply(result['champsValeurs'][i])
@@ -283,13 +341,11 @@ for hostgroup_name in hostGroups:
 # Write results to files
 ########################################## ##########################################################
 
-# Hosts
-objFileOut	= FileOutput({ 'name' : config.outputPath+config.outputFileHosts })	# obj[ClassName] : name of instance
-objFileOut.write(hostsOutput)
+outputFileHosts		= FileOutput({ 'name' : config.outputPath+config.outputFileHosts })
+outputFileHosts.write(hostsOutput)
 
-# Services
-objFileOut	= FileOutput({ 'name' : config.outputPath+config.outputFileServices })	# obj[ClassName] : name of instance
-objFileOut.write(servicesOutput)
+outputFileServices	= FileOutput({ 'name' : config.outputPath+config.outputFileServices })
+outputFileServices.write(servicesOutput)
 
 
 ########################################## ##########################################################

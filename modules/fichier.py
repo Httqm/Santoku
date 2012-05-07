@@ -19,40 +19,33 @@
 #
 
 
-
 from modules import config
+from modules import controller
 import re
+
+
+controller=controller.Controller()
+
 
 ########################################## ##########################################################
 # Generic
 ########################################## ##########################################################
-class Fichier(object):	# 'object' : ancestor of all classes
+class Fichier(object):
 	def __init__(self,params):
 		""" Any file. """
 		self.name	= params['name']
 		self.fs		= params['fs']
-		self.controller	= params['controller']
+#		self.controller	= params['controller']
 		self.data	= None
 
-	"""
-	def getData(self):
-		#Used by CSV and CFG extensions of class Fichier.
-		result=self.loadData()
-		if(result):
-			# TODO : leave with controller
-			print str(result)
-			import sys
-			sys.exit(1)	# http://docs.python.org/library/sys.html?highlight=sys.exit#sys.exit
-		else:
-			return self.data
-		return 0
-	"""
 
 	def getData(self):
 		""" Used by CSV and CFG extensions of class Fichier. """
 		result=self.loadData()
 		if(result):
-			self.controller.die({ 'exitMessage' : 'Error during loadData().'})
+#			self.controller.die({ 'exitMessage' : 'Error during loadData().'})
+			controller=controller.Controller()
+			controller.die({ 'exitMessage' : 'Error during loadData().'})
 		else:
 			self.check()
 			return self.data
@@ -63,15 +56,6 @@ class Fichier(object):	# 'object' : ancestor of all classes
 # .ini files (input)
 ########################################## ##########################################################
 class FileIni(Fichier):
-
-	"""
-	def __init__(self,params):
-		#Extends class 'fichier'. Specializes on CFG files. 
-		self.name	= params['name']
-		self.data	= None
-		self.controller	= params['controller']
-	"""
-
 	def check(self):
 		"""
 		Make sure that all tags ( "$ANYTHING$" ) appearing in 'pattern' also appear in 'VARIABLE2TAG'.
@@ -85,39 +69,6 @@ class FileIni(Fichier):
 			'needle'	: config.iniVarToTagString,
 			'haystack'	: config.iniPatternString
 			})
-
-
-		"""
-		# STEP 1 : make sure that ALL '$$' found in 'pattern' block exist in 'VARIABLE2TAG' block
-		# loading '$something$' from the 'pattern' block
-		patternLines	= self.data[config.iniPatternString].split("\n")
-		varToTagBlock	= str(self.data[config.iniVarToTagString])
-		for patternLine in patternLines:
-
-			# searching '$something$' in the 'pattern' block
-			match	= re.search('\$([^\$]+)\$', patternLine)
-			if(match):
-				# searching similar '$something$' in the 'varToTag' block
-				match2	= re.search('('+match.group(1)+')',varToTagBlock)
-				if(not match2):
-					self.controller.die({ 'exitMessage' : self.name+' : Tag "'+match.group(1)+'" found in "'+config.iniPatternString+'" block, missing in "'+config.iniVarToTagString+'" block.'})
-
-		"""
-
-		"""
-		# STEP 2 : make sure that ALL '$$' found in 'VARIABLE2TAG' block exist in 'pattern' block
-		# loading '$something$' from the 'VARIABLE2TAG' block : the '$$' are the keys
-		varToTagLines=self.data[config.iniVarToTagString]
-		patternBlock= str(self.data[config.iniPatternString])
-		for varToTagLine in varToTagLines:
-			# searching '$something$' in the 'varToTag' block
-			match	= re.search('\$([^\$]+)\$', varToTagLine)
-			if(match):
-				# searching similar '$something$' in the 'pattern' block
-				match2	= re.search('('+match.group(1)+')',patternBlock)
-				if(not match2):
-					self.controller.die({ 'exitMessage' : self.name+' : Tag "'+match.group(1)+'" found in "'+config.iniVarToTagString+'" block, missing in "'+config.iniPatternString+'" block.'})
-		"""
 		return 0
 
 
@@ -126,10 +77,7 @@ class FileIni(Fichier):
 		Get ALL needles from the 'needlesStanza', and look for them in the 'haystackStanza'.
 		Needles are tags surrounded with '$' signs, i.e. : $EXAMPLETAG$
 		"""
-
 		# There might be a cleaner way TODO this ;-)
-		# config.iniVarToTagStanzaFs
-		#print params['needle']+' : '+str(type(self.data[params['needle']]))
 		if type(self.data[params['needle']]).__name__=='str':
 			needlesStanza	= self.data[params['needle']].split("\n")
 		else:
@@ -137,52 +85,46 @@ class FileIni(Fichier):
 
 		haystackStanza	= str(self.data[params['haystack']])
 
-		#print haystackStanza
 
+		"""
+		print 'NEEDLE'
+		print needlesStanza
+		print 'HAYSTACK'
+		print haystackStanza 
+		print '-----------------------------------------'
+		"""
 		for line in needlesStanza:
 			match	= re.search('\$([^\$]+)\$', line)
 			if(match):
-				match2	= re.search('('+match.group(1)+')',haystackStanza)
-				if(not match2):
-					self.controller.die({ 'exitMessage' : self.name+' : Tag "'+match.group(1)+'" found in "'+params['needle']+'" block, missing in "'+params['haystack']+'" block.'})
 
+				match2	= re.search('('+match.group(1)+')',haystackStanza)
+#				print 'MATCH1 : '+match.group(1)
+#				print 'MATCH2 : '+match2.group(1)
+				
+				if(not match2):
+#					self.controller.die({ 'exitMessage' : self.name+' : Tag "'+match.group(1)+'" found in "'+params['needle']+'" block, missing in "'+params['haystack']+'" block.'})
+#					controller=controller.Controller()
+					controller.die({ 'exitMessage' : self.name+' : Tag "'+match.group(1)+'" found in "'+params['needle']+'" block, missing in "'+params['haystack']+'" block.'})
 
 		return 0
 
 
-
 	def loadData(self):
 		""" Read data from config file. """
-		# http://docs.python.org/tutorial/inputoutput.html
 		try:
 			cfgFile = open(self.name, 'r')
 		except IOError, e:	# trap IOError only
-			self.controller.die({ 'exitMessage' : 'Expected file "'+self.name+'" not found.'})
+#			self.controller.die({ 'exitMessage' : 'Expected file "'+self.name+'" not found.'})
+			controller=controller.Controller()
+			controller.die({ 'exitMessage' : 'Expected file "'+self.name+'" not found.'})
 
-		"""		
-		except Exception, e :	# trap all exceptions
-#			print str(e)	# IOError: [Errno 2] No such file or directory: './config/hosts.ini'
-#			print e.args[1]
-
-
-			# no specific error message so far. TODO
-			self.controller.die({ 'exitMessage' : str(e)})
-		# finally : http://docs.python.org/reference/compound_stmts.html#finally
-
-		except:
-			# basic error handling
-			# TODO : write to log string on error
-			return 1
-		"""
-		srcData={}
-
+		srcData		= {}
 		sectionType	= ''
 		for line in cfgFile:
 			# skip comments line in cfg file
 			match=re.search('^#', line)
 			if(match):
 				continue
-			# switch-case in Python : http://bytebaker.com/2008/11/03/switch-case-statement-in-python/
 
 			# searching a '[...]' section
 			match=re.search('\[(.+)\]', line)
@@ -203,10 +145,6 @@ class FileIni(Fichier):
 					# trim file content
 					line=line.replace(' ', '')
 					line=line.replace("\t", '')	# UGLY !!!
-#					line=''.strip(line)	# http://docs.python.org/library/string.html#string.strip DEPRECATED ?
-#					print line
-					#match=re.search('^(.+):(.+)$', line)
-					#print '============== RE = ^(.+)'+config.iniVarToTagStanzaFs+'(.+)$'
 					# TODO : make sure config.iniVarToTagStanzaFs is found here
 					match=re.search('^(.+)'+config.iniVarToTagStanzaFs+'(.+)$', line)
 					if(match):
@@ -214,7 +152,6 @@ class FileIni(Fichier):
 						#srcData[sectionType][match.group(1)]=match.group(2)
 						# tag ==> csvField
 						srcData[sectionType][match.group(2)]=match.group(1)
-		#print srcData
 
 		self.data	= srcData
 		return 		0	# Unix-style : 0 is OK
@@ -227,54 +164,28 @@ class FileIni(Fichier):
 ########################################## ##########################################################
 class FileCsv(Fichier):
 
-	"""
-	def __init__(self,params):
-		# Extends class 'fichier'. Specializes on CSV files.
-		self.name	= params['name']
-		self.fs		= params['fs']
-	"""
-
 	def check(self):
 		"""
 		Does nothing so far.
-		Just to match the Fichier.getData method requirement.
+		Just to match the Fichier.getData() method requirement.
 		"""
 		return 0
 
-	# http://www.yak.net/fqa/171.html
-	# read file line by line without loading it in memory first. the fileinput.input() call reads lines sequentially,
-	# but doesn't keep them in memory after they've been read.
+
 	def loadData(self):
 		""" Load data from CSV file into a dictionary """
+		self.getColumnNumbers()
+		self.readCsvDataIgnoringHeaders()
+		return 		0	# Unix-style : 0 is OK
+
+
+	def readCsvDataIgnoringHeaders(self):
+		"""
+		Read the data contained in the CSV file, ignoring the header line
+		"""
 		import fileinput
-
-		srcData={}
-
-		# read 1st line to get column numbers
-		try:
-			infile		= open(self.name,'r')
-			self.header	= infile.readline()
-		except IOError:
-			self.controller.die({ 'exitMessage' : 'Source CSV file "'+self.name+'" declared in "'+config.configFile+'" not found.'})
-
-
-		champs		= self.header.split(self.fs)
-		colNb2Text	= {}
-		colNumber	= 0
-
-                
-
-		for champ in champs:
-			colNb2Text[colNumber]=champ.strip('"')
-			colNumber+=1
-
-		# get field id of 'host_name'. 'host_name' is used as the key of our final dict.
-		colText2Nb = {}
-		for key, val in colNb2Text.items():
-			colText2Nb[val] = key
-
-		# read CSV file data
-		lineNb=0
+		csvData	= {}
+		lineNb	= 0
 		for line in fileinput.input([self.name]):
 
 			# skip CSV headers line
@@ -283,23 +194,45 @@ class FileCsv(Fichier):
 				continue
 
 			ligne		= line.split(self.fs)
-			host_name	= ligne[colText2Nb[config.csvHeaderHostName]].strip('"')
+			host_name	= ligne[self.columnTextToNumber[config.csvHeaderHostName]].strip('"')
 			hostFields	= {}
 
-			for clefs in colNb2Text.keys():
-				hostFields[colNb2Text[clefs]]=ligne[clefs].strip('"')
+			for clefs in self.columNumberToText.keys():
+				hostFields[self.columNumberToText[clefs]]=ligne[clefs].strip('"')
 
-			srcData[host_name]=hostFields
+			csvData[host_name]=hostFields
 
-			"""
-			# if (any error):
-			#	raise Exception, 'Can not load data from CSV file "'+srcFile+'"'	# or params['name'] ? Or deal with this in the class ?
-			http://python.about.com/od/gettingstarted/ss/begpyexceptions_8.htm
-			http://python.about.com/od/pythonstandardlibrary/a/lib_exceptions.htm
-			"""
+		self.data	= csvData
 
-		self.data	= srcData
 		return 		0	# Unix-style : 0 is OK
+
+
+	def getColumnNumbers(self):
+		"""
+		Read the first line of the CSV file, hthen builds 2 dictionaries :
+		- column number to column text
+		- column text to column number
+		"""
+		try:
+			infile		= open(self.name,'r')
+			self.header	= infile.readline()
+		except IOError:
+#			self.controller.die({ 'exitMessage' : 'Source CSV file "'+self.name+'" declared in "'+config.configFile+'" not found.'})
+			controller=controller.Controller()
+			controller.die({ 'exitMessage' : 'Source CSV file "'+self.name+'" declared in "'+config.configFile+'" not found.'})
+
+		self.columNumberToText	= {}
+		self.columnTextToNumber = {}
+		champs			= self.header.split(self.fs)
+		columnNumber		= 0
+
+		for champ in champs:
+			tmp				= champ.strip('"')
+			self.columNumberToText[columnNumber]	= tmp
+			self.columnTextToNumber[tmp]		= columnNumber
+			columnNumber+=1
+
+		return 0
 
 
 	def getHeader(self):
@@ -314,9 +247,8 @@ class FileCsv(Fichier):
 
 
 ########################################## ##########################################################
-# 
+# Output files 
 ########################################## ##########################################################
-#class FileOut(Fichier):
 class FileOutput(Fichier):
 	def __init__(self,params):
 		""" Extends class 'fichier' """
@@ -326,10 +258,9 @@ class FileOutput(Fichier):
 	def makeHeader(self):
 		""" Generate a basic header for output files showing generation date + 'do not modify manually' warning """
 
-		# http://www.saltycrane.com/blog/2008/06/how-to-get-current-date-and-time-in/
 		import datetime
-		now = datetime.datetime.now()
-		self.header="########################################## ##########################################################\n\
+		now		= datetime.datetime.now()
+		self.header	= "########################################## ##########################################################\n\
 # "+self.name+"\n# Generated by Santoku on "+now.strftime("%Y/%m/%d %H:%M")+"\n\
 # Don't edit manually or changes might be overwritten !\n\
 ########################################## ##########################################################\n\n"
@@ -339,7 +270,7 @@ class FileOutput(Fichier):
 	def getHeader(self):
 		""" Return the output file header """
 		if(self.makeHeader()):
-			raise Exception, 'Can not get header for output file'
+			raise Exception, 'Can not get header for output file' # TODO : clean this!
 		else:
 			return self.header
 
@@ -351,7 +282,6 @@ class FileOutput(Fichier):
 			outFile.write(data)
 			outFile.close
 		except Exception, e :
-			print str(e)
-			import sys
-			sys.exit(1)	# http://docs.python.org/library/sys.html?highlight=sys.exit#sys.exit
-
+#			self.controller.die({ 'exitMessage' : 'Can not write results to "'+self.name+'" : '+str(e)})
+			controller=controller.Controller()
+			controller.die({ 'exitMessage' : 'Can not write results to "'+self.name+'" : '+str(e)})
