@@ -24,11 +24,18 @@ from modules import fichier
 from modules import pattern
 from modules import controller
 
+FileIni		= fichier.FileIni
 
-controller=controller.Controller()
+controller	= controller.Controller()
 
 
 class AllHosts(object):
+
+	def __init__(self):
+		self.loadIniFiles()
+		self.loadPatterns()
+		self.output=''
+
 
 	def loadIniFiles(self):
 		self.loadIniFile()
@@ -36,7 +43,7 @@ class AllHosts(object):
 
 
 	def loadIniFile(self):
-		fileIniHost	= fichier.FileIni({
+		fileIniHost	= FileIni({
 			'name'	: config.configFilesPath+config.fileHostIni,
 			'fs'	: '',
 			})
@@ -45,7 +52,7 @@ class AllHosts(object):
 
 
 	def loadDirectives(self):
-		fileIniDirectives	= fichier.FileIni({
+		fileIniDirectives	= FileIni({
 				'name'		: config.configFilesPath+config.fileDirectivesIni,
 				'fs'		: '',
 				})

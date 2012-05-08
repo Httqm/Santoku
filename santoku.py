@@ -20,24 +20,25 @@
 
 
 from modules import config
-from modules import pattern
+from modules import controller
 from modules import fichier
 from modules import hosts
-from modules import services
-from modules import controller
 from modules import hostgroups
+from modules import pattern
+from modules import services
 
-# For code readabiliy, making local names for imported classes
+# local names for imported classes
+AllHosts	= hosts.AllHosts
+Controller	= controller.Controller
 FileCsv		= fichier.FileCsv
 FileIni		= fichier.FileIni
 FileOutput	= fichier.FileOutput
+Hostgroups	= hostgroups.Hostgroups
 Pattern		= pattern.Pattern
-Controller	= controller.Controller
-
-AllHosts	= hosts.AllHosts
 Host		= hosts.Host
 Service		= services.Service
-
+Service2	= services.Service2
+AllServices	= services.AllServices
 
 ########################################## ##########################################################
 # main()
@@ -48,42 +49,21 @@ controller	= Controller()
 
 # Load host data from CSV
 fileCsv	= FileCsv({
-		'name'		: config.csvFileName,
-		'fs'		: config.csvFileFs,
-		'controller'	: controller
+		'name'	: config.csvFileName,
+		'fs'	: config.csvFileFs
 		})
 csvData		= fileCsv.getData()
 
 
-"""
-# Load data from 'hostgroup.ini'
-objHostGroupFileIni	= FileIni({
-		'name'		: config.configFilesPath+config.fileHostgroupIni,
-		'fs'		: '',
-		'controller'	: controller
-		})
-cfgDataHostGroup	= objHostGroupFileIni.getData()
-"""
-
-
-allServices	= services.AllServices()
+allHosts	= AllHosts()
+hostgroups	= Hostgroups()
+allServices	= AllServices()
 serviceList	= allServices.getList(fileCsv.getHeader())
+
 
 ########################################## ##########################################################
 # Looping on hosts
 ########################################## ##########################################################
-hostsOutput	= ''
-servicesOutput	= ''
-
-hostgroups=hostgroups.Hostgroups()
-#hostGroups	= {}	# dict : hg name => hg members
-
-
-allHosts=AllHosts()
-allHosts.loadIniFiles()
-allHosts.loadPatterns()
-
-
 for hostName in csvData:	# 'hostName' is the key of the 'csvData' dict
 
 	host	= Host({
@@ -93,28 +73,22 @@ for hostName in csvData:	# 'hostName' is the key of the 'csvData' dict
 		'allHosts'	: allHosts
 		})
 
-	listHostGroups	= host.loadHostGroupsFromCsv()
+	groupsHostBelongsTo	= host.loadHostGroupsFromCsv()
 
-	if(host.isMarkedToBeIgnored()):
+	if host.isMarkedToBeIgnored() :
 		continue
 
 	csvData[hostName]['hostDirectives']	= host.loadDirectives()
 
 	# 'normal' hosts data fields
-	hostsOutput	+= host.applyHostPattern(csvData[hostName])
+	allHosts.output	+= host.applyHostPattern(csvData[hostName])
 
 
 	# Store hosts into hostgroups
 	hostgroups.addHostToGroups({
 		'host'		: hostName,
-		'groups'	: listHostGroups
+		'groups'	: groupsHostBelongsTo
 		})
-	"""
-	for hg in listHostGroups:
-		if not hg in hostGroups:	# if 'hostGroups[hg]' doesn't exist yet, create it.
-			hostGroups[hg]=[]
-		hostGroups[hg].append(hostName)	# then store 'host' in it !
-	"""
 
 	################################## ##########################################################
 	# Looping on services
@@ -124,31 +98,23 @@ for hostName in csvData:	# 'hostName' is the key of the 'csvData' dict
 	# serviceList is the list of all '*:do' CSV columns : ['check_filesystem:do', 'check_bidule:do']
 	for singleServiceCsvName in serviceList:
 
-		service=services.Service2({
+		service=Service2({
 				'currentCsvLine'	: csvData[hostName],
 				'serviceCsvName'	: singleServiceCsvName
 				})
 
-		# if 'do', load service stuff (pattern, csv2data, fields, values) and cook them together
-		#if(csvData[hostName][singleServiceCsvName]=='1'):
 		if service.isEnabled():
 
-			#serviceName=singleServiceCsvName.replace(config.csvHeaderFs+config.csvHeaderDo,'')
 			serviceName=service.getName()
-			################## ##########################################################
+
 			# service directives
-			################## ##########################################################
 			if service.hasDirectives(fileCsv):
 
 				service.loadDirectivesFromCsvData()
-
-				serviceDirectives=service.applyServiceDirectivesPattern()
-
-
-			################## ##########################################################
+				serviceDirectives	= service.applyServiceDirectivesPattern()
 			# /service directives
-			################## ##########################################################
 
+			"""	
 			objService	= Service({
 					'name'			: serviceName,
 					'hostName'		: hostName,
@@ -159,19 +125,28 @@ for hostName in csvData:	# 'hostName' is the key of the 'csvData' dict
 					})
 
 			result	= objService.buildArrayOfServices()
+			"""
+			result	= service.buildArrayOfServices({
+					'name'			: serviceName,
+					'hostName'		: hostName,
+					'csvHeader'		: fileCsv.getHeader(),
+					'csvDataLine'		: csvData[hostName],
+					'serviceDirectives'	: serviceDirectives
+					})
 
+
+			"""
 			# Load service data from './config/"serviceName".ini'
 			objServiceFileIni	= FileIni({
-					'name'		: config.configFilesPath+objService.getName()+'.ini',
+					'name'		: config.configFilesPath+service.getName()+'.ini',
 					'fs'		: '',
-					'controller'	: controller
 					})
 
 			# Load INI file data
 			cfgDataService		= objServiceFileIni.getData()
+			"""
 
-
-
+			"""
 			try:
 				cfgDataService[config.iniPatternString]
 			except KeyError:
@@ -181,20 +156,28 @@ for hostName in csvData:	# 'hostName' is the key of the 'csvData' dict
 				cfgDataService[config.iniVarToTagString]
 			except KeyError:
 				controller.die({ 'exitMessage' : 'Key error  : key "'+config.iniVarToTagString+'" not found in "'+objServiceFileIni.name})
+			"""
 
 
+
+			"""
 			objPatternService	= Pattern({
 					'pattern' : cfgDataService[config.iniPatternString],
 					'variable2tag' : cfgDataService[config.iniVarToTagString]
 					})
+			"""
 
+
+			"""
 			# finally apply service pattern as many time as the maximum number of values in multi-valued CSV cells
 			for i in xrange(result['maxRounds']):
-				servicesOutput+=objPatternService.apply(result['champsValeurs'][i])
+				allServices.output+=objPatternService.apply(result['champsValeurs'][i])
+			"""
+			allServices.output+=service.make()
 
 
 # host loop done : we've seen all hosts. Let's build hostgroups
-hostsOutput+=hostgroups.make()
+allHosts.output+=hostgroups.make()
 	
 
 ########################################## ##########################################################
@@ -202,10 +185,10 @@ hostsOutput+=hostgroups.make()
 ########################################## ##########################################################
 
 outputFileHosts		= FileOutput({ 'name' : config.outputPath+config.outputFileHosts })
-outputFileHosts.write(hostsOutput)
+outputFileHosts.write(allHosts.output)
 
 outputFileServices	= FileOutput({ 'name' : config.outputPath+config.outputFileServices })
-outputFileServices.write(servicesOutput)
+outputFileServices.write(allServices.output)
 
 
 ########################################## ##########################################################

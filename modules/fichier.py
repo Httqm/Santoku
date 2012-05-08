@@ -23,7 +23,6 @@ from modules import config
 from modules import controller
 import re
 
-
 controller=controller.Controller()
 
 
@@ -39,14 +38,9 @@ class Fichier(object):
 
 
 	def getData(self):
-		""" Used by CSV and CFG extensions of class Fichier. """
-		result=self.loadData()
-		if(result):
-			controller=controller.Controller()
-			controller.die({ 'exitMessage' : 'Error during loadData().'})
-		else:
-			self.check()
-			return self.data
+		self.loadData()
+		self.check()
+		return self.data
 
 
 ########################################## ##########################################################
@@ -94,8 +88,7 @@ class FileIni(Fichier):
 		""" Read data from config file. """
 		try:
 			cfgFile = open(self.name, 'r')
-		except IOError, e:	# trap IOError only
-			controller=controller.Controller()
+		except IOError, e:
 			controller.die({ 'exitMessage' : 'Expected file "'+self.name+'" not found.'})
 
 		srcData		= {}
@@ -134,9 +127,6 @@ class FileIni(Fichier):
 						srcData[sectionType][match.group(2)]=match.group(1)
 
 		self.data	= srcData
-		return 		0	# Unix-style : 0 is OK
-
-
 
 
 ########################################## ##########################################################
@@ -155,7 +145,6 @@ class FileCsv(Fichier):
 		""" Load data from CSV file into a dictionary """
 		self.getColumnNumbers()
 		self.readCsvDataIgnoringHeaders()
-		return 		0	# Unix-style : 0 is OK
 
 
 	def readCsvDataIgnoringHeaders(self):
@@ -183,8 +172,6 @@ class FileCsv(Fichier):
 
 		self.data	= csvData
 
-#		return 		0	# Unix-style : 0 is OK
-
 
 	def getColumnNumbers(self):
 		"""
@@ -196,7 +183,6 @@ class FileCsv(Fichier):
 			infile		= open(self.name,'r')
 			self.header	= infile.readline()
 		except IOError:
-			controller=controller.Controller()
 			controller.die({ 'exitMessage' : 'Source CSV file "'+self.name+'" declared in "'+config.configFile+'" not found.'})
 
 		self.columNumberToText	= {}
@@ -209,8 +195,6 @@ class FileCsv(Fichier):
 			self.columNumberToText[columnNumber]	= tmp
 			self.columnTextToNumber[tmp]		= columnNumber
 			columnNumber+=1
-
-#		return 0
 
 
 	def getHeader(self):
