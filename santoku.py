@@ -37,7 +37,6 @@ Hostgroups	= hostgroups.Hostgroups
 Pattern		= pattern.Pattern
 Host		= hosts.Host
 Service		= services.Service
-Service2	= services.Service2
 AllServices	= services.AllServices
 
 ########################################## ##########################################################
@@ -45,7 +44,6 @@ AllServices	= services.AllServices
 ########################################## ##########################################################
 
 controller	= Controller()
-
 
 # Load host data from CSV
 fileCsv	= FileCsv({
@@ -83,8 +81,6 @@ for hostName in csvData:	# 'hostName' is the key of the 'csvData' dict
 	# 'normal' hosts data fields
 	allHosts.output	+= host.applyHostPattern(csvData[hostName])
 
-
-	# Store hosts into hostgroups
 	hostgroups.addHostToGroups({
 		'host'		: hostName,
 		'groups'	: groupsHostBelongsTo
@@ -98,7 +94,7 @@ for hostName in csvData:	# 'hostName' is the key of the 'csvData' dict
 	# serviceList is the list of all '*:do' CSV columns : ['check_filesystem:do', 'check_bidule:do']
 	for singleServiceCsvName in serviceList:
 
-		service=Service2({
+		service=Service({
 				'currentCsvLine'	: csvData[hostName],
 				'serviceCsvName'	: singleServiceCsvName
 				})
@@ -114,18 +110,6 @@ for hostName in csvData:	# 'hostName' is the key of the 'csvData' dict
 				serviceDirectives	= service.applyServiceDirectivesPattern()
 			# /service directives
 
-			"""	
-			objService	= Service({
-					'name'			: serviceName,
-					'hostName'		: hostName,
-					'csvHeader'		: fileCsv.getHeader(),
-					'csvDataLine'		: csvData[hostName],
-					'fieldSeparator'	: config.csvFileParamFs,
-					'serviceDirectives'	: serviceDirectives
-					})
-
-			result	= objService.buildArrayOfServices()
-			"""
 			result	= service.buildArrayOfServices({
 					'name'			: serviceName,
 					'hostName'		: hostName,
@@ -135,44 +119,6 @@ for hostName in csvData:	# 'hostName' is the key of the 'csvData' dict
 					})
 
 
-			"""
-			# Load service data from './config/"serviceName".ini'
-			objServiceFileIni	= FileIni({
-					'name'		: config.configFilesPath+service.getName()+'.ini',
-					'fs'		: '',
-					})
-
-			# Load INI file data
-			cfgDataService		= objServiceFileIni.getData()
-			"""
-
-			"""
-			try:
-				cfgDataService[config.iniPatternString]
-			except KeyError:
-				controller.die({ 'exitMessage' : 'Key error  : key "'+config.iniPatternString+'" not found in "'+objServiceFileIni.name})
-
-			try:
-				cfgDataService[config.iniVarToTagString]
-			except KeyError:
-				controller.die({ 'exitMessage' : 'Key error  : key "'+config.iniVarToTagString+'" not found in "'+objServiceFileIni.name})
-			"""
-
-
-
-			"""
-			objPatternService	= Pattern({
-					'pattern' : cfgDataService[config.iniPatternString],
-					'variable2tag' : cfgDataService[config.iniVarToTagString]
-					})
-			"""
-
-
-			"""
-			# finally apply service pattern as many time as the maximum number of values in multi-valued CSV cells
-			for i in xrange(result['maxRounds']):
-				allServices.output+=objPatternService.apply(result['champsValeurs'][i])
-			"""
 			allServices.output+=service.make()
 
 

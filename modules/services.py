@@ -44,16 +44,14 @@ class AllServices(object):
 
 
 
+class Service(object):
 
-class Service2(object):
 	def __init__(self,params):
 		self.currentCsvLine	= params['currentCsvLine']
 		self.csvServiceName	= params['serviceCsvName']
 		self.cleanName		= self.csvServiceName.replace(config.csvHeaderFs+config.csvHeaderDo,'')
-
 		self.loadIniFiles()
 		self.loadPatterns()
-
 
 
 	def loadIniFiles(self):
@@ -62,16 +60,6 @@ class Service2(object):
 
 
 	def loadIniFile(self):
-		"""
-			# Load service data from './config/"serviceName".ini'
-			objServiceFileIni	= FileIni({
-					'name'		: config.configFilesPath+service.getName()+'.ini',
-					'fs'		: '',
-					})
-
-			# Load INI file data
-			cfgDataService		= objServiceFileIni.getData()
-		"""
 		fileIni	= FileIni({
 			'name'	: config.configFilesPath+self.cleanName+'.ini',
 			'fs'	: '',
@@ -80,24 +68,19 @@ class Service2(object):
 		self.checkFileIni()
 
 
-
 	def checkFileIni(self):
-		"""
-			try:
-				cfgDataService[config.iniPatternString]
-			except KeyError:
-				controller.die({ 'exitMessage' : 'Key error  : key "'+config.iniPatternString+'" not found in "'+objServiceFileIni.name})
+		self.checkFileIniPattern()
+		self.checkFileIniVarToTag()
 
-			try:
-				cfgDataService[config.iniVarToTagString]
-			except KeyError:
-				controller.die({ 'exitMessage' : 'Key error  : key "'+config.iniVarToTagString+'" not found in "'+objServiceFileIni.name})
-		"""
+
+	def checkFileIniPattern(self):
 		try:
 			self.fileIniData[config.iniPatternString]
 		except KeyError:
 			controller.die({ 'exitMessage' : 'Key error  : key "'+config.iniPatternString+'" not found in "'+fileIni.name})
 
+
+	def checkFileIniVarToTag(self):
 		try:
 			self.fileIniData[config.iniVarToTagString]
 		except KeyError:
@@ -105,23 +88,6 @@ class Service2(object):
 
 
 	def loadPatterns(self):
-		"""
-		def loadPatterns(self):
-			self.patternHost	= pattern.Pattern({
-					'pattern'	: self.iniFileData[config.iniPatternString],
-					'variable2tag'	: self.iniFileData[config.iniVarToTagString]
-					})
-
-			self.patternDirectives	= pattern.Pattern({
-					'pattern'	: self.directives[config.iniPatternString],
-					'variable2tag'	: self.directives[config.iniVarToTagString]
-					})
-
-		objPatternService	= Pattern({
-				'pattern' : cfgDataService[config.iniPatternString],
-				'variable2tag' : cfgDataService[config.iniVarToTagString]
-				})
-		"""
 		self.patternService	= Pattern({
 			'pattern'	: self.fileIniData[config.iniPatternString],
 			'variable2tag'	: self.fileIniData[config.iniVarToTagString]
@@ -165,7 +131,6 @@ class Service2(object):
 			}
 
 
-
 	def applyServiceDirectivesPattern(self):
 		self.serviceDirectives	= ''
 		for name,value in enumerate(self.directives['names']):
@@ -174,7 +139,6 @@ class Service2(object):
 				'directiveValue'	: self.directives['values'][name]
 				})
 		return self.serviceDirectives
-
 
 
 	def buildArrayOfServices(self,params):
@@ -195,7 +159,6 @@ class Service2(object):
 				config.csvHeaderUse		: config.csvGenericService
 				}
 			for serviceField in serviceCsvData:
-#				valuesOfMultiValuedCell	= serviceCsvData[serviceField].split(params['fieldSeparator'])
 				valuesOfMultiValuedCell	= serviceCsvData[serviceField].split(config.csvMultiValuedCellFS)
 
 				# Excluding the service directives columns here to avoid duplicating the service definition
@@ -225,12 +188,10 @@ class Service2(object):
 		serviceCsvData={} # temporary dict
 
 		# storing CSV data in a dict to play with it later
-#		for field in self.params['csvHeader']:
 		for field in params['csvHeader']:
 			match=re.search(self.cleanName+config.csvHeaderFs+'.*', field)
 			if(match):
 				# parsing all CSV columns related to this service
-#				serviceCsvData[field.replace(self.cleanName+config.csvHeaderFs,'')]=self.params['csvDataLine'][field]
 				serviceCsvData[field.replace(self.cleanName+config.csvHeaderFs,'')]=params['csvDataLine'][field]
 
 		# appending 'serviceDirectives'
@@ -241,82 +202,8 @@ class Service2(object):
 
 
 	def make(self):
-		"""
-			# finally apply service pattern as many time as the maximum number of values in multi-valued CSV cells
-			for i in xrange(result['maxRounds']):
-				allServices.output+=objPatternService.apply(result['champsValeurs'][i])
-		"""
-		bla=''
+		tmp=''
 		for i in xrange(self.result['maxRounds']):
-			bla+=self.patternService.apply(self.result['champsValeurs'][i])
+			tmp+=self.patternService.apply(self.result['champsValeurs'][i])
+		return tmp
 
-		return bla
-
-
-class Service(object):
-	def __init__(self,params):
-		self.params	= params
-		self.cleanName	= self.params['name'].replace(config.csvHeaderFs+config.csvHeaderDo,'')	# cleanName = name without ':do'
-
-
-	def getName(self):
-		return self.cleanName
-
-
-	def DISABLED_loadServiceData(self):
-		"""
-		For the current host and the current service, return : 
-		- 'clean' CSV header lines (without the 'serviceName:')
-		- cell values (including multiple values and field separators if any)
-		"""
-		import re
-		serviceCsvData={} # temporary dict
-
-		# storing CSV data in a dict to play with it later
-		for field in self.params['csvHeader']:
-			match=re.search(self.cleanName+config.csvHeaderFs+'.*', field)
-			if(match):
-				# parsing all CSV columns related to this service
-				serviceCsvData[field.replace(self.cleanName+config.csvHeaderFs,'')]=self.params['csvDataLine'][field]
-
-		# appending 'serviceDirectives'
-		# serviceCsvData contains 2 useless keys : 'serviceDirectivesNames' and 'serviceDirectivesValues'
-		serviceCsvData['serviceDirectives']=self.params['serviceDirectives']
-
-		return serviceCsvData
-
-
-	def DISABLED_buildArrayOfServices(self):
-		"""
-		Return an associative array containing all service(s) data ready to be injected into pattern.
-		This method handle multi-valued CSV cells
-		"""
-		serviceCsvData	= self.loadServiceData()
-		champsValeurs	= {}
-
-		# Parsing data stored in dict to register as many services as the number of values in mutli-valued cells
-		maxRounds	= 1
-		currentRound	= 0
-
-		while currentRound < maxRounds:
-			champsValeurs[currentRound]	= {
-				config.csvHeaderHostName	: self.params['hostName'],
-				config.csvHeaderUse		: config.csvGenericService
-				}
-			for serviceField in serviceCsvData:
-				valuesOfMultiValuedCell	= serviceCsvData[serviceField].split(self.params['fieldSeparator'])
-
-				# Excluding the service directives columns here to avoid duplicating the service definition
-				if((serviceField != config.csvServiceDirectivesNames) and (serviceField != config.csvServiceDirectivesValues)):
-					maxRounds	= len(valuesOfMultiValuedCell) if (len(valuesOfMultiValuedCell)>maxRounds) else maxRounds
-
-				try:
-					tmpValue	= valuesOfMultiValuedCell[currentRound]
-				except IndexError:
-					tmpValue	= valuesOfMultiValuedCell[0]
-
-				champsValeurs[currentRound][serviceField]=tmpValue
-
-			currentRound+=1
-
-		return { 'champsValeurs' : champsValeurs, 'maxRounds' : maxRounds }
