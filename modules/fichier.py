@@ -39,7 +39,7 @@ class Fichier(object):
 
 	def getData(self):
 		self.loadData()
-		self.check()
+		self.checkLoadedData()
 		return self.data
 
 
@@ -48,18 +48,18 @@ class Fichier(object):
 ########################################## ##########################################################
 class FileIni(Fichier):
 
-	def check(self):
+	def checkLoadedData(self):
 		"""
 		Make sure that all tags ( "$ANYTHING$" ) appearing in 'pattern' also appear in 'VARIABLE2TAG'.
 		And vice-versa.
 		"""
 		self.checkStanzasTitlesAreFoundInIniFileLoadedData()
-		self.checkUnidirectional({
+		self.checkTagsBetweenStanzas({
 			'needle'	: config.iniPatternString,
 			'haystack'	: config.iniVarToTagString
 			})
 
-		self.checkUnidirectional({
+		self.checkTagsBetweenStanzas({
 			'needle'	: config.iniVarToTagString,
 			'haystack'	: config.iniPatternString
 			})
@@ -77,7 +77,7 @@ class FileIni(Fichier):
 			controller.die({ 'exitMessage' : '"'+key+'" keyword not found in "'+self.name+'"'})
 
 
-	def checkUnidirectional(self,params):
+	def checkTagsBetweenStanzas(self,params):
 		"""
 		Get ALL needles from the 'needlesStanza', and look for them in the 'haystackStanza'.
 		Needles are tags surrounded with '$' signs, i.e. : $EXAMPLETAG$
@@ -89,12 +89,10 @@ class FileIni(Fichier):
 			needlesStanza	= self.data[params['needle']]
 
 		haystackStanza	= str(self.data[params['haystack']])
-
-
 		for line in needlesStanza:
 			match	= re.search('\$([^\$]+)\$', line)
 			if(match):
-				match2	= re.search('('+match.group(1)+')',haystackStanza)
+				match2	= re.search('(\$'+match.group(1)+'\$)',haystackStanza)
 				if(not match2):
 					controller.die({ 'exitMessage' : self.name+' : Tag "'+match.group(1)+'" found in "'+params['needle']+'" block, missing in "'+params['haystack']+'" block.'})
 
@@ -148,7 +146,7 @@ class FileIni(Fichier):
 ########################################## ##########################################################
 class FileCsv(Fichier):
 
-	def check(self):
+	def checkLoadedData(self):
 		"""
 		Does nothing so far.
 		Just to match the Fichier.getData() method requirement.
