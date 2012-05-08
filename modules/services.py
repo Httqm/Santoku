@@ -22,10 +22,15 @@
 from modules import config
 from modules import fichier
 from modules import pattern
+from modules import controller
 import re
 
-Pattern	= pattern.Pattern
-FileIni	= fichier.FileIni
+
+Pattern		= pattern.Pattern
+FileIni		= fichier.FileIni
+
+controller	= controller.Controller()
+
 
 class AllServices(object):
 
@@ -52,7 +57,7 @@ class Service(object):
 		self.cleanName		= self.csvServiceName.replace(config.csvHeaderFs+config.csvHeaderDo,'')
 		self.loadIniFiles()
 		self.loadPatterns()
-
+#		print self.cleanName
 
 	def loadIniFiles(self):
 		self.loadIniFile()
@@ -60,11 +65,11 @@ class Service(object):
 
 
 	def loadIniFile(self):
-		fileIni	= FileIni({
+		self.fileIni	= FileIni({
 			'name'	: config.configFilesPath+self.cleanName+'.ini',
 			'fs'	: '',
 			})
-		self.fileIniData	= fileIni.getData()
+		self.fileIniData	= self.fileIni.getData()
 		self.checkFileIni()
 
 
@@ -74,17 +79,22 @@ class Service(object):
 
 
 	def checkFileIniPattern(self):
+#		print 'PATTERN ?'
 		try:
 			self.fileIniData[config.iniPatternString]
 		except KeyError:
-			controller.die({ 'exitMessage' : 'Key error  : key "'+config.iniPatternString+'" not found in "'+fileIni.name})
+			controller.die({ 'exitMessage' : 'Key error  : key "'+config.iniPatternString+'" not found in "'+self.fileIni.name})
+
+#		print config.iniPatternString
+#		print self.fileIniData[config.iniPatternString]
+#		controller.die({ 'exitMessage' : 'BLA!'+self.fileIni.name})
 
 
 	def checkFileIniVarToTag(self):
 		try:
 			self.fileIniData[config.iniVarToTagString]
 		except KeyError:
-			controller.die({ 'exitMessage' : 'Key error  : key "'+config.iniVarToTagString+'" not found in "'+fileIni.name})
+			controller.die({ 'exitMessage' : 'Key error  : key "'+config.iniVarToTagString+'" not found in "'+self.fileIni.name})
 
 
 	def loadPatterns(self):

@@ -101,11 +101,10 @@ for hostName in csvData:	# 'hostName' is the key of the 'csvData' dict
 
 		if service.isEnabled():
 
-			serviceName=service.getName()
+			serviceName	= service.getName()
 
 			# service directives
 			if service.hasDirectives(fileCsv):
-
 				service.loadDirectivesFromCsvData()
 				serviceDirectives	= service.applyServiceDirectivesPattern()
 			# /service directives

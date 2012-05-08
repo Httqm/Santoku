@@ -47,10 +47,13 @@ class Fichier(object):
 # .ini files (input)
 ########################################## ##########################################################
 class FileIni(Fichier):
+
 	def check(self):
 		"""
 		Make sure that all tags ( "$ANYTHING$" ) appearing in 'pattern' also appear in 'VARIABLE2TAG'.
+		And vice-versa.
 		"""
+		self.checkStanzasTitlesAreFoundInIniFileLoadedData()
 		self.checkUnidirectional({
 			'needle'	: config.iniPatternString,
 			'haystack'	: config.iniVarToTagString
@@ -60,6 +63,18 @@ class FileIni(Fichier):
 			'needle'	: config.iniVarToTagString,
 			'haystack'	: config.iniPatternString
 			})
+
+
+	def checkStanzasTitlesAreFoundInIniFileLoadedData(self):
+		self.searchStanzaTitleInIniFileLoadedData(config.iniPatternString)
+		self.searchStanzaTitleInIniFileLoadedData(config.iniVarToTagString)
+
+
+	def searchStanzaTitleInIniFileLoadedData(self,key):
+		try:
+			self.data[key]
+		except Exception:
+			controller.die({ 'exitMessage' : '"'+key+'" keyword not found in "'+self.name+'"'})
 
 
 	def checkUnidirectional(self,params):
@@ -91,7 +106,7 @@ class FileIni(Fichier):
 		except IOError, e:
 			controller.die({ 'exitMessage' : 'Expected file "'+self.name+'" not found.'})
 
-		srcData		= {}
+		self.data	= {}
 		sectionType	= ''
 		for line in cfgFile:
 			# skip comments line in cfg file
@@ -105,14 +120,14 @@ class FileIni(Fichier):
 				# found a section. Let's detect which kind of section it is
 				sectionType=match.group(1)	# could be 'pattern' or 'VARIABLE2TAG', or ...
 				if(sectionType==config.iniPatternString):
-					srcData[sectionType]=''		# create key in data hash
+					self.data[sectionType]=''		# create key in data hash
 				elif(sectionType==config.iniVarToTagString):
-					srcData[sectionType]={}		# create key in data hash
+					self.data[sectionType]={}		# create key in data hash
 
 			else:
 				# loading data from section
 				if(sectionType==config.iniPatternString):
-					srcData[sectionType]+=line
+					self.data[sectionType]+=line
 
 				elif(sectionType==config.iniVarToTagString):
 					# trim file content
@@ -122,11 +137,10 @@ class FileIni(Fichier):
 					match=re.search('^(.+)'+config.iniVarToTagStanzaFs+'(.+)$', line)
 					if(match):
 						# csvField => tag
-						#srcData[sectionType][match.group(1)]=match.group(2)
+						#self.data[sectionType][match.group(1)]=match.group(2)
 						# tag ==> csvField
-						srcData[sectionType][match.group(2)]=match.group(1)
+						self.data[sectionType][match.group(2)]=match.group(1)
 
-		self.data	= srcData
 
 
 ########################################## ##########################################################

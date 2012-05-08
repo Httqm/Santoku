@@ -21,25 +21,14 @@
 
 from modules import config
 from modules import fichier
-"""
-from modules import pattern
-from modules import controller
 
-
-controller=controller.Controller()
-"""
 
 class Directives(object):
-
 
 	def loadIniFile(self):
 		fileIniDirectives	= fichier.FileIni({
 			'name'	: config.configFilesPath+config.fileHostIni,
 			'fs'	: '',
 			})
-#		for reference only :
-#		cfgDataHost	= fileIniDirectives.getData()
 		self.iniFileData	= fileIniDirectives.getData()
-		#print 'loadIniFile :'
-		#print self.iniFileData
 		self.checkIniFile()
