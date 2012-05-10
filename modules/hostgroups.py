@@ -32,13 +32,6 @@ class Hostgroups(object):
 
 
 	def addHostToGroups(self,params):
-		"""
-		for hg in listHostGroups:
-			if not hg in hostGroups:	# if 'hostGroups[hg]' doesn't exist yet, create it.
-				hostGroups[hg]=[]
-			hostGroups[hg].append(hostName)	# then store 'host' in it !
-
-		"""
 		for hg in params['groups']:
 			if not hg in self.members:	# if 'hostGroups[hg]' doesn't exist yet, create it.
 				self.members[hg]=[]
@@ -47,8 +40,8 @@ class Hostgroups(object):
 
 	def loadFileIni(self):
 		self.fileIni	= fichier.FileIni({
-				'name'		: config.configFilesPath+config.fileHostgroupIni,
-				'fs'		: '',
+				'name'	: config.configFilesPath+config.fileHostgroupIni,
+				'fs'	: '',
 				})
 		self.fileIniData	= self.fileIni.getData()
 
@@ -64,16 +57,6 @@ class Hostgroups(object):
 
 
 	def make(self):
-		"""
-		for hostgroup_name in hostGroups:
-			HG			= {}
-			members			= ', '.join(hostGroups[hostgroup_name])	# hosts of the hostgroup_name, as a string
-			HG['hostgroup_name']	= hostgroup_name
-			HG['alias']		= hostgroup_name
-			HG['members']		= members
-
-			hostsOutput+=objPatternHost.apply(HG)
-		"""
 		result=''
 		for hostgroupName in self.members:
 			HG			= {}

@@ -19,7 +19,7 @@
 #
 
 
-class Pattern(object):	# 'object' : ancestor of all classes
+class Pattern(object):
 	def __init__(self,params):
 		"""
 		A pattern is used to substitute tags with values and build .cfg files.

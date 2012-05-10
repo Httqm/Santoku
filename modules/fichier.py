@@ -98,46 +98,69 @@ class FileIni(Fichier):
 
 
 	def loadData(self):
-		""" Read data from config file. """
+		self.checkFileIsThere()
+		self.data		= {}
+		self.sectionType	= ''
+		for line in self.iniFile:
+
+			if self.lineIsNotAComment(line) and self.lineIsNotBlank(line):
+				# searching a '[...]' section
+				match	= re.search('\[(.+)\]', line)
+				if(match):
+					# found a section. Let's detect which kind of section it is
+					self.sectionType	= match.group(1)		# could be 'pattern' or 'VARIABLE2TAG', or ...
+					if(self.sectionType	== config.iniPatternString):
+						self.data[self.sectionType]	= ''
+					elif(self.sectionType== config.iniVarToTagString):
+						self.data[self.sectionType]	= {}
+
+				else:
+					# loading data from section
+					if(self.sectionType	== config.iniPatternString):
+						self.data[self.sectionType]+=line
+
+					elif(self.sectionType	== config.iniVarToTagString):
+						line	= self.removeWhitespaces(line)
+						self.checkLineMatchesFormat(line)
+						match	= re.search('^(.+)'+config.iniVarToTagStanzaFs+'(.+)$', line)
+						if(match):
+							self.data[self.sectionType][match.group(2)]=match.group(1)
+
+
+	def checkFileIsThere(self):
 		try:
-			cfgFile = open(self.name, 'r')
-		except IOError, e:
+			self.iniFile = open(self.name, 'r')
+		except IOError:
 			controller.die({ 'exitMessage' : 'Expected file "'+self.name+'" not found.'})
 
-		self.data	= {}
-		sectionType	= ''
-		for line in cfgFile:
-			# skip comments line in cfg file
-			match=re.search('^#', line)
-			if(match):
-				continue
 
-			# searching a '[...]' section
-			match=re.search('\[(.+)\]', line)
-			if(match):
-				# found a section. Let's detect which kind of section it is
-				sectionType=match.group(1)	# could be 'pattern' or 'VARIABLE2TAG', or ...
-				if(sectionType==config.iniPatternString):
-					self.data[sectionType]=''		# create key in data hash
-				elif(sectionType==config.iniVarToTagString):
-					self.data[sectionType]={}		# create key in data hash
+	def lineIsNotAComment(self,line):
+		match=re.search('^#', line)
+		if(match):
+			return 0
+		else:
+			return 1
 
-			else:
-				# loading data from section
-				if(sectionType==config.iniPatternString):
-					self.data[sectionType]+=line
 
-				elif(sectionType==config.iniVarToTagString):
-					# trim file content
-					line=line.replace(' ', '')
-					line=line.replace("\t", '')	# UGLY !!!
-					# TODO : make sure config.iniVarToTagStanzaFs is found here
-					match=re.search('^(.+)'+config.iniVarToTagStanzaFs+'(.+)$', line)
-					if(match):
-						# csvField => tag
-						#self.data[sectionType][match.group(1)]=match.group(2)
-						# tag ==> csvField
-						self.data[sectionType][match.group(2)]=match.group(1)
+	def lineIsNotBlank(self,line):
+		match=re.search('^\n$', line)
+		if(match):
+			return 0
+		else:
+			return 1
+
+
+	def removeWhitespaces(self,line):
+		return line.replace(' ', '').replace("\t", '')	# works but UGLY !!!
+
+
+	def checkLineMatchesFormat(self,line):
+		#print 'LINE:'+line+'.'
+		match=re.search('^\w+'+config.iniVarToTagStanzaFs+'\$\w+\$$', line)
+		if match:
+			return line
+		else:
+			controller.die({ 'exitMessage' : 'In file "'+self.name+'", section ['+self.sectionType+'], the line "'+line.replace("\n",'')+'" doesn\'t match the "variable '+config.iniVarToTagStanzaFs+' $TAG$" format. (not counting whitespaces).'})
 
 
 
