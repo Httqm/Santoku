@@ -136,7 +136,7 @@ class Host(object):
 
 
 	def applyHostPattern(self,values):
-		return self.allHosts.patternHost.apply(values)
+		return self.allHosts.patternHost.apply(values)+"\n"
 
 
 	def loadHostGroupsFromCsv(self):

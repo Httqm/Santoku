@@ -215,5 +215,5 @@ class Service(object):
 		tmp=''
 		for i in xrange(self.result['maxRounds']):
 			tmp+=self.patternService.apply(self.result['champsValeurs'][i])
-		return tmp
+		return tmp+"\n"
 
