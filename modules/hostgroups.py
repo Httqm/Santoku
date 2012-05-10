@@ -65,6 +65,6 @@ class Hostgroups(object):
 			HG['alias']		= hostgroupName
 			HG['members']		= members
 
-			result+=self.hostGroupPattern.apply(HG)
+			result+=self.hostGroupPattern.apply(HG)+"\n"
 
 		return result
