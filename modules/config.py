@@ -76,6 +76,7 @@ csvServiceDirectivesValues	= 'serviceDirectivesValues'
 # But just in case you don't like the way they are (cosmetics) or need a workaround for any reason :
 # HAVE FUN !
 ########################################## ##########################################################
-iniPatternString	= 'pattern'
+iniPatternString	= 'PATTERN'
 iniVarToTagString	= 'VARIABLE2TAG'
 iniVarToTagStanzaFs	= '='
+iniCommandString	= 'COMMAND'

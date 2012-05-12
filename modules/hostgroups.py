@@ -57,7 +57,7 @@ class Hostgroups(object):
 
 
 	def make(self):
-		result=''
+		result	= ''
 		for hostgroupName in self.members:
 			HG			= {}
 			members			= ', '.join(self.members[hostgroupName])	# hosts of 'hostgroupName', as a string
@@ -65,6 +65,6 @@ class Hostgroups(object):
 			HG['alias']		= hostgroupName
 			HG['members']		= members
 
-			result+=self.hostGroupPattern.apply(HG)+"\n"
+			result	+= self.hostGroupPattern.apply(HG)+"\n"
 
 		return result

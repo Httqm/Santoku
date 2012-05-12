@@ -78,7 +78,6 @@ for hostName in csvData:	# 'hostName' is the key of the 'csvData' dict
 
 	csvData[hostName]['hostDirectives']	= host.loadDirectives()
 
-	# 'normal' hosts data fields
 	allHosts.output	+= host.applyHostPattern(csvData[hostName])
 
 	hostgroups.addHostToGroups({
@@ -90,7 +89,6 @@ for hostName in csvData:	# 'hostName' is the key of the 'csvData' dict
 	# Looping on services
 	################################## ##########################################################
 
-	# detecting services to register
 	# serviceList is the list of all '*:do' CSV columns : ['check_filesystem:do', 'check_bidule:do']
 	for singleServiceCsvName in serviceList:
 
@@ -103,11 +101,9 @@ for hostName in csvData:	# 'hostName' is the key of the 'csvData' dict
 
 			serviceName	= service.getName()
 
-			# service directives
 			if service.hasDirectives(fileCsv):
 				service.loadDirectivesFromCsvData()
 				serviceDirectives	= service.applyServiceDirectivesPattern()
-			# /service directives
 
 			result	= service.buildArrayOfServices({
 					'name'			: serviceName,

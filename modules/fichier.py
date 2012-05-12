@@ -30,8 +30,8 @@ controller=controller.Controller()
 # Generic
 ########################################## ##########################################################
 class Fichier(object):
+
 	def __init__(self,params):
-		""" Any file. """
 		self.name	= params['name']
 		self.fs		= params['fs']
 		self.data	= None
@@ -102,29 +102,33 @@ class FileIni(Fichier):
 		self.data		= {}
 		self.sectionType	= ''
 		for line in self.iniFile:
+			if self.lineIsAComment(line) or self.lineIsBlank(line):
+				continue
 
-			if self.lineIsNotAComment(line) and self.lineIsNotBlank(line):
-				# searching a '[...]' section
-				match	= re.search('\[(.+)\]', line)
-				if(match):
-					# found a section. Let's detect which kind of section it is
-					self.sectionType	= match.group(1)		# could be 'pattern' or 'VARIABLE2TAG', or ...
-					if(self.sectionType	== config.iniPatternString):
-						self.data[self.sectionType]	= ''
-					elif(self.sectionType== config.iniVarToTagString):
-						self.data[self.sectionType]	= {}
+			if self.lineIsASectionTitle(line):
+				# found a section. Detecting which kind of section it is
+				self.sectionType	= self.match.group(1)		# PATTERN|VARIABLE2TAG|COMMAND
+				if self.sectionType	== config.iniPatternString or self.sectionType	== config.iniCommandString :
+					self.data[self.sectionType]	= ''
+				elif(self.sectionType	== config.iniVarToTagString):
+					self.data[self.sectionType]	= {}
 
-				else:
-					# loading data from section
-					if(self.sectionType	== config.iniPatternString):
-						self.data[self.sectionType]+=line
+			else:
+				# loading data from section
+				if self.sectionType	== config.iniPatternString or self.sectionType	== config.iniCommandString :
+					self.data[self.sectionType]+=line
 
-					elif(self.sectionType	== config.iniVarToTagString):
-						line	= self.removeWhitespaces(line)
-						self.checkLineMatchesFormat(line)
-						match	= re.search('^(.+)'+config.iniVarToTagStanzaFs+'(.+)$', line)
-						if(match):
-							self.data[self.sectionType][match.group(2)]=match.group(1)
+				elif(self.sectionType	== config.iniVarToTagString):
+					line	= self.removeWhitespaces(line)
+					self.checkLineMatchesFormat(line)
+					match	= re.search('^(.+)'+config.iniVarToTagStanzaFs+'(.+)$', line)
+					if(match):
+						self.data[self.sectionType][match.group(2)]=match.group(1)
+
+	
+	def lineIsASectionTitle(self,line):
+		self.match	= re.search('\[(.+)\]', line)
+		return 1 if self.match else 0
 
 
 	def checkFileIsThere(self):
@@ -134,20 +138,20 @@ class FileIni(Fichier):
 			controller.die({ 'exitMessage' : 'Expected file "'+self.name+'" not found.'})
 
 
-	def lineIsNotAComment(self,line):
+	def lineIsAComment(self,line):
 		match=re.search('^#', line)
 		if(match):
-			return 0
-		else:
 			return 1
+		else:
+			return 0
 
 
-	def lineIsNotBlank(self,line):
+	def lineIsBlank(self,line):
 		match=re.search('^\n$', line)
 		if(match):
-			return 0
-		else:
 			return 1
+		else:
+			return 0
 
 
 	def removeWhitespaces(self,line):
@@ -155,7 +159,6 @@ class FileIni(Fichier):
 
 
 	def checkLineMatchesFormat(self,line):
-		#print 'LINE:'+line+'.'
 		match=re.search('^\w+'+config.iniVarToTagStanzaFs+'\$\w+\$$', line)
 		if match:
 			return line
@@ -183,9 +186,6 @@ class FileCsv(Fichier):
 
 
 	def readCsvDataIgnoringHeaders(self):
-		"""
-		Read the data contained in the CSV file, ignoring the header line
-		"""
 		import fileinput
 		csvData	= {}
 		lineNb	= 0
@@ -210,7 +210,7 @@ class FileCsv(Fichier):
 
 	def getColumnNumbers(self):
 		"""
-		Read the first line of the CSV file, hthen builds 2 dictionaries :
+		Read the first line of the CSV file, then builds 2 dictionaries :
 		- column number to column text
 		- column text to column number
 		"""
@@ -247,14 +247,14 @@ class FileCsv(Fichier):
 # Output files 
 ########################################## ##########################################################
 class FileOutput(Fichier):
+
 	def __init__(self,params):
 		""" Extends class 'fichier' """
 		self.name	= params['name']
 
 
-	def makeHeader(self):
+	def makeHeaderWithWarningMessage(self):
 		""" Generate a basic header for output files showing generation date + a 'do not modify manually' warning """
-
 		import datetime
 		now		= datetime.datetime.now()
 		return "########################################## ##########################################################\n\
@@ -264,10 +264,9 @@ class FileOutput(Fichier):
 
 
 	def write(self, data):
-		""" Write data to file """
 		try:
 			outFile	= open(self.name,'w')
-			outFile.write(self.makeHeader())
+			outFile.write(self.makeHeaderWithWarningMessage())
 			outFile.write(data)
 			outFile.close
 		except Exception, e :
