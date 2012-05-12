@@ -20,6 +20,7 @@
 
 
 from modules import config
+from modules import commands
 from modules import controller
 from modules import fichier
 from modules import hosts
@@ -28,16 +29,17 @@ from modules import pattern
 from modules import services
 
 # local names for imported classes
+AllCommands	= commands.AllCommands
 AllHosts	= hosts.AllHosts
+AllServices	= services.AllServices
 Controller	= controller.Controller
 FileCsv		= fichier.FileCsv
 FileIni		= fichier.FileIni
 FileOutput	= fichier.FileOutput
+Host		= hosts.Host
 Hostgroups	= hostgroups.Hostgroups
 Pattern		= pattern.Pattern
-Host		= hosts.Host
 Service		= services.Service
-AllServices	= services.AllServices
 
 ########################################## ##########################################################
 # main()
@@ -53,6 +55,7 @@ fileCsv	= FileCsv({
 csvData		= fileCsv.getData()
 
 
+allCommands	= AllCommands()
 allHosts	= AllHosts()
 hostgroups	= Hostgroups()
 allServices	= AllServices()
@@ -99,8 +102,9 @@ for hostName in csvData:	# 'hostName' is the key of the 'csvData' dict
 
 		if service.isEnabled():
 
-			serviceName	= service.getName()
+			allCommands.add(service.getCommand())
 
+			serviceName	= service.getName()
 			if service.hasDirectives(fileCsv):
 				service.loadDirectivesFromCsvData()
 				serviceDirectives	= service.applyServiceDirectivesPattern()
@@ -112,7 +116,6 @@ for hostName in csvData:	# 'hostName' is the key of the 'csvData' dict
 					'csvDataLine'		: csvData[hostName],
 					'serviceDirectives'	: serviceDirectives
 					})
-
 
 			allServices.output+=service.make()
 
@@ -130,6 +133,9 @@ outputFileHosts.write(allHosts.output)
 
 outputFileServices	= FileOutput({ 'name' : config.outputPath+config.outputFileServices })
 outputFileServices.write(allServices.output)
+
+outputFileCommands	= FileOutput({ 'name' : config.outputPath+config.outputFileCommands })
+outputFileCommands.write(allCommands.getOutput())
 
 
 ########################################## ##########################################################

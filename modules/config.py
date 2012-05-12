@@ -40,6 +40,7 @@ fileDirectivesIni	= 'directives.ini'
 outputPath		= './output/'
 outputFileHosts		= 'hosts.cfg'
 outputFileServices	= 'services.cfg'
+outputFileCommands	= 'commands.cfg'
 
 
 ########################################## ##########################################################

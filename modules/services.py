@@ -57,7 +57,7 @@ class Service(object):
 		self.cleanName		= self.csvServiceName.replace(config.csvHeaderFs+config.csvHeaderDo,'')
 		self.loadIniFiles()
 		self.loadPatterns()
-#		print self.cleanName
+
 
 	def loadIniFiles(self):
 		self.loadIniFile()
@@ -67,15 +67,28 @@ class Service(object):
 	def loadIniFile(self):
 		self.fileIni	= FileIni({
 			'name'	: config.configFilesPath+self.cleanName+'.ini',
-			'fs'	: '',
+			'fs'	: ''
 			})
 		self.fileIniData	= self.fileIni.getData()
+
 		self.checkFileIni()
 
+
+	def getCommand(self):
+		try:
+#			print 'services.py            '+self.cleanName+':'+self.fileIniData['COMMAND']
+			return {
+				'serviceName'		: self.cleanName,
+				'serviceCommand'	: self.fileIniData['COMMAND']
+				}
+		except KeyError:
+			controller.die({ 'exitMessage' : 'No command specified for service "'+self.cleanName+'" in config file "'+self.fileIni.name+'"'})
+		
 
 	def checkFileIni(self):
 		self.checkFileIniPattern()
 		self.checkFileIniVarToTag()
+		#self.checkFileIniCommand()	# TODO
 
 
 	def checkFileIniPattern(self):
@@ -159,7 +172,7 @@ class Service(object):
 		serviceCsvData	= self.loadServiceData(params)
 		champsValeurs	= {}
 
-		# Parsing data stored in dict to register as many services as the number of values in mutli-valued cells
+		# Parsing data stored in dict to register as many services as the number of values in multi-valued cells
 		maxRounds	= 1
 		currentRound	= 0
 
@@ -195,7 +208,7 @@ class Service(object):
 		- cell values (including multiple values and field separators if any)
 		"""
 		import re
-		serviceCsvData={} # temporary dict
+		serviceCsvData={}
 
 		# storing CSV data in a dict to play with it later
 		for field in params['csvHeader']:
