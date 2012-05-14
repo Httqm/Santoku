@@ -19,6 +19,10 @@
 #
 
 
+from modules import controller
+controller	= controller.Controller()
+
+
 class Pattern(object):
 	def __init__(self,params):
 		"""
@@ -28,7 +32,6 @@ class Pattern(object):
 		- variable2tag : dictionary with key = variable name, and value = tag name. This is defined in the [VARIABLE2TAG] section of .ini files
 		- values : dictionary with key = variable name, and value = ... value ;-)
 		"""
-
 		self.pattern		= params['pattern']
 		self.variable2tag	= params['variable2tag']
 
@@ -36,10 +39,15 @@ class Pattern(object):
 	def apply(self,values):
 		""" Perform substitutions over a copy of the pattern, so that the pattern is not altered """
 		patternCopy		= self.pattern	# so that pattern is not altered
-		values			= values
-
+		self.values		= values
 		for tag in self.variable2tag:
-			patternCopy=patternCopy.replace(tag,values[self.variable2tag[tag]])
-
+			self.checkTagValueExists(tag)
+			patternCopy	= patternCopy.replace(tag,self.values[self.variable2tag[tag]])
 		return patternCopy
 
+
+	def checkTagValueExists(self,tag):
+		try:
+			self.values[self.variable2tag[tag]]
+		except KeyError:
+			controller.die({ 'exitMessage' : 'No CSV value given for tag "'+tag+'" in pattern : '+self.pattern})

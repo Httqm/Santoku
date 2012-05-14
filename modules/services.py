@@ -227,6 +227,6 @@ class Service(object):
 	def make(self):
 		tmp=''
 		for i in xrange(self.result['maxRounds']):
-			tmp+=self.patternService.apply(self.result['champsValeurs'][i])
-		return tmp+"\n"
+			tmp+=self.patternService.apply(self.result['champsValeurs'][i])+"\n"
+		return tmp
 

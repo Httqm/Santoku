@@ -104,7 +104,8 @@ for hostName in csvData:	# 'hostName' is the key of the 'csvData' dict
 
 			allCommands.add(service.getCommand())
 
-			serviceName	= service.getName()
+			serviceName		= service.getName()
+			serviceDirectives	= ''
 			if service.hasDirectives(fileCsv):
 				service.loadDirectivesFromCsvData()
 				serviceDirectives	= service.applyServiceDirectivesPattern()
