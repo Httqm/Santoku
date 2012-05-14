@@ -68,13 +68,14 @@ class FileIni(Fichier):
 	def checkStanzasTitlesAreFoundInIniFileLoadedData(self):
 		self.searchStanzaTitleInIniFileLoadedData(config.iniPatternString)
 		self.searchStanzaTitleInIniFileLoadedData(config.iniVarToTagString)
+		self.searchStanzaTitleInIniFileLoadedData(config.iniCommandString)
 
 
 	def searchStanzaTitleInIniFileLoadedData(self,key):
 		try:
 			self.data[key]
 		except Exception:
-			controller.die({ 'exitMessage' : '"'+key+'" keyword not found in "'+self.name+'"'})
+			controller.die({ 'exitMessage' : '"'+key+'" keyword not found as stanza title in "'+self.name+'"'})
 
 
 	def checkTagsBetweenStanzas(self,params):
