@@ -23,6 +23,7 @@ class AllCommands(object):
 	def __init__(self):
 		self.output	= ''
 		self.commands	= {}
+		self.number	= 0
 
 
 	def add(self,commandData):
@@ -32,5 +33,8 @@ class AllCommands(object):
 	def getOutput(self):
 		for serviceName in self.commands:
 			self.output+=self.commands[serviceName]+"\n"
-
 		return self.output
+
+
+	def getCount(self):
+		return len(self.commands)

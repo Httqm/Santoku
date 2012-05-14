@@ -35,7 +35,8 @@ controller	= controller.Controller()
 class AllServices(object):
 
 	def __init__(self):
-		self.output=''
+		self.output	= ''
+		self.number	= 0
 
 
 	def getList(self,csvHeaders):
@@ -44,8 +45,11 @@ class AllServices(object):
 			match=re.search('.*'+config.csvHeaderFs+config.csvHeaderDo+'$', field)
 			if(match):
 				self.list.append(field)
-
 		return self.list
+
+
+	def count(self):
+		self.number+=1
 
 
 
@@ -76,7 +80,6 @@ class Service(object):
 
 	def getCommand(self):
 		try:
-#			print 'services.py            '+self.cleanName+':'+self.fileIniData['COMMAND']
 			return {
 				'serviceName'		: self.cleanName,
 				'serviceCommand'	: self.fileIniData['COMMAND']
@@ -88,19 +91,13 @@ class Service(object):
 	def checkFileIni(self):
 		self.checkFileIniPattern()
 		self.checkFileIniVarToTag()
-		#self.checkFileIniCommand()	# TODO
 
 
 	def checkFileIniPattern(self):
-#		print 'PATTERN ?'
 		try:
 			self.fileIniData[config.iniPatternString]
 		except KeyError:
 			controller.die({ 'exitMessage' : 'Key error  : key "'+config.iniPatternString+'" not found in "'+self.fileIni.name})
-
-#		print config.iniPatternString
-#		print self.fileIniData[config.iniPatternString]
-#		controller.die({ 'exitMessage' : 'BLA!'+self.fileIni.name})
 
 
 	def checkFileIniVarToTag(self):

@@ -20,16 +20,22 @@
 
 
 from modules import config
-#            self.c=c	# looking for a cleaner way to do this ;-)
+
 
 class Controller(object):
 	def __init__(self):
-            self.mySys	= __import__('sys')	# http://effbot.org/zone/import-confusion.htm
+		self.mySys	= __import__('sys')
 
 
 	def die(self,params):
-            """ Display an error message and leave the program. """
-            print params['exitMessage']
-            print config.messageDie
-            self.mySys.exit(2)	# http://docs.python.org/library/sys.html#sys.exit
+		""" Display an error message and leave the program. """
+		print params['exitMessage']
+		print config.messageDie
+		self.mySys.exit(2)
 
+
+	def displayStats(self,params):
+		print 'HOSTS    : '+str(params['hosts'])
+		print 'SERVICES : '+str(params['services'])
+		print 'COMMANDS : '+str(params['commands'])
+	

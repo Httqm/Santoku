@@ -34,7 +34,8 @@ class AllHosts(object):
 	def __init__(self):
 		self.loadIniFiles()
 		self.loadPatterns()
-		self.output=''
+		self.output	= ''
+		self.number	= 0
 
 
 	def loadIniFiles(self):
@@ -87,6 +88,10 @@ class AllHosts(object):
 			'pattern'	: self.directives[config.iniPatternString],
 			'variable2tag'	: self.directives[config.iniVarToTagString]
 			})
+
+
+	def count(self):
+		self.number+=1
 
 
 

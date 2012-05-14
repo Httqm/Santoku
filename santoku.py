@@ -82,6 +82,7 @@ for hostName in csvData:	# 'hostName' is the key of the 'csvData' dict
 	csvData[hostName]['hostDirectives']	= host.loadDirectives()
 
 	allHosts.output	+= host.applyHostPattern(csvData[hostName])
+	allHosts.count()
 
 	hostgroups.addHostToGroups({
 		'host'		: hostName,
@@ -119,7 +120,7 @@ for hostName in csvData:	# 'hostName' is the key of the 'csvData' dict
 					})
 
 			allServices.output+=service.make()
-
+			allServices.count()
 
 # host loop done : we've seen all hosts. Let's build hostgroups
 allHosts.output+=hostgroups.make()
@@ -139,6 +140,11 @@ outputFileCommands	= FileOutput({ 'name' : config.outputPath+config.outputFileCo
 outputFileCommands.write(allCommands.getOutput())
 
 
+controller.displayStats({
+		'hosts'		: allHosts.number,
+		'services'	: allServices.number,
+		'commands'	: allCommands.getCount()
+		})
 ########################################## ##########################################################
 # the end!
 ########################################## ##########################################################
