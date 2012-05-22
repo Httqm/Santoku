@@ -35,7 +35,10 @@ class AllHosts(object):
 		self.loadIniFiles()
 		self.loadPatterns()
 		self.output	= ''
-		self.number	= 0
+		self.number	= {
+			'valid'		: 0,
+			'ignored'	: 0
+			}
 
 
 	def loadIniFiles(self):
@@ -90,8 +93,8 @@ class AllHosts(object):
 			})
 
 
-	def count(self):
-		self.number+=1
+	def count(self,hostType):
+		self.number[hostType]+=1
 
 
 

@@ -37,12 +37,13 @@ class Pattern(object):
 
 
 	def apply(self,values):
-		""" Perform substitutions over a copy of the pattern, so that the pattern is not altered """
+		""" Perform substitutions of tags with their values in the pattern """
 		patternCopy		= self.pattern	# so that pattern is not altered
 		self.values		= values
 		for tag in self.variable2tag:
 			self.checkTagValueExists(tag)
-			patternCopy	= patternCopy.replace(tag,self.values[self.variable2tag[tag]])
+			patternCopy	= patternCopy.replace(tag,str(self.values[self.variable2tag[tag]]))
+			# /!\ args for replace must be strings. Otherwise "expected a character buffer object" error
 		return patternCopy
 
 

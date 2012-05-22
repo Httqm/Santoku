@@ -37,6 +37,7 @@ csvFileParamFs		= '|'		# separator used when a CSV cell contains several values
 fileHostIni		= 'host.ini'
 fileHostgroupIni	= 'hostgroup.ini'
 fileDirectivesIni	= 'directives.ini'
+fileSummaryIni		= 'summary.ini'
 
 # OUTPUT files
 outputPath		= './output/'

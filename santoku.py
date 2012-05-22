@@ -27,6 +27,7 @@ from modules import hosts
 from modules import hostgroups
 from modules import pattern
 from modules import services
+from modules import summary
 
 # local names for imported classes
 AllCommands	= commands.AllCommands
@@ -40,6 +41,7 @@ Host		= hosts.Host
 Hostgroups	= hostgroups.Hostgroups
 Pattern		= pattern.Pattern
 Service		= services.Service
+Summary		= summary.Summary
 
 ########################################## ##########################################################
 # main()
@@ -53,7 +55,6 @@ fileCsv	= FileCsv({
 		'fs'	: config.csvFileFs
 		})
 csvData		= fileCsv.getData()
-#print csvData
 
 allCommands	= AllCommands()
 allHosts	= AllHosts()
@@ -75,12 +76,13 @@ for hostId in csvData.keys():
 		})
 
 	if host.isMarkedToBeIgnored() :
+		allHosts.count('ignored')
 		continue
 
 	csvData[hostId]['hostDirectives']	= host.loadDirectives()
 
 	allHosts.output	+= host.applyHostPattern(csvData[hostId])
-	allHosts.count()
+	allHosts.count('valid')
 
 	hostgroups.addHostToGroups({
 		'host'		: csvData[hostId][config.csvHeaderHostName],
@@ -139,10 +141,21 @@ outputFileCommands	= FileOutput({ 'name' : config.outputPath+config.outputFileCo
 outputFileCommands.write(allCommands.getOutput())
 
 
+########################################## ##########################################################
+# Summary
+########################################## ##########################################################
+"""
 controller.displayStats({
 		'hosts'		: allHosts.number,
 		'services'	: allServices.number,
 		'commands'	: allCommands.getCount()
+		})
+"""
+summary=Summary()
+print summary.make({
+		'total'		: allHosts.number['valid']+allHosts.number['ignored'],
+		'valid'		: allHosts.number['valid'],
+		'ignored'	: allHosts.number['ignored']
 		})
 ########################################## ##########################################################
 # the end!
