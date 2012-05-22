@@ -28,7 +28,8 @@ configFilesPath		= './config/'
 
 # CSV file
 #csvFileName		= 'file.csv'
-csvFileName		= 'hostsOBS.csv'
+#csvFileName		= 'hostsOBS.csv'
+csvFileName		= 'hostsOBS_light.csv'
 csvFileFs		= ';'		# CSV field separator
 csvFileParamFs		= '|'		# separator used when a CSV cell contains several values
 

@@ -53,7 +53,7 @@ fileCsv	= FileCsv({
 		'fs'	: config.csvFileFs
 		})
 csvData		= fileCsv.getData()
-
+#print csvData
 
 allCommands	= AllCommands()
 allHosts	= AllHosts()
@@ -65,28 +65,26 @@ serviceList	= allServices.getList(fileCsv.getHeader())
 ########################################## ##########################################################
 # Looping on hosts
 ########################################## ##########################################################
-for hostName in csvData:	# 'hostName' is the key of the 'csvData' dict
+for hostId in csvData.keys():
 
 	host	= Host({
-		'data'		: csvData[hostName],
+		'data'		: csvData[hostId],
 		'csvFileName'	: fileCsv.name,
 		'controller'	: controller,
 		'allHosts'	: allHosts
 		})
 
-	groupsHostBelongsTo	= host.loadHostGroupsFromCsv()
-
 	if host.isMarkedToBeIgnored() :
 		continue
 
-	csvData[hostName]['hostDirectives']	= host.loadDirectives()
+	csvData[hostId]['hostDirectives']	= host.loadDirectives()
 
-	allHosts.output	+= host.applyHostPattern(csvData[hostName])
+	allHosts.output	+= host.applyHostPattern(csvData[hostId])
 	allHosts.count()
 
 	hostgroups.addHostToGroups({
-		'host'		: hostName,
-		'groups'	: groupsHostBelongsTo
+		'host'		: csvData[hostId][config.csvHeaderHostName],
+		'groups'	: host.loadHostGroupsFromCsv()
 		})
 
 	################################## ##########################################################
@@ -97,7 +95,7 @@ for hostName in csvData:	# 'hostName' is the key of the 'csvData' dict
 	for singleServiceCsvName in serviceList:
 
 		service=Service({
-				'currentCsvLine'	: csvData[hostName],
+				'currentCsvLine'	: csvData[hostId],
 				'serviceCsvName'	: singleServiceCsvName
 				})
 
@@ -113,18 +111,19 @@ for hostName in csvData:	# 'hostName' is the key of the 'csvData' dict
 
 			result	= service.buildArrayOfServices({
 					'name'			: serviceName,
-					'hostName'		: hostName,
+					'hostName'		: csvData[hostId][config.csvHeaderHostName],
 					'csvHeader'		: fileCsv.getHeader(),
-					'csvDataLine'		: csvData[hostName],
+					'csvDataLine'		: csvData[hostId],
 					'serviceDirectives'	: serviceDirectives
 					})
 
 			allServices.output+=service.make()
 			allServices.count()
 
+
 # host loop done : we've seen all hosts. Let's build hostgroups
 allHosts.output+=hostgroups.make()
-	
+
 
 ########################################## ##########################################################
 # Write results to files

@@ -189,13 +189,11 @@ class FileCsv(Fichier):
 	def readCsvDataIgnoringHeaders(self):
 		import fileinput
 		csvData	= {}
-		lineNb	= 0
+		lineNb	= -1	# hack so that the 1st host has the ID '1'
 		for line in fileinput.input([self.name]):
-
-			# skip CSV headers line
 			lineNb+=1
-			if(lineNb==1):
-				continue
+			if(lineNb==0):
+				continue	# skip CSV headers line
 
 			ligne		= line.split(self.fs)
 			host_name	= ligne[self.columnTextToNumber[config.csvHeaderHostName]].strip('"')
@@ -204,7 +202,7 @@ class FileCsv(Fichier):
 			for clefs in self.columNumberToText.keys():
 				hostFields[self.columNumberToText[clefs]]=ligne[clefs].strip('"')
 
-			csvData[host_name]=hostFields
+			csvData[lineNb]=hostFields
 
 		self.data	= csvData
 
@@ -216,8 +214,8 @@ class FileCsv(Fichier):
 		- column text to column number
 		"""
 		try:
-			infile		= open(self.name,'r')
-			self.header	= infile.readline()
+			inputFile	= open(self.name,'r')
+			self.header	= inputFile.readline()
 		except IOError:
 			controller.die({ 'exitMessage' : 'Source CSV file "'+self.name+'" declared in "'+config.configFile+'" not found.'})
 

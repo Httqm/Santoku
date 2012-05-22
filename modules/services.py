@@ -52,7 +52,6 @@ class AllServices(object):
 		self.number+=1
 
 
-
 class Service(object):
 
 	def __init__(self,params):
@@ -225,5 +224,6 @@ class Service(object):
 		tmp=''
 		for i in xrange(self.result['maxRounds']):
 			tmp+=self.patternService.apply(self.result['champsValeurs'][i])+"\n"
+#		print tmp
 		return tmp
 
