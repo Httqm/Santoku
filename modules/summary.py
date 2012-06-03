@@ -57,6 +57,7 @@ class Summary(object):
 				'nbHostsTotal'		: params['hostsTotal'],
 				'nbHostsValid'		: params['hostsValid'],
 				'nbHostsIgnored'	: params['hostsIgnored'],
+				'nbHostsDuplicated'	: params['hostsDuplicated'],
 				'nbServicesTotal'	: params['servicesTotal'],
 				'nbCommandsTotal'	: params['commandsTotal'],
 				})

@@ -68,24 +68,27 @@ for hostId in csvData.keys():
 
 	host	= Host({
 		'data'		: csvData[hostId],
-		'csvFileName'	: fileCsv.name,
-		'controller'	: controller,
+		'csvFileName'	: fileCsv.name,		# <=== WHY ? (TODO)
+		'controller'	: controller,		# <=== WHY ? (TODO)
 		'allHosts'	: allHosts
 		})
 
 	if host.isMarkedToBeIgnored() :
-		allHosts.count('ignored')
+		allHosts.incrementCountOf('ignored')
 		continue
 
-	csvData[hostId]['hostDirectives']	= host.loadDirectives()
+	if host.isDuplicated():
+		allHosts.incrementCountOf('duplicated')
+	else:
+		csvData[hostId]['hostDirectives'] = host.loadDirectives()
+	
+		allHosts.output	+= host.applyHostPattern(csvData[hostId])
+		allHosts.incrementCountOf('valid')
 
-	allHosts.output	+= host.applyHostPattern(csvData[hostId])
-	allHosts.count('valid')
-
-	hostgroups.addHostToGroups({
-		'host'		: csvData[hostId][config.csvHeaderHostName],
-		'groups'	: host.loadHostGroupsFromCsv()
-		})
+		hostgroups.addHostToGroups({
+			'host'		: csvData[hostId][config.csvHeaderHostName],
+			'groups'	: host.loadHostGroupsFromCsv()
+			})
 
 	################################## ##########################################################
 	# Looping on services
@@ -144,11 +147,12 @@ outputFileCommands.write(allCommands.getOutput())
 ########################################## ##########################################################
 summary=Summary()
 print summary.make({
-		'hostsTotal'	: allHosts.number['valid']+allHosts.number['ignored'],
-		'hostsValid'	: allHosts.number['valid'],
-		'hostsIgnored'	: allHosts.number['ignored'],
-		'servicesTotal'	: allServices.number,
-		'commandsTotal'	: allCommands.number
+		'hostsTotal'		: allHosts.number['valid']+allHosts.number['ignored'],
+		'hostsValid'		: allHosts.number['valid'],
+		'hostsIgnored'		: allHosts.number['ignored'],
+		'hostsDuplicated'	: allHosts.number['duplicated'],
+		'servicesTotal'		: allServices.number,
+		'commandsTotal'		: allCommands.number
 		})
 ########################################## ##########################################################
 # the end!

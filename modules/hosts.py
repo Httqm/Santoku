@@ -37,7 +37,8 @@ class AllHosts(object):
 		self.output	= ''
 		self.number	= {
 			'valid'		: 0,
-			'ignored'	: 0
+			'ignored'	: 0,
+			'duplicated'	: 0
 			}
 
 
@@ -93,7 +94,7 @@ class AllHosts(object):
 			})
 
 
-	def count(self,hostType):
+	def incrementCountOf(self,hostType):
 		self.number[hostType]+=1
 
 
@@ -110,6 +111,17 @@ class Host(object):
 
 	def isMarkedToBeIgnored(self):
 		return 1 if self.hostData[config.csvHeaderIgnoreHost]=='1' else 0
+
+
+	def isDuplicated(self):
+		"""
+		A host may appear on several lines of the source CSV file.
+		This is especially true with 'virtual' hosts that are not attached to a physical machine.
+		Such hosts are then called 'duplicated'.
+		"""
+		import re
+		match = re.search(self.hostData[config.csvHeaderHostName], self.allHosts.output)
+		return 1 if match else 0
 
 
 	def loadDirectives(self):
@@ -140,7 +152,6 @@ class Host(object):
 			self.hostData[config.csvHostDirectivesValues]
 		except KeyError:
 			self.controller.die({ 'exitMessage' : 'Key error : key "'+config.csvHostDirectivesValues+'" not found in "'+self.csvFileName+'"'})
-
 
 
 	def applyHostPattern(self,values):
