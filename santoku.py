@@ -46,10 +46,8 @@ Summary		= summary.Summary
 ########################################## ##########################################################
 # main()
 ########################################## ##########################################################
-
 controller	= Controller()
 
-# Load host data from CSV
 fileCsv	= FileCsv({
 		'name'	: config.csvFileName,
 		'fs'	: config.csvFileFs
@@ -144,18 +142,13 @@ outputFileCommands.write(allCommands.getOutput())
 ########################################## ##########################################################
 # Summary
 ########################################## ##########################################################
-"""
-controller.displayStats({
-		'hosts'		: allHosts.number,
-		'services'	: allServices.number,
-		'commands'	: allCommands.getCount()
-		})
-"""
 summary=Summary()
 print summary.make({
-		'total'		: allHosts.number['valid']+allHosts.number['ignored'],
-		'valid'		: allHosts.number['valid'],
-		'ignored'	: allHosts.number['ignored']
+		'hostsTotal'	: allHosts.number['valid']+allHosts.number['ignored'],
+		'hostsValid'	: allHosts.number['valid'],
+		'hostsIgnored'	: allHosts.number['ignored'],
+		'servicesTotal'	: allServices.number,
+		'commandsTotal'	: allCommands.number
 		})
 ########################################## ##########################################################
 # the end!

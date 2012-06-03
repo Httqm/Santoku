@@ -50,7 +50,13 @@ class Summary(object):
 
 	def make(self,params):
 		return self.summaryPattern.apply({
-				'nbHostsTotal'		: params['total'],
-				'nbHostsValid'		: params['valid'],
-				'nbHostsIgnored'	: params['ignored']
+				'fileCsv'		: config.configFilesPath+config.csvFileName,
+				'fileHosts'		: config.outputPath+config.outputFileHosts,
+				'fileServices'		: config.outputPath+config.outputFileServices,
+				'fileCommands'		: config.outputPath+config.outputFileCommands,
+				'nbHostsTotal'		: params['hostsTotal'],
+				'nbHostsValid'		: params['hostsValid'],
+				'nbHostsIgnored'	: params['hostsIgnored'],
+				'nbServicesTotal'	: params['servicesTotal'],
+				'nbCommandsTotal'	: params['commandsTotal'],
 				})

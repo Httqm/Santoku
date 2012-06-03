@@ -27,14 +27,11 @@ class AllCommands(object):
 
 
 	def add(self,commandData):
-		self.commands[commandData['serviceName']]=commandData['serviceCommand']
+		self.commands[commandData['serviceName']]	= commandData['serviceCommand']
+		self.number					= len(self.commands)
 
 
 	def getOutput(self):
 		for serviceName in self.commands:
 			self.output+=self.commands[serviceName]+"\n"
 		return self.output
-
-
-	def getCount(self):
-		return len(self.commands)

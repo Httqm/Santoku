@@ -32,10 +32,3 @@ class Controller(object):
 		print params['exitMessage']
 		print config.messageDie
 		self.mySys.exit(2)
-
-
-	def displayStats(self,params):
-		print 'HOSTS    : '+str(params['hosts'])
-		print 'SERVICES : '+str(params['services'])
-		print 'COMMANDS : '+str(params['commands'])
-	
