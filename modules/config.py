@@ -84,3 +84,13 @@ iniPatternString	= 'PATTERN'
 iniVarToTagString	= 'VARIABLE2TAG'
 iniVarToTagStanzaFs	= '='
 iniCommandString	= 'COMMAND'
+
+
+########################################## ##########################################################
+# NAGIOS / SHINKEN .cfg DIRECTIVES
+# Values below are there just to avoid hardcoding.
+#
+# DON'T CHANGE THEM !
+########################################## ##########################################################
+commandDirectiveInServiceDefinition	='check_command'
+commandDirectiveInCommandDefinition	= 'command_name'

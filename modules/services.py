@@ -73,7 +73,6 @@ class Service(object):
 			'fs'	: ''
 			})
 		self.fileIniData	= self.fileIni.getData()
-
 		self.checkFileIni()
 
 
@@ -90,6 +89,31 @@ class Service(object):
 	def checkFileIni(self):
 		self.checkFileIniPattern()
 		self.checkFileIniVarToTag()
+		self.checkFileIniCommandNamesMatch()
+
+
+	def checkFileIniCommandNamesMatch(self):
+		commandInPatternStanza = self.getCommandValueFromStanza({
+				'directive'	: config.commandDirectiveInServiceDefinition,
+				'stanzaTitle'	: config.iniPatternString
+				})
+
+		commandInCommandStanza = self.getCommandValueFromStanza({
+				'directive'	: config.commandDirectiveInCommandDefinition,
+				'stanzaTitle'	: config.iniCommandString
+				})
+
+		if commandInPatternStanza != commandInCommandStanza:
+			controller.die({ 'exitMessage' : 'Commands don\'t match between the "'+config.iniPatternString+'" ('+config.commandDirectiveInServiceDefinition+' '+commandInPatternStanza+') and the "'+config.iniCommandString+'" ('+config.commandDirectiveInCommandDefinition+' '+commandInCommandStanza+') stanzas of config file "'+self.fileIni.name+'"'})
+
+
+	def getCommandValueFromStanza(self, params):
+		import re
+		match = re.search('\s'+params['directive']+'\s+(\w*)', self.fileIniData[params['stanzaTitle']])
+		if match:
+			return match.group(1)
+		else:
+			controller.die({ 'exitMessage' : '"'+params['directive']+'" directive not found in "'+params['stanzaTitle']+'" stanza of config file "'+self.fileIni.name+'"'})
 
 
 	def checkFileIniPattern(self):
