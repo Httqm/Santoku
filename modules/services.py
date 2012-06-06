@@ -40,21 +40,22 @@ class AllServices(object):
 
 
 	def getList(self,csvHeaders):
-		self.list=[]
+		self.list = []
 		for field in csvHeaders:
-			match=re.search('.*'+config.csvHeaderFs+config.csvHeaderDo+'$', field)
+			match = re.search('.*'+config.csvHeaderFs+config.csvHeaderDo+'$', field)
 			if(match):
 				self.list.append(field)
 		return self.list
 
 
 	def count(self):
-		self.number+=1
+		self.number += 1
 
 
 class Service(object):
 
 	def __init__(self,params):
+		self.fileCsv		= params['fileCsv']
 		self.currentCsvLine	= params['currentCsvLine']
 		self.csvServiceName	= params['serviceCsvName']
 		self.cleanName		= self.csvServiceName.replace(config.csvHeaderFs+config.csvHeaderDo,'')
@@ -157,10 +158,12 @@ class Service(object):
 		return self.cleanName
 
 
-	def hasDirectives(self,sourceCsvFile):
+#	def hasDirectives(self,sourceCsvFile):
+	def hasDirectives(self):
 		hasDirectives	= 1
 		for columnName in [self.cleanName+config.csvHeaderFs+config.csvServiceDirectivesNames, self.cleanName+config.csvHeaderFs+config.csvServiceDirectivesValues]:
-			if(sourceCsvFile.columnExists(columnName)):
+#			if(sourceCsvFile.columnExists(columnName)):
+			if(self.fileCsv.columnExists(columnName)):
 				hasDirectives	= hasDirectives and self.currentCsvLine[columnName]
 			else:
 				hasDirectives	= 0
@@ -177,7 +180,7 @@ class Service(object):
 	def applyServiceDirectivesPattern(self):
 		self.serviceDirectives	= ''
 		for name,value in enumerate(self.directives['names']):
-			self.serviceDirectives+=self.patternDirectives.apply({
+			self.serviceDirectives += self.patternDirectives.apply({
 				'directiveName'		: self.directives['names'][name],
 				'directiveValue'	: self.directives['values'][name]
 				})
@@ -213,12 +216,13 @@ class Service(object):
 				except IndexError:
 					tmpValue	= valuesOfMultiValuedCell[0]
 
-				champsValeurs[currentRound][serviceField]=tmpValue
+				champsValeurs[currentRound][serviceField] = tmpValue
 
-			currentRound+=1
+			currentRound += 1
 		
-		self.result=	{ 'champsValeurs' : champsValeurs, 'maxRounds' : maxRounds }
-		return self.result
+		self.result	= { 'champsValeurs' : champsValeurs, 'maxRounds' : maxRounds }
+#		controller.showDebug(self.result)
+#		return self.result
 
 
 	def loadServiceData(self,params):
@@ -228,25 +232,28 @@ class Service(object):
 		- cell values (including multiple values and field separators if any)
 		"""
 		import re
-		serviceCsvData={}
+		serviceCsvData = {}
 
 		# storing CSV data in a dict to play with it later
 		for field in params['csvHeader']:
-			match=re.search(self.cleanName+config.csvHeaderFs+'.*', field)
+			match = re.search(self.cleanName + config.csvHeaderFs+'.*', field)
 			if(match):
 				# parsing all CSV columns related to this service
-				serviceCsvData[field.replace(self.cleanName+config.csvHeaderFs,'')]=params['csvDataLine'][field]
+				serviceCsvData[field.replace(self.cleanName+config.csvHeaderFs,'')] = params['csvDataLine'][field]
 
 		# appending 'serviceDirectives'
 		# serviceCsvData contains 2 useless keys : 'serviceDirectivesNames' and 'serviceDirectivesValues'
-		serviceCsvData['serviceDirectives']=params['serviceDirectives']
+		serviceCsvData['serviceDirectives'] = params['serviceDirectives']
 
+#		controller.showDebug(serviceCsvData)
 		return serviceCsvData
 
 
-	def make(self):
-		tmp=''
+	def make(self,allServices):
+		tmp = ''
 		for i in xrange(self.result['maxRounds']):
-			tmp+=self.patternService.apply(self.result['champsValeurs'][i])+"\n"
+			tmp += self.patternService.apply(self.result['champsValeurs'][i])+"\n"
+#			controller.showDebug('BUILD 1 SERVICE')
+			allServices.count()
 		return tmp
 

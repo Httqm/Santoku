@@ -11,7 +11,7 @@
 #
 # Santoku is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the
 # GNU Affero General Public License for more details.
 #
 # You should have received a copy of the GNU Affero General Public License
@@ -49,9 +49,9 @@ Summary		= summary.Summary
 controller	= Controller()
 
 fileCsv	= FileCsv({
-		'name'	: config.csvFileName,
-		'fs'	: config.csvFileFs
-		})
+	'name'	: config.csvFileName,
+	'fs'	: config.csvFileFs
+	})
 csvData		= fileCsv.getData()
 
 allCommands	= AllCommands()
@@ -67,7 +67,7 @@ serviceList	= allServices.getList(fileCsv.getHeader())
 for hostId in csvData.keys():
 
 	host	= Host({
-		'data'		: csvData[hostId],
+		'data'	: csvData[hostId],
 		'allHosts'	: allHosts
 		})
 
@@ -79,8 +79,8 @@ for hostId in csvData.keys():
 		allHosts.incrementCountOf('duplicated')
 	else:
 		csvData[hostId]['hostDirectives'] = host.loadDirectives()
-	
-		allHosts.output	+= host.applyHostPattern(csvData[hostId])
+
+		allHosts.output += host.applyHostPattern(csvData[hostId])
 		allHosts.incrementCountOf('valid')
 
 		hostgroups.addHostToGroups({
@@ -95,63 +95,65 @@ for hostId in csvData.keys():
 	# serviceList is the list of all '*:do' CSV columns : ['check_filesystem:do', 'check_bidule:do']
 	for singleServiceCsvName in serviceList:
 
-		service=Service({
-				'currentCsvLine'	: csvData[hostId],
-				'serviceCsvName'	: singleServiceCsvName
-				})
+		service = Service({
+			'fileCsv'		: fileCsv,
+			'currentCsvLine'	: csvData[hostId],
+			'serviceCsvName'	: singleServiceCsvName
+			})
 
 		if service.isEnabled():
+			#controller.showDebug('SANTOKU : '+singleServiceCsvName+' IS ENABLED')
 
 			allCommands.add(service.getCommand())
 
 			serviceName		= service.getName()
+
 			serviceDirectives	= ''
-			if service.hasDirectives(fileCsv):
+			if service.hasDirectives():
 				service.loadDirectivesFromCsvData()
 				serviceDirectives	= service.applyServiceDirectivesPattern()
 
-			result	= service.buildArrayOfServices({
-					'name'			: serviceName,
-					'hostName'		: csvData[hostId][config.csvHeaderHostName],
-					'csvHeader'		: fileCsv.getHeader(),
-					'csvDataLine'		: csvData[hostId],
-					'serviceDirectives'	: serviceDirectives
-					})
+			service.buildArrayOfServices({
+				'name'			: serviceName,
+				'hostName'		: csvData[hostId][config.csvHeaderHostName],
+				'csvHeader'		: fileCsv.getHeader(),
+				'csvDataLine'		: csvData[hostId],
+				'serviceDirectives'	: serviceDirectives
+				})
 
-			allServices.output+=service.make()
-			allServices.count()
+			allServices.output += service.make(allServices)	# <== TODO : clean this
 
 
 # host loop done : we've seen all hosts. Let's build hostgroups
-allHosts.output+=hostgroups.make()
+allHosts.output += hostgroups.make()
 
 
 ########################################## ##########################################################
 # Write results to files
 ########################################## ##########################################################
 
-outputFileHosts		= FileOutput({ 'name' : config.outputPath+config.outputFileHosts })
+outputFileHosts	     = FileOutput({ 'name' : config.outputPath+config.outputFileHosts })
 outputFileHosts.write(allHosts.output)
 
-outputFileServices	= FileOutput({ 'name' : config.outputPath+config.outputFileServices })
+outputFileServices  = FileOutput({ 'name' : config.outputPath+config.outputFileServices })
 outputFileServices.write(allServices.output)
 
-outputFileCommands	= FileOutput({ 'name' : config.outputPath+config.outputFileCommands })
+outputFileCommands  = FileOutput({ 'name' : config.outputPath+config.outputFileCommands })
 outputFileCommands.write(allCommands.getOutput())
 
 
 ########################################## ##########################################################
 # Summary
 ########################################## ##########################################################
-summary=Summary()
+summary = Summary()
 print summary.make({
-		'hostsTotal'		: allHosts.number['valid']+allHosts.number['ignored'],
-		'hostsValid'		: allHosts.number['valid'],
-		'hostsIgnored'		: allHosts.number['ignored'],
-		'hostsDuplicated'	: allHosts.number['duplicated'],
-		'servicesTotal'		: allServices.number,
-		'commandsTotal'		: allCommands.number
-		})
+	'hostsTotal'		: allHosts.number['valid']+allHosts.number['ignored'],
+	'hostsValid'		: allHosts.number['valid'],
+	'hostsIgnored'		: allHosts.number['ignored'],
+	'hostsDuplicated'	: allHosts.number['duplicated'],
+	'servicesTotal'		: allServices.number,
+	'commandsTotal'		: allCommands.number
+	})
 ########################################## ##########################################################
 # the end!
 ########################################## ##########################################################

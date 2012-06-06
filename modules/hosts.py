@@ -48,11 +48,11 @@ class AllHosts(object):
 
 
 	def loadIniFile(self):
-		fileIniHost	= FileIni({
+		self.fileIniHost	= FileIni({
 			'name'	: config.configFilesPath+config.fileHostIni,
 			'fs'	: '',
 			})
-		self.iniFileData	= fileIniHost.getData()
+		self.iniFileData	= self.fileIniHost.getData()
 		self.checkIniFile()
 
 
@@ -69,18 +69,20 @@ class AllHosts(object):
 		self.searchVariablesStanza()
 
 
+	# TODO : duplicate code below !!!!!
 	def searchPatternStanza(self):
 		try:
 			self.iniFileData[config.iniPatternString]
 		except KeyError:
-			controller.die({ 'exitMessage' : 'Key error  : key "'+config.iniPatternString+'" not found in "'+fileIniHost.name})
+			controller.die({ 'exitMessage' : 'Key error  : key "'+config.iniPatternString+'" not found in "'+self.fileIniHost.name})
 
 
 	def searchVariablesStanza(self):
 		try:
 			self.iniFileData[config.iniVarToTagString]
 		except KeyError:
-			controller.die({ 'exitMessage' : 'Key error  : key "'+config.iniVarToTagString+'" not found in "'+fileIniHost.name})
+			controller.die({ 'exitMessage' : 'Key error  : key "'+config.iniVarToTagString+'" not found in "'+self.fileIniHost.name})
+	# /TODO
 
 
 	def loadPatterns(self):

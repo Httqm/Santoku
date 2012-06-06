@@ -44,4 +44,3 @@ class Controller(object):
 			    + ' || CALLER  : ' + str(inspect.stack()[1][3]) + "\n" \
 			    + ' || MESSAGE : ' + str(message) + "\n" \
 			    + " ++================== /DEBUG =========================\n" \
-			    + "\n"

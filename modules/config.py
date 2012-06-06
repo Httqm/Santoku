@@ -23,13 +23,13 @@
 # FILES AND FOLDERS
 ########################################## ##########################################################
 # common
-configFile		= __file__	# This is used to point to THIS file in error messages, don't change it !
+configFile		= __file__	# This is used to point to THIS file in error messages. DON'T CHANGE THIS !
 configFilesPath		= './config/'
 
 # CSV file
-#csvFileName		= 'file.csv'
+csvFileName		= 'file.csv'
 #csvFileName		= 'hostsOBS.csv'
-csvFileName		= 'hostsOBS_light.csv'
+#csvFileName		= 'hostsOBS_light.csv'
 csvFileFs		= ';'		# CSV field separator
 csvFileParamFs		= '|'		# separator used when a CSV cell contains several values
 
@@ -47,10 +47,10 @@ outputFileCommands	= 'commands.cfg'
 
 
 ########################################## ##########################################################
-# OUTPUT MESSAGES
+# OUTPUT MESSAGES & DEBUG
 ########################################## ##########################################################
 messageDie		= 'Tennoheika, banzai !!! (seppuku...)'
-
+debug			= 1	# 0|1
 
 ########################################## ##########################################################
 # CSV COSMETICS
@@ -90,7 +90,7 @@ iniCommandString	= 'COMMAND'
 # NAGIOS / SHINKEN .cfg DIRECTIVES
 # Values below are there just to avoid hardcoding.
 #
-# DON'T CHANGE THEM !
+# DON'T CHANGE THIS !
 ########################################## ##########################################################
-commandDirectiveInServiceDefinition	='check_command'
+commandDirectiveInServiceDefinition	= 'check_command'
 commandDirectiveInCommandDefinition	= 'command_name'
