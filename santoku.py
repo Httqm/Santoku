@@ -68,8 +68,6 @@ for hostId in csvData.keys():
 
 	host	= Host({
 		'data'		: csvData[hostId],
-		'csvFileName'	: fileCsv.name,		# <=== WHY ? (TODO)
-		'controller'	: controller,		# <=== WHY ? (TODO)
 		'allHosts'	: allHosts
 		})
 

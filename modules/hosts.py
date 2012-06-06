@@ -102,11 +102,9 @@ class AllHosts(object):
 class Host(object):
 	def __init__(self,params):
 		""" Get a CSV line 'hostData' to play with. """
-		self.hostData		= params['data']
-		self.csvFileName	= params['csvFileName']
-		self.controller		= params['controller']
-		self.pattern		= {}
-		self.allHosts		= params['allHosts']
+		self.hostData	= params['data']
+		self.pattern	= {}
+		self.allHosts	= params['allHosts']
 
 
 	def isMarkedToBeIgnored(self):
@@ -144,14 +142,14 @@ class Host(object):
 		try:
 			self.hostData[config.csvHostDirectivesNames]
 		except KeyError:
-			self.controller.die({ 'exitMessage' : 'Key error : key "'+config.csvHostDirectivesNames+'" not found in "'+self.csvFileName+'"'})
+			controller.die({ 'exitMessage' : 'Key error : key "'+config.csvHostDirectivesNames+'" not found in "'+config.csvFileName+'"'})
 
 
 	def searchCsvHostDirectivesValues(self):
 		try:
 			self.hostData[config.csvHostDirectivesValues]
 		except KeyError:
-			self.controller.die({ 'exitMessage' : 'Key error : key "'+config.csvHostDirectivesValues+'" not found in "'+self.csvFileName+'"'})
+			controller.die({ 'exitMessage' : 'Key error : key "'+config.csvHostDirectivesValues+'" not found in "'+config.csvFileName+'"'})
 
 
 	def applyHostPattern(self,values):
