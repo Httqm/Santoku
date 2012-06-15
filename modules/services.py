@@ -151,18 +151,16 @@ class Service(object):
 
 
 	def isEnabled(self):
-		return 1 if self.currentCsvLine[self.csvServiceName]=='1' else 0
+		return 1 if self.currentCsvLine[self.csvServiceName] == '1' else 0
 
 
 	def getName(self):
 		return self.cleanName
 
 
-#	def hasDirectives(self,sourceCsvFile):
 	def hasDirectives(self):
 		hasDirectives	= 1
 		for columnName in [self.cleanName+config.csvHeaderFs+config.csvServiceDirectivesNames, self.cleanName+config.csvHeaderFs+config.csvServiceDirectivesValues]:
-#			if(sourceCsvFile.columnExists(columnName)):
 			if(self.fileCsv.columnExists(columnName)):
 				hasDirectives	= hasDirectives and self.currentCsvLine[columnName]
 			else:

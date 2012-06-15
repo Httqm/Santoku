@@ -23,7 +23,7 @@ from modules import config
 from modules import controller
 import re
 
-controller=controller.Controller()
+controller = controller.Controller()
 
 
 ########################################## ##########################################################
@@ -84,7 +84,7 @@ class FileIni(Fichier):
 		Needles are tags surrounded with '$' signs, i.e. : $EXAMPLETAG$
 		"""
 		# There might be a cleaner way TODO this ;-)
-		if type(self.data[params['needle']]).__name__=='str':
+		if type(self.data[params['needle']]).__name__ == 'str':
 			needlesStanza	= self.data[params['needle']].split("\n")
 		else:
 			needlesStanza	= self.data[params['needle']]
@@ -125,7 +125,7 @@ class FileIni(Fichier):
 					self.checkLineMatchesFormat(line)
 					match	= re.search('^(.+)'+config.iniVarToTagStanzaFs+'(.+)$', line)
 					if(match):
-						self.data[self.sectionType][match.group(2)]=match.group(1)
+						self.data[self.sectionType][match.group(2)] = match.group(1)
 
 
 
@@ -142,7 +142,7 @@ class FileIni(Fichier):
 
 
 	def lineIsAComment(self,line):
-		match=re.search('^#', line)
+		match = re.search('^#', line)
 		if(match):
 			return 1
 		else:
@@ -150,7 +150,7 @@ class FileIni(Fichier):
 
 
 	def lineIsBlank(self,line):
-		match=re.search('^\n$', line)
+		match = re.search('^\n$', line)
 		if(match):
 			return 1
 		else:
@@ -162,7 +162,7 @@ class FileIni(Fichier):
 
 
 	def checkLineMatchesFormat(self,line):
-		match=re.search('^\w+'+config.iniVarToTagStanzaFs+'\$\w+\$$', line)
+		match = re.search('^\w+'+config.iniVarToTagStanzaFs+'\$\w+\$$', line)
 		if match:
 			return line
 		else:
@@ -193,8 +193,8 @@ class FileCsv(Fichier):
 		csvData	= {}
 		lineNb	= -1	# hack so that the 1st host has the ID '1'
 		for line in fileinput.input([self.name]):
-			lineNb+=1
-			if(lineNb==0):
+			lineNb += 1
+			if(lineNb == 0):
 				continue	# skip CSV headers line
 
 			ligne		= line.split(self.fs)
@@ -202,9 +202,9 @@ class FileCsv(Fichier):
 			hostFields	= {}
 
 			for clefs in self.columNumberToText.keys():
-				hostFields[self.columNumberToText[clefs]]=ligne[clefs].strip('"')
+				hostFields[self.columNumberToText[clefs]] = ligne[clefs].strip('"')
 
-			csvData[lineNb]=hostFields
+			csvData[lineNb] = hostFields
 
 		self.data	= csvData
 
@@ -231,7 +231,7 @@ class FileCsv(Fichier):
 			tmp					= champ.strip('"')
 			self.columNumberToText[columnNumber]	= tmp
 			self.columnTextToNumber[tmp]		= columnNumber
-			columnNumber+=1
+			columnNumber += 1
 
 
 	def getHeader(self):
