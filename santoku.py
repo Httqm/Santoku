@@ -69,7 +69,7 @@ serviceList	= allServices.getList(fileCsv.getHeader())
 for hostId in csvData.keys():
 
 	host	= Host({
-		'data'	: csvData[hostId],
+		'data'		: csvData[hostId],
 		'allHosts'	: allHosts
 		})
 

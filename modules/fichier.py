@@ -198,7 +198,6 @@ class FileCsv(Fichier):
 				continue	# skip CSV headers line
 
 			ligne		= line.split(self.fs)
-			#host_name	= ligne[self.columnTextToNumber[config.csvHeaderHostName]].strip('"')
 			hostFields	= {}
 
 			for clefs in self.columNumberToText.keys():

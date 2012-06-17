@@ -33,5 +33,5 @@ class AllCommands(object):
 
 	def getOutput(self):
 		for serviceName in self.commands:
-			self.output+=self.commands[serviceName]+"\n"
+			self.output += self.commands[serviceName] + "\n"
 		return self.output
