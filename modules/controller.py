@@ -24,7 +24,7 @@ from modules import config
 
 class Controller(object):
 	def __init__(self):
-		self.mySys	= __import__('sys')
+		self.mySys = __import__('sys')
 
 
 	def die(self,params):
@@ -44,3 +44,13 @@ class Controller(object):
 			    + ' || CALLER  : ' + str(inspect.stack()[1][3]) + "\n" \
 			    + ' || MESSAGE : ' + str(message) + "\n" \
 			    + " ++================== /DEBUG =========================\n" \
+
+
+	def checkConfigValues(self):
+		self.checkCsvFieldAndListSeparatorsAreDifferent()
+
+
+	def checkCsvFieldAndListSeparatorsAreDifferent(self):
+		if config.csvFileFs == config.csvFileParamFs:
+			self.die({'exitMessage':'The values for the CSV field separator and the CSV list separator must be different in ' + config.configFile})
+

@@ -30,8 +30,8 @@ configFilesPath		= './config/'
 csvFileName		= 'file.csv'
 #csvFileName		= 'hostsOBS.csv'
 #csvFileName		= 'hostsOBS_light.csv'
-csvFileFs		= ';'		# CSV field separator
-csvFileParamFs		= '|'		# separator used when a CSV cell contains several values
+csvFileFs		= ';'		# CSV field separator. Must be different from the CSV list separator below.
+csvFileParamFs		= '|'		# CSV list separator. This is used when a CSV cell contains several values
 
 # INI files
 fileHostIni		= 'host.ini'
@@ -49,7 +49,7 @@ outputFileCommands	= 'commands.cfg'
 ########################################## ##########################################################
 # OUTPUT MESSAGES & DEBUG
 ########################################## ##########################################################
-messageDie		= 'Tennoheika, banzai !!! (seppuku...)'
+messageDie		= 'Tenno Heika Banzai !!! (seppuku...)'
 debug			= 1	# 0|1
 
 ########################################## ##########################################################

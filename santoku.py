@@ -48,6 +48,8 @@ Summary		= summary.Summary
 ########################################## ##########################################################
 controller	= Controller()
 
+controller.checkConfigValues()
+
 fileCsv	= FileCsv({
 	'name'	: config.csvFileName,
 	'fs'	: config.csvFileFs
