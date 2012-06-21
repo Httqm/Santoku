@@ -39,13 +39,20 @@
 					0px 0px 6px rgba(0,0,0,.2);
 				}
 
+			.command, .code {font-family:helvetica;padding:0.2em;font-weight:bold; }
+
+			.command { background-color:black;color:white; }
+			.code { background-color:#aaaaaa;color:#002222; }
+
 			div.chapter { border-style:solid;border-color:red;border-width:0 0 2px 0; font-weight:bold; }
 			.section, .subsection { font-weight:bold;text-decoration:underline; }
 
 			.section { padding-left:1em; }
 			.subsection { padding-left:2em; }
 
-			.file { font-family:"freemono";font-weight:bold;color:#888; }
+			.sw { color: blue;font-family:courier; }
+
+			.file { font-family:"freemono";font-weight:bold;color:#88a; }
 
 /*
 			p::after{content:'Back to top';}
@@ -56,7 +63,7 @@
 
 	<body>
 
-<h1>Santoku</h1>
+<h1><span class="sw">Santoku</span></h1>
 
 
 
@@ -66,23 +73,23 @@
 <!--
 	<li><a href="#"></a></li>
 -->
-	<li><a href="#whatIsSantoku">What is Santoku ?</a>
+	<li><a href="#whatIsSantoku">What is <span class="sw">Santoku</span> ?</a>
 		<ol>
 <!--
 			<li><a href="#"></a></li>
 -->
 			<li><a href="#concept">The concept</a></li>
 			<li><a href="#functions">Functions</a></li>
-			<li><a href="#whySantoku">Why "Santoky" ?</a></li>
+			<li><a href="#whySantoku">Why "<span class="sw">Santoku</span>" ?</a></li>
 			<li><a href="#requirements">Requirements</a></li>
-			<li><a href="#whereDoesSantokuWork">Where does Santoku work ?</a></li>
+			<li><a href="#whereDoesSantokuWork">Where does <span class="sw">Santoku</span> work ?</a></li>
 		</ol>
 	</li>
 	<li><a href="#usage">Usage</a>
 		<ol>
-			<li><a href="#howToGetSantoku">How to get Santoku ?</a></li>
+			<li><a href="#howToGetSantoku">How to get <span class="sw">Santoku</span> ?</a></li>
 			<li><a href="#installation">Installation</a></li>
-			<li><a href="#runningSantoku">Running Santoku</a></li>
+			<li><a href="#runningSantoku">Running <span class="sw">Santoku</span></a></li>
 			<li><a href="#csvFormat">Format of the CSV file</a></li>
 		</ol>
 	</li>
@@ -111,24 +118,30 @@
 
 <div class="chapter">Contents</div>
 
-<h4 class="section" id="whatIsSantoku">What is Santoku ?</h4>
-<p>Santoku is a Python script designed to generate configuration files for Shinken and Nagios from data provided in a CSV file. The CSV file is expected to have a specific format. The generated files are :</p>
+<h4 class="section" id="whatIsSantoku">What is <span class="sw">Santoku</span> ?</h4>
+<p><span class="sw">Santoku</span> is a Python script designed to generate configuration files for <span class="sw">Shinken</span> and <span class="sw">Nagios</span> from data provided in a CSV file. The CSV file is expected to have a <a href="#csvFormat">specific format</a>. The generated files are :</p>
 <ul>
-	<li><span class="file">hosts.cfg</span>, including host groups (done !)</li>
-	<li><span class="file">services.cfg</span> (on going)</li>
-	<li><span class="file">commands.cfg</span> (0% done)</li>
+	<li><span class="file">hosts.cfg</span>, including host groups</li>
+	<li><span class="file">services.cfg</span></li>
+	<li><span class="file">commands.cfg</span></li>
 	<li>and a very basic tabular-presented Nagvis map showing ALL hosts listed in the CSV file (0% done)</li>
 </ul>
-<p>At a previous position, I wrote a PERL script doing all this (except the commands.cfg part). This script still works very well, but because of the numerous plugins / environments / usages it handles, it's now a 50KBytes cluttered script and debugging/updating it has become a nightmare. So I can't even share it with the community.<br />
-This is why I started developping Santoku : I'd like to build a modular tool that others could benefit from, without being developers themselves.</p>
+<p>At a previous position, I wrote a PERL script doing all this (except the <span class="file">commands.cfg</span> part). This script still works very well, but because of the numerous plugins / environments / usages it handles, it's now a 60KBytes cluttered script and debugging/updating it has become a nightmare. So I can't even share it with the community.<br />
+So I started developping <span class="sw">Santoku</span> :
+</p>
+<ul>
+	<li>because I wanted to build a modular tool that others could benefit from, without being developers themselves</li>
+	<li>to improve my Python skills</li>
+	<li>... and because coding is fun ;-)</li>
+</ul>
 
 
 <h5 class="subsection" id="concept">The concept</h5>
 <p>Basically speaking, just consider a few things :</p>
 <ul>
-	<li>a CSV file you can generate with a spreadsheet programm such as (Open|Libre)Office Calc or Microsoft Excel.</li>
-	<li>the Santoku script.</li>
-	<li></li>
+	<li>a CSV file you can generate with a spreadsheet programm such as <span class="sw">(Open|Libre)Office Calc</span> or <span class="sw">Microsoft Excel</span></li>
+	<li>the <span class="sw">Santoku</span> script</li>
+	<li>a configuration file for every plugin you're using</li>
 	<li></li>
 	<li></li>
 </ul>
@@ -136,31 +149,31 @@ This is why I started developping Santoku : I'd like to build a modular tool tha
 <h5 class="subsection" id="functions">Functions</h5>
 <p></p>
 
-<h5 class="subsection" id="whySantoku">Why "Santoky" ?</h5>
-<p>Well, ... there was Batman and Robin. Now, there is Shinken and Santoku :-)<br />
-	Actually, since Santoku is designed to be used together with Shinken, I wanted to name it as a Japanese cutting device. However, since Santoku is a very humble piece of software, I could not name it as a deadly weapon.<br />
+<h5 class="subsection" id="whySantoku">Why "<span class="sw">Santoku</span>" ?</h5>
+<p>Well, ... there was Batman and Robin. Now, there is <span class="sw">Shinken</span> and <span class="sw">Santoku</span> :-)<br />
+	Actually, since <span class="sw">Santoku</span> is designed to be used together with <span class="sw">Shinken</span>, I wanted to name it as a Japanese cutting device. However, since <span class="sw">Santoku</span> is a very humble piece of software, I could not name it as a deadly weapon.<br />
 	A santoku is a <a href="https://en.wikipedia.org/wiki/Santoku">japanese kitchen knife</a>.
 </p>
 
 <h5 class="subsection" id="requirements">Requirements</h5>
 <p></p>
 
-<h5 class="subsection" id="whereDoesSantokuWork">Where does Santoku work ?</h5>
-<p></p>
+<h5 class="subsection" id="whereDoesSantokuWork">Where does <span class="sw">Santoku</span> work ?</h5>
+<p><span class="sw">Santoku</span> is developed on a <span class="sw">Debian</span> Squeeze workstation, with Python 2.6, and using CSV files made with <span class="sw">Calc</span> from <span class="sw">OpenOffice.org</span> 3.2.1 . I expect some minor fixes to support CSV files made with <span class="sw">Microsoft Excel</span>, and to handle files made in a <span class="sw">Microsof Windows</span> environment (line end encoding...). To be done.</p>
 
 
 
 <h4 class="section" id="usage">Usage</h4>
 <p></p>
 
-<h5 class="subsection" id="howToGetSantoku">How to get Santoku ?</h5>
-<p>Vivamus fermentum semper porta. Nunc diam velit, adipiscing ut tristique vitae, sagittis vel odio. Maecenas convallis ullamcorper ultricies. Curabitur ornare, ligula semper consectetur sagittis, nisi diam iaculis velit, id fringilla sem nunc vel mi. Nam dictum, odio nec pretium volutpat, arcu ante placerat erat, non tristique elit urna et turpis. Quisque mi metus, ornare sit amet fermentum et, tincidunt et orci. Fusce eget orci a orci congue vestibulum. Ut dolor diam, elementum et vestibulum eu, porttitor vel elit. Curabitur venenatis pulvinar tellus gravida ornare. Sed et erat faucibus nunc euismod ultricies ut id justo. Nullam cursus suscipit nisi, et ultrices justo sodales nec. Fusce venenatis facilisis lectus ac semper. Aliquam at massa ipsum. Quisque bibendum purus convallis nulla ultrices ultricies. Nullam aliquam, mi eu aliquam tincidunt, purus velit laoreet tortor, viverra pretium nisi quam vitae mi. Fusce vel volutpat elit. Nam sagittis nisi dui.</p>
+<h5 class="subsection" id="howToGetSantoku">How to get <span class="sw">Santoku</span> ?</h5>
+<p class="command">git clone https://github.com/Httqm/Santoku.git</p>
 
 <h5 class="subsection" id="installation">Installation</h5>
-				<p>Suspendisse lectus leo, consectetur in tempor sit amet, placerat quis neque. Etiam luctus porttitor lorem, sed suscipit est rutrum non. Curabitur lobortis nisl a enim congue semper. Aenean commodo ultrices imperdiet. Vestibulum ut justo vel sapien venenatis tincidunt. Phasellus eget dolor sit amet ipsum dapibus condimentum vitae quis lectus. Aliquam ut massa in turpis dapibus convallis. Praesent elit lacus, vestibulum at malesuada et, ornare et est. Ut augue nunc, sodales ut euismod non, adipiscing vitae orci. Mauris ut placerat justo. Mauris in ultricies enim. Quisque nec est eleifend nulla ultrices egestas quis ut quam. Donec sollicitudin lectus a mauris pulvinar id aliquam urna cursus. Cras quis ligula sem, vel elementum mi. Phasellus non ullamcorper urna.</p>
+<p>Simply move the <span class="file">Santoku</span> folder you got with <span class="command">git clone</span> to the desired location. You're done !</p>
 
-<h5 class="subsection" id="runningSantoku">Running Santoku</h5>
-<p></p>
+<h5 class="subsection" id="runningSantoku">Running <span class="sw">Santoku</span></h5>
+<p><span class="sw">Santoku</span> has no command-line flag since every option it requires it stored in its configuration file <span class="file">modules/config.py</span>.<br />To run <span class="sw">Santoku</span>, just type <span class="command">./santoku.py</span></p>
 
 <h5 class="subsection" id="csvFormat">Format of the CSV file</h5>
 <p></p>
@@ -177,7 +190,23 @@ This is why I started developping Santoku : I'd like to build a modular tool tha
 <p></p>
 
 <h4 class="section" id="knownBugsAndLimitations">Known bugs and limitations</h4>
-<p></p>
+<p>Since <span class="sw">Santoku</span> is in its early version, few bugs and limitations are known so far. Here are some important notices :</p>
+<ul>
+	<li>In the <span class="file">commands.cfg</span> file, <span class="sw">Santoku</span> writes the commands related to the plugins execution. In a <span class="sw">Shinken</span> fresh install, the <span class="file">commands.cfg</span> file not only stores the plugin commands, but also the notification commands. So overwriting the default <span class="file">commands.cfg</span> will erase the notification commands. To fix this :
+		<ol>
+			<li>create a <span class="file">commands_notification.cfg</span> file in the folder containing the <span class="file">commands.cfg</span> file on the host running <span class="sw">Shinken</span></li>
+			<li>save the notification commands "notify-host-by-email" and "notify-service-by-email" in <span class="file">commands_notification.cfg</span></li>
+			<li>register <span class="file">commands_notification.cfg</span> in <span class="file">nagios.cfg</span> by declaring it like <span class="file">commands.cfg</span> : <span class="code">cfg_file = commands_notification.cfg</span></li>
+		</ol>
+	</li>
+	<li><span class="sw">Santoku</span> is designed so that, upon error, it exits cleanly with a detailed error message. If it happens to die on a Python error : this is a BUG ! Please report an issue.</li>
+	<li></li>
+	<li></li>
+	<li></li>
+	<li></li>
+	<li></li>
+	<li></li>
+</ul>
 
 
 
