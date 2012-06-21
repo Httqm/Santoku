@@ -42,7 +42,7 @@ class AllServices(object):
 	def getList(self,csvHeaders):
 		self.list = []
 		for field in csvHeaders:
-			match = re.search('.*'+config.csvHeaderFs+config.csvHeaderDo+'$', field)
+			match = re.search('.*' + config.csvHeaderFs + config.csvHeaderDo + '$', field)
 			if(match):
 				self.list.append(field)
 		return self.list
@@ -58,7 +58,7 @@ class Service(object):
 		self.fileCsv		= params['fileCsv']
 		self.currentCsvLine	= params['currentCsvLine']
 		self.csvServiceName	= params['serviceCsvName']
-		self.cleanName		= self.csvServiceName.replace(config.csvHeaderFs+config.csvHeaderDo,'')
+		self.cleanName		= self.csvServiceName.replace(config.csvHeaderFs + config.csvHeaderDo,'')
 		self.loadIniFiles()
 		self.loadPatterns()
 
@@ -70,7 +70,7 @@ class Service(object):
 
 	def loadIniFile(self):
 		self.fileIni	= FileIni({
-			'name'	: config.configFilesPath+self.cleanName+'.ini',
+			'name'	: config.configFilesPath + self.cleanName + '.ini',
 			'fs'	: ''
 			})
 		self.fileIniData	= self.fileIni.getData()
@@ -84,13 +84,21 @@ class Service(object):
 				'serviceCommand'	: self.fileIniData['COMMAND']
 				}
 		except KeyError:
-			controller.die({ 'exitMessage' : 'No command specified for service "'+self.cleanName+'" in config file "'+self.fileIni.name+'"'})
+			controller.die({ 'exitMessage' : 'No command specified for service "' + self.cleanName + '" in config file "' + self.fileIni.name + '"'})
 		
 
 	def checkFileIni(self):
-		self.checkFileIniPattern()
-		self.checkFileIniVarToTag()
+		self.checkFileIniPatternWasLoaded()
+		self.checkFileIniVarToTagWasLoaded()
 		self.checkFileIniCommandNamesMatch()
+		self.checkFileIniBothTagSurroundingCharsAreThere()
+
+
+	def checkFileIniBothTagSurroundingCharsAreThere(self):
+		for stanzaTitle in self.fileIniData:
+			match = re.search('(("|\s)\$[a-zA-Z_:]*("|\s|/))|(("|\s)[a-zA-Z_:]*\$("|\s|/))', str(self.fileIniData[stanzaTitle]))
+			if(match):
+				controller.die({ 'exitMessage' : 'Missing leading/trailing "$" in expression "' + match.group(0) + '" in the "[' + stanzaTitle + ']" section of "' + self.fileIni.name + '"'})
 
 
 	def checkFileIniCommandNamesMatch(self):
@@ -105,30 +113,30 @@ class Service(object):
 				})
 
 		if commandInPatternStanza != commandInCommandStanza:
-			controller.die({ 'exitMessage' : 'Commands don\'t match between the "'+config.iniPatternString+'" ('+config.commandDirectiveInServiceDefinition+' '+commandInPatternStanza+') and the "'+config.iniCommandString+'" ('+config.commandDirectiveInCommandDefinition+' '+commandInCommandStanza+') stanzas of config file "'+self.fileIni.name+'"'})
+			controller.die({ 'exitMessage' : 'Commands don\'t match between the "' + config.iniPatternString + '" (' + config.commandDirectiveInServiceDefinition + ' ' + commandInPatternStanza + ') and the "' + config.iniCommandString + '" (' + config.commandDirectiveInCommandDefinition + ' ' + commandInCommandStanza + ') stanzas of config file "' + self.fileIni.name + '"'})
 
 
 	def getCommandValueFromStanza(self, params):
 		import re
-		match = re.search('\s'+params['directive']+'\s+(\w*)', self.fileIniData[params['stanzaTitle']])
+		match = re.search('\s' + params['directive'] + '\s + (\w*)', self.fileIniData[params['stanzaTitle']])
 		if match:
 			return match.group(1)
 		else:
-			controller.die({ 'exitMessage' : '"'+params['directive']+'" directive not found in "'+params['stanzaTitle']+'" stanza of config file "'+self.fileIni.name+'"'})
+			controller.die({ 'exitMessage' : '"' + params['directive'] + '" directive not found in "' + params['stanzaTitle'] + '" stanza of config file "' + self.fileIni.name + '"'})
 
 
-	def checkFileIniPattern(self):
+	def checkFileIniPatternWasLoaded(self):
 		try:
 			self.fileIniData[config.iniPatternString]
 		except KeyError:
-			controller.die({ 'exitMessage' : 'Key error  : key "'+config.iniPatternString+'" not found in "'+self.fileIni.name})
+			controller.die({ 'exitMessage' : 'Key error  : key "' + config.iniPatternString + '" not found in "' + self.fileIni.name})
 
 
-	def checkFileIniVarToTag(self):
+	def checkFileIniVarToTagWasLoaded(self):
 		try:
 			self.fileIniData[config.iniVarToTagString]
 		except KeyError:
-			controller.die({ 'exitMessage' : 'Key error  : key "'+config.iniVarToTagString+'" not found in "'+self.fileIni.name})
+			controller.die({ 'exitMessage' : 'Key error  : key "' + config.iniVarToTagString + '" not found in "' + self.fileIni.name})
 
 
 	def loadPatterns(self):
@@ -144,7 +152,7 @@ class Service(object):
 
 	def loadDirectivesIni(self):
 		fileDirectivesIni	= FileIni({
-			'name'		: config.configFilesPath+config.fileDirectivesIni,
+			'name'		: config.configFilesPath + config.fileDirectivesIni,
 			'fs'		: ''
 			})
 		self.cfgHostDirectives	= fileDirectivesIni.getData()
@@ -160,7 +168,7 @@ class Service(object):
 
 	def hasDirectives(self):
 		hasDirectives	= 1
-		for columnName in [self.cleanName+config.csvHeaderFs+config.csvServiceDirectivesNames, self.cleanName+config.csvHeaderFs+config.csvServiceDirectivesValues]:
+		for columnName in [self.cleanName + config.csvHeaderFs + config.csvServiceDirectivesNames, self.cleanName + config.csvHeaderFs + config.csvServiceDirectivesValues]:
 			if(self.fileCsv.columnExists(columnName)):
 				hasDirectives	= hasDirectives and self.currentCsvLine[columnName]
 			else:
@@ -170,8 +178,8 @@ class Service(object):
 
 	def loadDirectivesFromCsvData(self):
 		self.directives	= {
-			'names'		: self.currentCsvLine[self.cleanName+config.csvHeaderFs+config.csvServiceDirectivesNames].split(config.csvMultiValuedCellFS),
-			'values'	: self.currentCsvLine[self.cleanName+config.csvHeaderFs+config.csvServiceDirectivesValues].split(config.csvMultiValuedCellFS)		
+			'names'		: self.currentCsvLine[self.cleanName + config.csvHeaderFs + config.csvServiceDirectivesNames].split(config.csvMultiValuedCellFS),
+			'values'	: self.currentCsvLine[self.cleanName + config.csvHeaderFs + config.csvServiceDirectivesValues].split(config.csvMultiValuedCellFS)		
 			}
 
 
@@ -234,10 +242,10 @@ class Service(object):
 
 		# storing CSV data in a dict to play with it later
 		for field in params['csvHeader']:
-			match = re.search(self.cleanName + config.csvHeaderFs+'.*', field)
+			match = re.search(self.cleanName + config.csvHeaderFs + '.*', field)
 			if(match):
 				# parsing all CSV columns related to this service
-				serviceCsvData[field.replace(self.cleanName+config.csvHeaderFs,'')] = params['csvDataLine'][field]
+				serviceCsvData[field.replace(self.cleanName + config.csvHeaderFs,'')] = params['csvDataLine'][field]
 
 		# appending 'serviceDirectives'
 		# serviceCsvData contains 2 useless keys : 'serviceDirectivesNames' and 'serviceDirectivesValues'
@@ -250,7 +258,7 @@ class Service(object):
 	def make(self,allServices):
 		tmp = ''
 		for i in xrange(self.result['maxRounds']):
-			tmp += self.patternService.apply(self.result['champsValeurs'][i])+"\n"
+			tmp += self.patternService.apply(self.result['champsValeurs'][i]) + "\n"
 #			controller.showDebug('BUILD 1 SERVICE')
 			allServices.count()
 		return tmp
