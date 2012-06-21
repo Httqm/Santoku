@@ -28,8 +28,8 @@ logFile='./checkConf.log'
 # config values for Shinken host
 shinkenHost='192.168.1.101'
 shinkenSshUser='root'
-shinkenBaseFolder='/usr/local/shinken/'			# final '/' expected
-shinkenEtcFolder=$shinkenBaseFolder'etc/'	# final '/' expected
+shinkenBaseFolder='/usr/local/shinken/'		# final '/' expected
+shinkenEtcFolder=$shinkenBaseFolder'etc/'		# final '/' expected
 backupSuffix='_PREVIOUS'
 
 shinkenCheckBin=$shinkenBaseFolder'bin/shinken-arbiter'
@@ -65,27 +65,32 @@ function checkShinkenConfig {
 
 function showCheckConfLog {
 	echo $stringKo
-#	ssh $shinkenSshUser@$shinkenHost "grep \"Error:\" $logFile"
 	grep "Error:" $logFile
 	echo
 	echo "Read full details in $logFile"
 	}
 
 function restartShinken {
-	echo "RESTARTING SHINKEN ..."
-#	ssh $shinkenSshUser@$shinkenHost "$$shinkenRestartCmd || "
+#	echo "RESTARTING SHINKEN ..."
+	ssh $shinkenSshUser@$shinkenHost "$shinkenRestartCmd"
 	}
 
-echo -n 'Copying files ................ '
+# TODO : deploy either to an SSH host or to the local host
+echo -n ' Copying files ............... '
 sshCopyToShinkenHost $localPathToFiles/commands.cfg $shinkenEtcFolder
 sshCopyToShinkenHost $localPathToFiles/hosts.cfg $shinkenEtcFolder'hosts/'
 sshCopyToShinkenHost $localPathToFiles/services.cfg $shinkenEtcFolder'services/'
 echo $stringOk
 
-echo -n 'Checking configuration ....... '
+echo -n ' Checking configuration ...... '
 #checkShinkenConfig && echo 'OK' || echo 'KO'
-checkShinkenConfig && restartShinken || { showCheckConfLog;exit 1; }
-echo $stringOk
+checkShinkenConfig && echo $stringOk || { showCheckConfLog;exit 1; }
+
+
+echo -n ' Restarting Shinken .......... '
+restartShinken && echo $stringOk || echo $stringKo
+
+
 
 #r=$(checkShinkenConfig)
 #checkShinkenConfig && echo 'OK' || echo 'KO'
