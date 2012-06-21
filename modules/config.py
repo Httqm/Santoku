@@ -27,7 +27,8 @@ configFile		= __file__	# This is used to point to THIS file in error messages. D
 configFilesPath		= './config/'
 
 # CSV file
-csvFileName		= 'file.csv'
+csvFileName		= 'home.csv'
+#csvFileName		= 'file.csv'
 #csvFileName		= 'hostsOBS.csv'
 #csvFileName		= 'hostsOBS_light.csv'
 csvFileFs		= ';'		# CSV field separator. Must be different from the CSV list separator below.
