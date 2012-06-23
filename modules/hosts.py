@@ -49,7 +49,7 @@ class AllHosts(object):
 
 	def loadIniFile(self):
 		self.fileIniHost	= FileIni({
-			'name'	: config.configFilesPath+config.fileHostIni,
+			'name'	: config.configFilesPath + config.fileHostIni,
 			'fs'	: '',
 			})
 		self.iniFileData	= self.fileIniHost.getData()
@@ -58,7 +58,7 @@ class AllHosts(object):
 
 	def loadDirectives(self):
 		fileIniDirectives	= FileIni({
-			'name'	: config.configFilesPath+config.fileDirectivesIni,
+			'name'	: config.configFilesPath + config.fileDirectivesIni,
 			'fs'	: '',
 			})
 		self.directives	= fileIniDirectives.getData()
@@ -74,14 +74,14 @@ class AllHosts(object):
 		try:
 			self.iniFileData[config.iniPatternString]
 		except KeyError:
-			controller.die({ 'exitMessage' : 'Key error  : key "'+config.iniPatternString+'" not found in "'+self.fileIniHost.name})
+			controller.die({ 'exitMessage' : 'Key error  : key "' + config.iniPatternString + '" not found in "' + self.fileIniHost.name})
 
 
 	def searchVariablesStanza(self):
 		try:
 			self.iniFileData[config.iniVarToTagString]
 		except KeyError:
-			controller.die({ 'exitMessage' : 'Key error  : key "'+config.iniVarToTagString+'" not found in "'+self.fileIniHost.name})
+			controller.die({ 'exitMessage' : 'Key error  : key "' + config.iniVarToTagString + '" not found in "' + self.fileIniHost.name})
 	# /TODO
 
 
@@ -97,7 +97,7 @@ class AllHosts(object):
 
 
 	def incrementCountOf(self,hostType):
-		self.number[hostType]+=1
+		self.number[hostType] += 1
 
 
 
@@ -144,18 +144,18 @@ class Host(object):
 		try:
 			self.hostData[config.csvHostDirectivesNames]
 		except KeyError:
-			controller.die({ 'exitMessage' : 'Key error : key "'+config.csvHostDirectivesNames+'" not found in "'+config.csvFileName+'"'})
+			controller.die({ 'exitMessage' : 'Key error : key "' + config.csvHostDirectivesNames + '" not found in "' + config.csvFileName + '"'})
 
 
 	def searchCsvHostDirectivesValues(self):
 		try:
 			self.hostData[config.csvHostDirectivesValues]
 		except KeyError:
-			controller.die({ 'exitMessage' : 'Key error : key "'+config.csvHostDirectivesValues+'" not found in "'+config.csvFileName+'"'})
+			controller.die({ 'exitMessage' : 'Key error : key "' + config.csvHostDirectivesValues + '" not found in "' + config.csvFileName + '"'})
 
 
 	def applyHostPattern(self,values):
-		return self.allHosts.patternHost.apply(values)+"\n"
+		return self.allHosts.patternHost.apply(values) + "\n"
 
 
 	def loadHostGroupsFromCsv(self):

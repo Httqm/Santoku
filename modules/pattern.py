@@ -51,4 +51,4 @@ class Pattern(object):
 		try:
 			self.values[self.variable2tag[tag]]
 		except KeyError:
-			controller.die({ 'exitMessage' : 'No CSV value given for tag "'+tag+'" in pattern : '+self.pattern})
+			controller.die({ 'exitMessage' : 'No CSV value given for tag "' + tag + '" in pattern : ' + self.pattern})
