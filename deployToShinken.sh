@@ -19,10 +19,10 @@
 #
 
 
-# TODO : add trap for CTRL-c
+trap "echo;echo 'Interrupted by CTRL-c.';exit 1;" INT
 
 # config values for local host
-localPathToFiles='./output'
+sourceFolder='./output'
 logFile='./checkConf.log'
 
 # config values for Shinken host
@@ -77,9 +77,9 @@ function restartShinken {
 
 # TODO : deploy either to an SSH host or to the local host
 echo -n ' Copying files ............... '
-sshCopyToShinkenHost $localPathToFiles/commands.cfg $shinkenEtcFolder
-sshCopyToShinkenHost $localPathToFiles/hosts.cfg $shinkenEtcFolder'hosts/'
-sshCopyToShinkenHost $localPathToFiles/services.cfg $shinkenEtcFolder'services/'
+sshCopyToShinkenHost $sourceFolder/commands.cfg $shinkenEtcFolder
+sshCopyToShinkenHost $sourceFolder/hosts.cfg $shinkenEtcFolder'hosts/'
+sshCopyToShinkenHost $sourceFolder/services.cfg $shinkenEtcFolder'services/'
 echo $stringOk
 
 echo -n ' Checking configuration ...... '
