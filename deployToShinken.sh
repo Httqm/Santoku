@@ -21,16 +21,27 @@
 
 trap "echo;echo 'Interrupted by CTRL-c.';exit 1;" INT
 
+
+########################################## ##########################################################
+# CONFIG
+########################################## ##########################################################
+useSsh=1		# If 1, deliver files through SSH. Otherwise simply 'cp' them.
+
 # config values for local host
-sourceFolder='./output'
+sourceFolder='./output/'											# final '/' expected
 logFile='./checkConf.log'
 
 # config values for Shinken host
-shinkenHost='192.168.1.101'
-shinkenSshUser='root'
-shinkenBaseFolder='/usr/local/shinken/'		# final '/' expected
-shinkenEtcFolder=$shinkenBaseFolder'etc/'		# final '/' expected
-backupSuffix='_PREVIOUS'
+shinkenHost='192.168.1.101'										# unused if Shinken host == localhost
+shinkenSshUser='root'												# unused if Shinken host == localhost
+
+shinkenBaseFolder='/usr/local/shinken/'						# final '/' expected
+shinkenEtcFolder=$shinkenBaseFolder'etc/'						# final '/' expected
+shinkenEtcHostsFolder=$shinkenEtcFolder'hosts/'				# final '/' expected
+shinkenEtcServicesFolder=$shinkenEtcFolder'services/'		# final '/' expected
+
+backupSuffix='_PREVIOUS_VERSION'
+
 
 shinkenCheckBin=$shinkenBaseFolder'bin/shinken-arbiter'
 shinkenRestartCmd='/etc/init.d/shinken restart'
@@ -41,27 +52,66 @@ stringOk='[ OK ]'
 stringKo='[ KO ]'
 
 
+########################################## ##########################################################
+# FUNCTIONS
+########################################## ##########################################################
+
+# Args :
+# $1 : file or folder to check
+function checkFileOrFolderExists {
+	if [ $useSsh -eq 1 ]; then
+		ssh $shinkenSshUser@$shinkenHost "[ -e \"$1\" ]" && : || { echo " $stringKo : the remote file or folder \"$1\" doesn't exist.";exit 1; }
+	else
+		[ -e "$1" ] && : || { echo " $stringKo : the local file or folder \"$1\" doesn't exist.";exit 1; }
+	fi
+	}
+
+
 # Args :
 # $1 : file to copy
-# $2 : local folder on destination
-function sshCopyToShinkenHost {
+# $2 : destination folder (either on localhost or on Shinken host)
+function copyFileToShinkenFileTree {
 	backupFile $2$(basename $1)
-#	echo -n "Copying $1 to $shinkenHost ........ "
-	scp -q $1 $shinkenSshUser@$shinkenHost:$2 1>/dev/null 2>&1 || { echo "Can not copy $1 to $shinkenHost";exit 1; }
-# TODO : improve error management
+
+	if [ $useSsh -eq 1 ]; then
+		scp -q "$1" $shinkenSshUser@$shinkenHost:"$2" 1>/dev/null 2>&1 || { echo "Can not copy \"$1\" to $shinkenHost";exit 1; }
+	else
+		cp $1 $2
+	fi
 	}
+
 
 # Args :
 # $1 : absolute path to file to backup
 function backupFile {
-#	echo -n "Making a backup copy of $1 ........ "
-#	ssh $shinkenSshUser@$shinkenHost "[ -f $1 ] && cp $1 $1$backupSuffix" && echo 'OK :-)' || 'KO :-('
-	ssh $shinkenSshUser@$shinkenHost "[ -f $1 ] && cp $1 $1$backupSuffix"
+	command="[ -f \"$1\" ] && cp \"$1\" \"$1$backupSuffix\""
+	if [ $useSsh -eq 1 ]; then
+		ssh $shinkenSshUser@$shinkenHost "$command"
+	else
+		$(command)
+	fi
 	}
 
+
 function checkShinkenConfig {
-	ssh $shinkenSshUser@$shinkenHost "$shinkenCheckBin -v -c $shinkenConfigFile" 1>$logFile 2>&1
+	command="$shinkenCheckBin -v -c $shinkenConfigFile 1>$logFile 2>&1"
+	if [ $useSsh -eq 1 ]; then
+		ssh $shinkenSshUser@$shinkenHost "$command"
+	else
+		 echo $command
+		$(command)
+	fi
 	}
+
+
+function restartShinken {
+	if [ $useSsh -eq 1 ]; then
+		ssh $shinkenSshUser@$shinkenHost "$shinkenRestartCmd"
+	else
+		$shinkenRestartCmd
+	fi
+	}
+
 
 function showCheckConfLog {
 	echo $stringKo
@@ -70,29 +120,30 @@ function showCheckConfLog {
 	echo "Read full details in $logFile"
 	}
 
-function restartShinken {
-#	echo "RESTARTING SHINKEN ..."
-	ssh $shinkenSshUser@$shinkenHost "$shinkenRestartCmd"
-	}
 
-# TODO : deploy either to an SSH host or to the local host
+########################################## ##########################################################
+# main()
+########################################## ##########################################################
+
+for fileOrFolder in "$shinkenEtcFolder" "$shinkenEtcHostsFolder" "$shinkenEtcServicesFolder" "$shinkenCheckBin" "$shinkenConfigFile";do
+	checkFileOrFolderExists "$fileOrFolder"
+done
+
+
 echo -n ' Copying files ............... '
-sshCopyToShinkenHost $sourceFolder/commands.cfg $shinkenEtcFolder
-sshCopyToShinkenHost $sourceFolder/hosts.cfg $shinkenEtcFolder'hosts/'
-sshCopyToShinkenHost $sourceFolder/services.cfg $shinkenEtcFolder'services/'
+copyFileToShinkenFileTree ${sourceFolder}commands.cfg $shinkenEtcFolder
+copyFileToShinkenFileTree ${sourceFolder}hosts.cfg $shinkenEtcHostsFolder
+copyFileToShinkenFileTree ${sourceFolder}services.cfg $shinkenEtcServicesFolder
 echo $stringOk
 
+
 echo -n ' Checking configuration ...... '
-#checkShinkenConfig && echo 'OK' || echo 'KO'
 checkShinkenConfig && echo $stringOk || { showCheckConfLog;exit 1; }
 
 
 echo -n ' Restarting Shinken .......... '
 restartShinken && echo $stringOk || echo $stringKo
 
-
-
-#r=$(checkShinkenConfig)
-#checkShinkenConfig && echo 'OK' || echo 'KO'
-#[ $(checkShinkenConfig) -eq 1 ] && restartShinken || showCheckConfLog
-
+########################################## ##########################################################
+# THE END !
+########################################## ##########################################################
