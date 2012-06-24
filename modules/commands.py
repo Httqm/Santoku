@@ -19,6 +19,12 @@
 #
 
 
+from modules import config
+from modules import controller
+
+controller	= controller.Controller()
+
+
 class AllCommands(object):
 	def __init__(self):
 		self.output	= ''

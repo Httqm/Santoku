@@ -51,7 +51,7 @@ outputFileCommands	= 'commands.cfg'
 # OUTPUT MESSAGES & DEBUG
 ########################################## ##########################################################
 messageDie		= 'Tenno Heika Banzai !!! (seppuku...)'
-debug			= 1	# 0|1
+debug			= 1	# 0|1, enable output of controller.showDebug messages
 
 ########################################## ##########################################################
 # CSV COSMETICS
@@ -95,3 +95,14 @@ iniCommandString	= 'COMMAND'
 ########################################## ##########################################################
 commandDirectiveInServiceDefinition	= 'check_command'
 commandDirectiveInCommandDefinition	= 'command_name'
+defaultCommands="""
+define command {
+	command_name	notify-host-by-email
+	command_line	/usr/bin/printf "%b" "Shinken Notification\n\nType:$NOTIFICATIONTYPE$\nHost: $HOSTNAME$\nState: $HOSTSTATE$\nAddress: $HOSTADDRESS$\nInfo: $HOSTOUTPUT$\nDate/Time: $SHORTDATETIME$" | /usr/bin/mail -s "Host $HOSTNAME$	is	$HOSTSTATE$" $CONTACTEMAIL$
+	}
+
+define command {
+	command_name	notify-service-by-email
+	command_line	/usr/bin/printf "%b" "Shinken Notification\n\nNotification Type: $NOTIFICATIONTYPE$\n\nService: $SERVICEDESC$\nHost: $HOSTALIAS$\nAddress: $HOSTADDRESS$\nState: $SERVICESTATE$\n\nDate/Time: $SHORTDATETIME$ Additional Info : $SERVICEOUTPUT$" | /usr/bin/mail -s "$NOTIFICATIONTYPE$	$HOSTALIAS$ / $SERVICEDESC$	$SERVICESTATE$" $CONTACTEMAIL$
+	}
+"""

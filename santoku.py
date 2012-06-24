@@ -77,6 +77,9 @@ for hostId in csvData.keys():
 		allHosts.incrementCountOf('ignored')
 		continue
 
+	if(csvData[hostId]['check_command']):
+		allCommands.add(host.getCheckCommand())
+
 	if host.isDuplicated():
 		allHosts.incrementCountOf('duplicated')
 	else:
@@ -104,8 +107,6 @@ for hostId in csvData.keys():
 			})
 
 		if service.isEnabled():
-			#controller.showDebug('SANTOKU : '+singleServiceCsvName+' IS ENABLED')
-
 			allCommands.add(service.getCommand())
 
 			serviceName		= service.getName()
@@ -128,7 +129,6 @@ for hostId in csvData.keys():
 
 # host loop done : we've seen all hosts. Let's build hostgroups
 allHosts.output += hostgroups.make()
-
 
 ########################################## ##########################################################
 # Write results to files

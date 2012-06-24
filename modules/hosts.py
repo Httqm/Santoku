@@ -25,7 +25,6 @@ from modules import pattern
 from modules import controller
 
 FileIni		= fichier.FileIni
-
 controller	= controller.Controller()
 
 
@@ -124,6 +123,19 @@ class Host(object):
 		return 1 if match else 0
 
 
+	def getCheckCommand(self):
+		hostCheckFileIni = FileIni({
+			'name'	: config.configFilesPath + self.hostData['check_command'] + '.ini',
+			'fs'	: '',
+			})
+		hostCheckFileIni.loadData()
+
+		return {
+			'serviceName'		: self.hostData['check_command'],
+			'serviceCommand'	: hostCheckFileIni.getData()['COMMAND']
+			}
+
+
 	def loadDirectives(self):
 		self.checkCsvHostDirectivesExist()
 		directives		= ''
@@ -131,7 +143,7 @@ class Host(object):
 		directivesValues	= self.hostData[config.csvHostDirectivesValues].split(config.csvMultiValuedCellFS)
 
 		for index,value in enumerate(directivesNames):
-			directives	+= self.allHosts.patternDirectives.apply({	'directiveName' : directivesNames[index], 'directiveValue' : directivesValues[index]})
+			directives	+= self.allHosts.patternDirectives.apply({ 'directiveName' : directivesNames[index], 'directiveValue' : directivesValues[index]})
 		return directives
 
 
