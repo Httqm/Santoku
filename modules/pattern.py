@@ -20,35 +20,36 @@
 
 
 from modules import controller
-controller	= controller.Controller()
+controller = controller.Controller()
 
 
 class Pattern(object):
-	def __init__(self,params):
-		"""
-		A pattern is used to substitute tags with values and build .cfg files.
 
-		- pattern is a block of text containing tags identified by special chars. ex : $TAG$. Patterns and tags are defined in .ini files.
-		- variable2tag : dictionary with key = variable name, and value = tag name. This is defined in the [VARIABLE2TAG] section of .ini files
-		- values : dictionary with key = variable name, and value = ... value ;-)
-		"""
-		self.pattern		= params['pattern']
-		self.variable2tag	= params['variable2tag']
+    def __init__(self,params):
+        """
+        A pattern is used to substitute tags with values and build .cfg files.
 
-
-	def apply(self,values):
-		""" Perform substitutions of tags with their values in the pattern """
-		patternCopy		= self.pattern	# so that pattern is not altered
-		self.values		= values
-		for tag in self.variable2tag:
-			self.checkTagValueExists(tag)
-			patternCopy	= patternCopy.replace(tag,str(self.values[self.variable2tag[tag]]))
-			# /!\ args for replace must be strings. Otherwise "expected a character buffer object" error
-		return patternCopy
+        - pattern is a block of text containing tags identified by special chars. ex : $TAG$. Patterns and tags are defined in .ini files.
+        - variable2tag : dictionary with key = variable name, and value = tag name. This is defined in the [VARIABLE2TAG] section of .ini files
+        - values : dictionary with key = variable name, and value = ... value ;-)
+        """
+        self.pattern        = params['pattern']
+        self.variable2tag   = params['variable2tag']
 
 
-	def checkTagValueExists(self,tag):
-		try:
-			self.values[self.variable2tag[tag]]
-		except KeyError:
-			controller.die({ 'exitMessage' : 'No CSV value given for tag "' + tag + '" in pattern : ' + self.pattern})
+    def apply(self,values):
+        """ Perform substitutions of tags with their values in the pattern """
+        patternCopy = self.pattern  # so that pattern is not altered
+        self.values = values
+        for tag in self.variable2tag:
+            self.checkTagValueExists(tag)
+            patternCopy	= patternCopy.replace(tag,str(self.values[self.variable2tag[tag]]))
+            # /!\ args for replace must be strings. Otherwise "expected a character buffer object" error
+        return patternCopy
+
+
+    def checkTagValueExists(self,tag):
+        try:
+            self.values[self.variable2tag[tag]]
+        except KeyError:
+            controller.die({ 'exitMessage' : 'No CSV value given for tag "' + tag + '" in pattern : ' + self.pattern})

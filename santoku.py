@@ -22,6 +22,7 @@
 from modules import config
 from modules import commands
 from modules import controller
+from modules import csv
 from modules import fichier
 from modules import hosts
 from modules import hostgroups
@@ -30,101 +31,122 @@ from modules import services
 from modules import summary
 
 # local names for imported classes
-AllCommands	= commands.AllCommands
-AllHosts	= hosts.AllHosts
-AllServices	= services.AllServices
-Controller	= controller.Controller
-FileCsv		= fichier.FileCsv
-FileIni		= fichier.FileIni
-FileOutput	= fichier.FileOutput
-Host		= hosts.Host
-Hostgroups	= hostgroups.Hostgroups
-Pattern		= pattern.Pattern
-Service		= services.Service
-Summary		= summary.Summary
+AllCommands = commands.AllCommands
+AllHosts    = hosts.AllHosts
+AllServices = services.AllServices
+Controller  = controller.Controller
+#FileCsv    = fichier.FileCsv
+Csv=csv.Csv
+FileIni     = fichier.FileIni
+FileOutput  = fichier.FileOutput
+Host        = hosts.Host
+Hostgroups  = hostgroups.Hostgroups
+Pattern     = pattern.Pattern
+Service     = services.Service
+Summary     = summary.Summary
 
 ########################################## ##########################################################
 # main()
 ########################################## ##########################################################
-controller	= Controller()
+controller  = Controller()
 
 controller.checkConfigValues()
 
+"""
 fileCsv	= FileCsv({
-	'name'	: config.csvFileName,
-	'fs'	: config.csvFileFs
-	})
-csvData		= fileCsv.getData()
+    'name'  : config.csvFileName,
+    'fs'    : config.csvFileFs
+    })
+csvData     = fileCsv.getData()
+"""
+csvThing=Csv()
 
-allCommands	= AllCommands()
-allHosts	= AllHosts()
-hostgroups	= Hostgroups()
-allServices	= AllServices()
-serviceList	= allServices.getList(fileCsv.getHeader())
+allCommands = AllCommands()
+allHosts    = AllHosts()
+hostgroups  = Hostgroups()
+allServices = AllServices()
+#serviceList    = allServices.getList(fileCsv.getHeader())
+serviceList = allServices.getList(csvThing.getHeader())
 
 
 ########################################## ##########################################################
 # Looping on hosts
 ########################################## ##########################################################
-for hostId in csvData.keys():
+#for hostId in csvData.keys():
+for hostId in csvThing.getKeys():
 
-	host	= Host({
-		'data'		: csvData[hostId],
-		'allHosts'	: allHosts
-		})
+    #controller.showDebug(hostId)
+    csvThing.setCurrentRow({'rowId' : hostId})
 
-	if host.isMarkedToBeIgnored() :
-		allHosts.incrementCountOf('ignored')
-		continue
+    host    = Host({
+#       'data'      : csvData[hostId],
+        'data'      : csvThing.getCurrentRow(),
+        'allHosts'  : allHosts
+        })
 
-	if(csvData[hostId]['check_command']):
-		allCommands.add(host.getCheckCommand())
+    if host.isMarkedToBeIgnored() :
+        allHosts.incrementCountOf('ignored')
+        continue
 
-	if host.isDuplicated():
-		allHosts.incrementCountOf('duplicated')
-	else:
-		csvData[hostId]['hostDirectives'] = host.loadDirectives()
+#   if(csvData[hostId]['check_command']):
+    if(csvThing.currentRowHasCheckCommand()):
+        allCommands.add(host.getCheckCommand())
 
-		allHosts.output += host.applyHostPattern(csvData[hostId])
-		allHosts.incrementCountOf('valid')
+    if host.isDuplicated():
+        allHosts.incrementCountOf('duplicated')
+    else:
+#       csvData[hostId]['hostDirectives'] = host.loadDirectives()
+        csvThing.setHostDirectives({'hostDirectives' : host.loadDirectives() })
 
-		hostgroups.addHostToGroups({
-			'host'		: csvData[hostId][config.csvHeaderHostName],
-			'groups'	: host.loadHostGroupsFromCsv()
-			})
 
-	################################## ##########################################################
-	# Looping on services
-	################################## ##########################################################
+#		allHosts.output += host.applyHostPattern(csvData[hostId])
+        allHosts.output += host.applyHostPattern(csvThing.getCurrentRow())
 
-	# serviceList is the list of all '*:do' CSV columns : ['check_filesystem:do', 'check_bidule:do']
-	for singleServiceCsvName in serviceList:
+        allHosts.incrementCountOf('valid')
 
-		service = Service({
-			'fileCsv'		: fileCsv,
-			'currentCsvLine'	: csvData[hostId],
-			'serviceCsvName'	: singleServiceCsvName
-			})
+        hostgroups.addHostToGroups({
+#			'host'		: csvData[hostId][config.csvHeaderHostName],
+            'host'      : csvThing.getHostnameFromCurrentRow(),
+            'groups'    : host.loadHostGroupsFromCsv()
+            })
 
-		if service.isEnabled():
-			allCommands.add(service.getCommand())
+    ################################## ##########################################################
+    # Looping on services
+    ################################## ##########################################################
 
-			serviceName		= service.getName()
+    # serviceList is the list of all '*:do' CSV columns : ['check_filesystem:do', 'check_bidule:do']
+    for singleServiceCsvName in serviceList:
 
-			serviceDirectives	= ''
-			if service.hasDirectives():
-				service.loadDirectivesFromCsvData()
-				serviceDirectives	= service.applyServiceDirectivesPattern()
+        service = Service({
+#			'fileCsv'		: fileCsv,
+            'fileCsv'           : csvThing,
+#			'currentCsvLine'	: csvData[hostId],
+            'currentCsvLine'    : csvThing.getCurrentRow(),
+            'serviceCsvName'    : singleServiceCsvName
+            })
 
-			service.buildArrayOfServices({
-				'name'			: serviceName,
-				'hostName'		: csvData[hostId][config.csvHeaderHostName],
-				'csvHeader'		: fileCsv.getHeader(),
-				'csvDataLine'		: csvData[hostId],
-				'serviceDirectives'	: serviceDirectives
-				})
+        if service.isEnabled():
+            allCommands.add(service.getCommand())
 
-			allServices.output += service.make(allServices)	# <== TODO : clean this
+            serviceName = service.getName()
+
+            serviceDirectives = ''
+            if service.hasDirectives():
+                service.loadDirectivesFromCsvData()
+                serviceDirectives = service.applyServiceDirectivesPattern()
+
+            service.buildArrayOfServices({
+                'name'              : serviceName,
+#               'hostName'          : csvData[hostId][config.csvHeaderHostName],
+                'hostName'          : csvThing.getHostnameFromCurrentRow(),
+#               'csvHeader'         : fileCsv.getHeader(),
+                'csvHeader'         : csvThing.getHeader(),
+#               'csvDataLine'       : csvData[hostId],
+                'csvDataLine'       : csvThing.getCurrentRow(),
+                'serviceDirectives' : serviceDirectives
+                })
+
+            allServices.output += service.make(allServices)	# <== TODO : clean this
 
 
 # host loop done : we've seen all hosts. Let's build hostgroups
@@ -134,7 +156,7 @@ allHosts.output += hostgroups.make()
 # Write results to files
 ########################################## ##########################################################
 
-outputFileHosts	     = FileOutput({ 'name' : config.outputPath+config.outputFileHosts })
+outputFileHosts     = FileOutput({ 'name' : config.outputPath+config.outputFileHosts })
 outputFileHosts.write(allHosts.output)
 
 outputFileServices  = FileOutput({ 'name' : config.outputPath+config.outputFileServices })
@@ -149,13 +171,13 @@ outputFileCommands.write(allCommands.getOutput())
 ########################################## ##########################################################
 summary = Summary()
 print summary.make({
-	'hostsTotal'		: allHosts.number['valid']+allHosts.number['ignored'],
-	'hostsValid'		: allHosts.number['valid'],
-	'hostsIgnored'		: allHosts.number['ignored'],
-	'hostsDuplicated'	: allHosts.number['duplicated'],
-	'servicesTotal'		: allServices.number,
-	'commandsTotal'		: allCommands.number
-	})
+    'hostsTotal'        : allHosts.number['valid']+allHosts.number['ignored'],
+    'hostsValid'        : allHosts.number['valid'],
+    'hostsIgnored'      : allHosts.number['ignored'],
+    'hostsDuplicated'   : allHosts.number['duplicated'],
+    'servicesTotal'     : allServices.number,
+    'commandsTotal'     : allCommands.number
+    })
 ########################################## ##########################################################
 # the end!
 ########################################## ##########################################################

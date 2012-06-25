@@ -23,35 +23,35 @@
 # FILES AND FOLDERS
 ########################################## ##########################################################
 # common
-configFile		= __file__	# This is used to point to THIS file in error messages. DON'T CHANGE THIS !
-configFilesPath		= './config/'
+configFile          = __file__  # This is used to point to THIS file in error messages. DON'T CHANGE THIS !
+configFilesPath     = './config/'
 
 # CSV file
-csvFileName		= 'home.csv'
-#csvFileName		= 'file.csv'
-#csvFileName		= 'hostsOBS.csv'
-#csvFileName		= 'hostsOBS_light.csv'
-csvFileFs		= ';'		# CSV field separator. Must be different from the CSV list separator below.
-csvFileParamFs		= '|'		# CSV list separator. This is used when a CSV cell contains several values
+csvFileName     = 'home.csv'
+#csvFileName    = 'file.csv'
+#csvFileName    = 'hostsOBS.csv'
+#csvFileName    = 'hostsOBS_light.csv'
+csvFileFs       = ';'   # CSV field separator. Must be different from the CSV list separator below.
+csvFileParamFs  = '|'   # CSV list separator. This is used when a CSV cell contains several values
 
 # INI files
-fileHostIni		= 'host.ini'
-fileHostgroupIni	= 'hostgroup.ini'
-fileDirectivesIni	= 'directives.ini'
-fileSummaryIni		= 'summary.ini'
+fileHostIni         = 'host.ini'
+fileHostgroupIni    = 'hostgroup.ini'
+fileDirectivesIni   = 'directives.ini'
+fileSummaryIni      = 'summary.ini'
 
 # OUTPUT files
-outputPath		= './output/'
-outputFileHosts		= 'hosts.cfg'
-outputFileServices	= 'services.cfg'
-outputFileCommands	= 'commands.cfg'
+outputPath          = './output/'
+outputFileHosts     = 'hosts.cfg'
+outputFileServices  = 'services.cfg'
+outputFileCommands  = 'commands.cfg'
 
 
 ########################################## ##########################################################
 # OUTPUT MESSAGES & DEBUG
 ########################################## ##########################################################
-messageDie		= 'Tenno Heika Banzai !!! (seppuku...)'
-debug			= 1	# 0|1, enable output of controller.showDebug messages
+messageDie  = 'Tenno Heika Banzai !!! (seppuku...)'
+debug       = 1 # 0|1, enable output of controller.showDebug messages
 
 ########################################## ##########################################################
 # CSV COSMETICS
@@ -60,18 +60,18 @@ debug			= 1	# 0|1, enable output of controller.showDebug messages
 # But just in case you don't like the way they are (cosmetics) or need a workaround for any reason :
 # HAVE FUN !
 ########################################## ##########################################################
-csvMultiValuedCellFS		= '|'
-csvHeaderDo			= 'do'
-csvHeaderFs			= ':'
-csvHeaderHostName		= 'host_name'
-csvHeaderIgnoreHost		= 'ignore_host'
-csvHeaderUse			= 'use'
-csvHeaderHostgroups		= 'hostgroups'
-csvGenericService		= 'generic_service'
-csvHostDirectivesNames		= 'hostDirectivesNames'
-csvHostDirectivesValues		= 'hostDirectivesValues'
-csvServiceDirectivesNames	= 'serviceDirectivesNames'
-csvServiceDirectivesValues	= 'serviceDirectivesValues'
+csvMultiValuedCellFS        = '|'
+csvHeaderDo                 = 'do'
+csvHeaderFs                 = ':'
+csvHeaderHostName           = 'host_name'
+csvHeaderIgnoreHost         = 'ignore_host'
+csvHeaderUse                = 'use'
+csvHeaderHostgroups         = 'hostgroups'
+csvGenericService           = 'generic_service'
+csvHostDirectivesNames      = 'hostDirectivesNames'
+csvHostDirectivesValues     = 'hostDirectivesValues'
+csvServiceDirectivesNames   = 'serviceDirectivesNames'
+csvServiceDirectivesValues  = 'serviceDirectivesValues'
 
 
 ########################################## ##########################################################
@@ -81,10 +81,10 @@ csvServiceDirectivesValues	= 'serviceDirectivesValues'
 # But just in case you don't like the way they are (cosmetics) or need a workaround for any reason :
 # HAVE FUN !
 ########################################## ##########################################################
-iniPatternString	= 'PATTERN'
-iniVarToTagString	= 'VARIABLE2TAG'
-iniVarToTagStanzaFs	= '='
-iniCommandString	= 'COMMAND'
+iniPatternString    = 'PATTERN'
+iniVarToTagString   = 'VARIABLE2TAG'
+iniVarToTagStanzaFs = '='
+iniCommandString    = 'COMMAND'
 
 
 ########################################## ##########################################################

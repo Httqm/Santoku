@@ -25,10 +25,10 @@ from modules import fichier
 
 class Directives(object):
 
-	def loadIniFile(self):
-		fileIniDirectives	= fichier.FileIni({
-			'name'	: config.configFilesPath+config.fileHostIni,
-			'fs'	: '',
-			})
-		self.iniFileData	= fileIniDirectives.getData()
-		self.checkIniFile()
+    def loadIniFile(self):
+        fileIniDirectives = fichier.FileIni({
+            'name'  : config.configFilesPath+config.fileHostIni,
+            'fs'    : '',
+            })
+        self.iniFileData = fileIniDirectives.getData()
+        #self.checkIniFile() # TODO : fix this!

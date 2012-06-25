@@ -26,240 +26,241 @@ from modules import controller
 import re
 
 
-Pattern		= pattern.Pattern
-FileIni		= fichier.FileIni
+Pattern     = pattern.Pattern
+FileIni     = fichier.FileIni
 
-controller	= controller.Controller()
+controller  = controller.Controller()
 
 
 class AllServices(object):
 
-	def __init__(self):
-		self.output	= ''
-		self.number	= 0
+    def __init__(self):
+        self.output	= ''
+        self.number	= 0
 
 
-	def getList(self,csvHeaders):
-		self.list = []
-		for field in csvHeaders:
-			match = re.search('.*' + config.csvHeaderFs + config.csvHeaderDo + '$', field)
-			if(match):
-				self.list.append(field)
-		return self.list
+    def getList(self,csvHeaders):
+        self.list = []
+        for field in csvHeaders:
+            match = re.search('.*' + config.csvHeaderFs + config.csvHeaderDo + '$', field)
+            if(match):
+                self.list.append(field)
+        return self.list
 
 
-	def count(self):
-		self.number += 1
+    def count(self):
+        self.number += 1
 
 
 class Service(object):
 
-	def __init__(self,params):
-		self.fileCsv		= params['fileCsv']
-		self.currentCsvLine	= params['currentCsvLine']
-		self.csvServiceName	= params['serviceCsvName']
-		self.cleanName		= self.csvServiceName.replace(config.csvHeaderFs + config.csvHeaderDo,'')
-		self.loadIniFiles()
-		self.loadPatterns()
+    def __init__(self,params):
+        self.fileCsv        = params['fileCsv']	# TODO : rename as this is not a CSV file anymore
+        self.currentCsvLine = params['currentCsvLine']
+        self.csvServiceName = params['serviceCsvName']
+        self.cleanName      = self.csvServiceName.replace(config.csvHeaderFs + config.csvHeaderDo,'')
+        self.loadIniFiles()
+        self.loadPatterns()
 
 
-	def loadIniFiles(self):
-		self.loadIniFile()
-		self.loadDirectivesIni()
+    def loadIniFiles(self):
+        self.loadIniFile()
+        self.loadDirectivesIni()
 
 
-	def loadIniFile(self):
-		self.fileIni	= FileIni({
-			'name'	: config.configFilesPath + self.cleanName + '.ini',
-			'fs'	: ''
-			})
-		self.fileIniData	= self.fileIni.getData()
-		self.checkFileIni()
+    def loadIniFile(self):
+        self.fileIni = FileIni({
+            'name'  : config.configFilesPath + self.cleanName + '.ini',
+            'fs'    : ''
+            })
+        self.fileIniData = self.fileIni.getData()
+        self.checkFileIni()
 
 
-	def getCommand(self):
-		try:
-			return {
-				'serviceName'		: self.cleanName,
-				'serviceCommand'	: self.fileIniData['COMMAND']
-				}
-		except KeyError:
-			controller.die({ 'exitMessage' : 'No command specified for service "' + self.cleanName + '" in config file "' + self.fileIni.name + '"'})
-		
-
-	def checkFileIni(self):
-		self.checkFileIniPatternWasLoaded()
-		self.checkFileIniVarToTagWasLoaded()
-		self.checkFileIniCommandNamesMatch()
-		self.checkFileIniBothTagSurroundingCharsAreThere()
+    def getCommand(self):
+        try:
+            return {
+                'serviceName'       : self.cleanName,
+                'serviceCommand'    : self.fileIniData['COMMAND']
+                }
+        except KeyError:
+            controller.die({ 'exitMessage' : 'No command specified for service "' + self.cleanName + '" in config file "' + self.fileIni.name + '"'})
 
 
-	def checkFileIniBothTagSurroundingCharsAreThere(self):
-		for stanzaTitle in self.fileIniData:
-			match = re.search('(("|\s)\$[a-zA-Z_:]*("|\s|/))|(("|\s)[a-zA-Z_:]*\$("|\s|/))', str(self.fileIniData[stanzaTitle]))
-			if(match):
-				controller.die({ 'exitMessage' : 'Missing leading/trailing "$" in expression "' + match.group(0) + '" in the "[' + stanzaTitle + ']" section of "' + self.fileIni.name + '"'})
+    def checkFileIni(self):
+        self.checkFileIniPatternWasLoaded()
+        self.checkFileIniVarToTagWasLoaded()
+        self.checkFileIniCommandNamesMatch()
+        self.checkFileIniBothTagSurroundingCharsAreThere()
 
 
-	def checkFileIniCommandNamesMatch(self):
-		commandInPatternStanza = self.getCommandValueFromStanza({
-				'directive'	: config.commandDirectiveInServiceDefinition,
-				'stanzaTitle'	: config.iniPatternString
-				})
-
-		commandInCommandStanza = self.getCommandValueFromStanza({
-				'directive'	: config.commandDirectiveInCommandDefinition,
-				'stanzaTitle'	: config.iniCommandString
-				})
-
-		if commandInPatternStanza != commandInCommandStanza:
-			controller.die({ 'exitMessage' : 'Commands don\'t match between the "' + config.iniPatternString + '" (' + config.commandDirectiveInServiceDefinition + ' ' + commandInPatternStanza + ') and the "' + config.iniCommandString + '" (' + config.commandDirectiveInCommandDefinition + ' ' + commandInCommandStanza + ') stanzas of config file "' + self.fileIni.name + '"'})
+    def checkFileIniBothTagSurroundingCharsAreThere(self):
+        for stanzaTitle in self.fileIniData:
+            match = re.search('(("|\s)\$[a-zA-Z_:]*("|\s|/))|(("|\s)[a-zA-Z_:]*\$("|\s|/))', str(self.fileIniData[stanzaTitle]))
+            if(match):
+                controller.die({ 'exitMessage' : 'Missing leading/trailing "$" in expression "' + match.group(0) + '" in the "[' + stanzaTitle + ']" section of "' + self.fileIni.name + '"'})
 
 
-	def getCommandValueFromStanza(self, params):
-		import re
-		match = re.search('\s' + params['directive'] + '\s + (\w*)', self.fileIniData[params['stanzaTitle']])
-		if match:
-			return match.group(1)
-		else:
-			controller.die({ 'exitMessage' : '"' + params['directive'] + '" directive not found in "' + params['stanzaTitle'] + '" stanza of config file "' + self.fileIni.name + '"'})
+    def checkFileIniCommandNamesMatch(self):
+        commandInPatternStanza = self.getCommandValueFromStanza({
+            'directive'     : config.commandDirectiveInServiceDefinition,
+            'stanzaTitle'   : config.iniPatternString
+            })
+
+        commandInCommandStanza = self.getCommandValueFromStanza({
+            'directive'     : config.commandDirectiveInCommandDefinition,
+            'stanzaTitle'   : config.iniCommandString
+            })
+
+        if commandInPatternStanza != commandInCommandStanza:
+            controller.die({ 'exitMessage' : 'Commands don\'t match between the "' + config.iniPatternString + '" (' + config.commandDirectiveInServiceDefinition + ' ' + commandInPatternStanza + ') and the "' + config.iniCommandString + '" (' + config.commandDirectiveInCommandDefinition + ' ' + commandInCommandStanza + ') stanzas of config file "' + self.fileIni.name + '"'})
 
 
-	def checkFileIniPatternWasLoaded(self):
-		try:
-			self.fileIniData[config.iniPatternString]
-		except KeyError:
-			controller.die({ 'exitMessage' : 'Key error  : key "' + config.iniPatternString + '" not found in "' + self.fileIni.name})
+    def getCommandValueFromStanza(self, params):
+        #import re
+        match = re.search('\s' + params['directive'] + '\s + (\w*)', self.fileIniData[params['stanzaTitle']])
+        if match:
+            return match.group(1)
+        else:
+            controller.die({ 'exitMessage' : '"' + params['directive'] + '" directive not found in "' + params['stanzaTitle'] + '" stanza of config file "' + self.fileIni.name + '"'})
 
 
-	def checkFileIniVarToTagWasLoaded(self):
-		try:
-			self.fileIniData[config.iniVarToTagString]
-		except KeyError:
-			controller.die({ 'exitMessage' : 'Key error  : key "' + config.iniVarToTagString + '" not found in "' + self.fileIni.name})
+    def checkFileIniPatternWasLoaded(self):
+        try:
+            self.fileIniData[config.iniPatternString]
+        except KeyError:
+            controller.die({ 'exitMessage' : 'Key error  : key "' + config.iniPatternString + '" not found in "' + self.fileIni.name})
 
 
-	def loadPatterns(self):
-		self.patternService	= Pattern({
-			'pattern'	: self.fileIniData[config.iniPatternString],
-			'variable2tag'	: self.fileIniData[config.iniVarToTagString]
-			})
-		self.patternDirectives	= Pattern({
-			'pattern'	: self.cfgHostDirectives[config.iniPatternString],
-			'variable2tag'	: self.cfgHostDirectives[config.iniVarToTagString]
-			})
+    def checkFileIniVarToTagWasLoaded(self):
+        try:
+            self.fileIniData[config.iniVarToTagString]
+        except KeyError:
+            controller.die({ 'exitMessage' : 'Key error  : key "' + config.iniVarToTagString + '" not found in "' + self.fileIni.name})
 
 
-	def loadDirectivesIni(self):
-		fileDirectivesIni	= FileIni({
-			'name'		: config.configFilesPath + config.fileDirectivesIni,
-			'fs'		: ''
-			})
-		self.cfgHostDirectives	= fileDirectivesIni.getData()
+    def loadPatterns(self):
+        self.patternService = Pattern({
+            'pattern'       : self.fileIniData[config.iniPatternString],
+            'variable2tag'  : self.fileIniData[config.iniVarToTagString]
+            })
+        self.patternDirectives = Pattern({
+            'pattern'       : self.cfgHostDirectives[config.iniPatternString],
+            'variable2tag'  : self.cfgHostDirectives[config.iniVarToTagString]
+            })
 
 
-	def isEnabled(self):
-		return 1 if self.currentCsvLine[self.csvServiceName] == '1' else 0
+    def loadDirectivesIni(self):
+        fileDirectivesIni = FileIni({
+            'name'  : config.configFilesPath + config.fileDirectivesIni,
+            'fs'    : ''
+            })
+        self.cfgHostDirectives = fileDirectivesIni.getData()
 
 
-	def getName(self):
-		return self.cleanName
+    def isEnabled(self):
+        return 1 if self.currentCsvLine[self.csvServiceName] == '1' else 0
 
 
-	def hasDirectives(self):
-		hasDirectives	= 1
-		for columnName in [self.cleanName + config.csvHeaderFs + config.csvServiceDirectivesNames, self.cleanName + config.csvHeaderFs + config.csvServiceDirectivesValues]:
-			if(self.fileCsv.columnExists(columnName)):
-				hasDirectives	= hasDirectives and self.currentCsvLine[columnName]
-			else:
-				hasDirectives	= 0
-		return hasDirectives
+    def getName(self):
+        return self.cleanName
 
 
-	def loadDirectivesFromCsvData(self):
-		self.directives	= {
-			'names'		: self.currentCsvLine[self.cleanName + config.csvHeaderFs + config.csvServiceDirectivesNames].split(config.csvMultiValuedCellFS),
-			'values'	: self.currentCsvLine[self.cleanName + config.csvHeaderFs + config.csvServiceDirectivesValues].split(config.csvMultiValuedCellFS)		
-			}
+    def hasDirectives(self):
+        hasDirectives = 1
+        for columnName in [self.cleanName + config.csvHeaderFs + config.csvServiceDirectivesNames, self.cleanName + config.csvHeaderFs + config.csvServiceDirectivesValues]:
+#           if(self.fileCsv.columnExists(columnName)):
+            if(self.fileCsv.columnExists(columnName)):
+                hasDirectives = hasDirectives and self.currentCsvLine[columnName]
+            else:
+                hasDirectives = 0
+        return hasDirectives
 
 
-	def applyServiceDirectivesPattern(self):
-		self.serviceDirectives	= ''
-		for name,value in enumerate(self.directives['names']):
-			self.serviceDirectives += self.patternDirectives.apply({
-				'directiveName'		: self.directives['names'][name],
-				'directiveValue'	: self.directives['values'][name]
-				})
-		return self.serviceDirectives
+    def loadDirectivesFromCsvData(self):
+        self.directives	= {
+            'names'     : self.currentCsvLine[self.cleanName + config.csvHeaderFs + config.csvServiceDirectivesNames].split(config.csvMultiValuedCellFS),
+            'values'    : self.currentCsvLine[self.cleanName + config.csvHeaderFs + config.csvServiceDirectivesValues].split(config.csvMultiValuedCellFS)		
+            }
 
 
-	def buildArrayOfServices(self,params):
-		"""
-		Return an associative array containing all service(s) data ready to be injected into pattern.
-		This method handle multi-valued CSV cells
-		"""
-		serviceCsvData	= self.loadServiceData(params)
-		champsValeurs	= {}
-
-		# Parsing data stored in dict to register as many services as the number of values in multi-valued cells
-		maxRounds	= 1
-		currentRound	= 0
-
-		while currentRound < maxRounds:
-			champsValeurs[currentRound]	= {
-				config.csvHeaderHostName	: params['hostName'],
-				config.csvHeaderUse		: config.csvGenericService
-				}
-			for serviceField in serviceCsvData:
-				valuesOfMultiValuedCell	= serviceCsvData[serviceField].split(config.csvMultiValuedCellFS)
-
-				# Excluding the service directives columns here to avoid duplicating the service definition
-				if((serviceField != config.csvServiceDirectivesNames) and (serviceField != config.csvServiceDirectivesValues)):
-					maxRounds	= len(valuesOfMultiValuedCell) if (len(valuesOfMultiValuedCell)>maxRounds) else maxRounds
-
-				try:
-					tmpValue	= valuesOfMultiValuedCell[currentRound]
-				except IndexError:
-					tmpValue	= valuesOfMultiValuedCell[0]
-
-				champsValeurs[currentRound][serviceField] = tmpValue
-
-			currentRound += 1
-		
-		self.result	= { 'champsValeurs' : champsValeurs, 'maxRounds' : maxRounds }
-#		controller.showDebug(self.result)
-#		return self.result
+    def applyServiceDirectivesPattern(self):
+        self.serviceDirectives = ''
+        for name,value in enumerate(self.directives['names']):
+            self.serviceDirectives += self.patternDirectives.apply({
+                'directiveName'     : self.directives['names'][name],
+                'directiveValue'    : self.directives['values'][name]
+                })
+        return self.serviceDirectives
 
 
-	def loadServiceData(self,params):
-		"""
-		For the current host and the current service, return : 
-		- 'clean' CSV header lines (without the 'serviceName:')
-		- cell values (including multiple values and field separators if any)
-		"""
-		import re
-		serviceCsvData = {}
+    def buildArrayOfServices(self,params):
+        """
+        Return an associative array containing all service(s) data ready to be injected into pattern.
+        This method handle multi-valued CSV cells
+        """
+        serviceCsvData  = self.loadServiceData(params)
+        champsValeurs   = {}
 
-		# storing CSV data in a dict to play with it later
-		for field in params['csvHeader']:
-			match = re.search(self.cleanName + config.csvHeaderFs + '.*', field)
-			if(match):
-				# parsing all CSV columns related to this service
-				serviceCsvData[field.replace(self.cleanName + config.csvHeaderFs,'')] = params['csvDataLine'][field]
+        # Parsing data stored in dict to register as many services as the number of values in multi-valued cells
+        maxRounds       = 1
+        currentRound    = 0
 
-		# appending 'serviceDirectives'
-		# serviceCsvData contains 2 useless keys : 'serviceDirectivesNames' and 'serviceDirectivesValues'
-		serviceCsvData['serviceDirectives'] = params['serviceDirectives']
+        while currentRound < maxRounds:
+            champsValeurs[currentRound]	= {
+                config.csvHeaderHostName    : params['hostName'],
+                config.csvHeaderUse         : config.csvGenericService
+                }
+            for serviceField in serviceCsvData:
+                valuesOfMultiValuedCell	= serviceCsvData[serviceField].split(config.csvMultiValuedCellFS)
 
-#		controller.showDebug(serviceCsvData)
-		return serviceCsvData
+                # Excluding the service directives columns here to avoid duplicating the service definition
+                if((serviceField != config.csvServiceDirectivesNames) and (serviceField != config.csvServiceDirectivesValues)):
+                    maxRounds = len(valuesOfMultiValuedCell) if (len(valuesOfMultiValuedCell)>maxRounds) else maxRounds
+
+                try:
+                    tmpValue = valuesOfMultiValuedCell[currentRound]
+                except IndexError:
+                    tmpValue = valuesOfMultiValuedCell[0]
+
+                champsValeurs[currentRound][serviceField] = tmpValue
+
+            currentRound += 1
+
+        self.result	= { 'champsValeurs' : champsValeurs, 'maxRounds' : maxRounds }
+#       controller.showDebug(self.result)
+#       return self.result
 
 
-	def make(self,allServices):
-		tmp = ''
-		for i in xrange(self.result['maxRounds']):
-			tmp += self.patternService.apply(self.result['champsValeurs'][i]) + "\n"
-#			controller.showDebug('BUILD 1 SERVICE')
-			allServices.count()
-		return tmp
+    def loadServiceData(self,params):
+        """
+        For the current host and the current service, return : 
+        - 'clean' CSV header lines (without the 'serviceName:')
+        - cell values (including multiple values and field separators if any)
+        """
+        #import re
+        serviceCsvData = {}
+
+        # storing CSV data in a dict to play with it later
+        for field in params['csvHeader']:
+            match = re.search(self.cleanName + config.csvHeaderFs + '.*', field)
+            if(match):
+                # parsing all CSV columns related to this service
+                serviceCsvData[field.replace(self.cleanName + config.csvHeaderFs,'')] = params['csvDataLine'][field]
+
+        # appending 'serviceDirectives'
+        # serviceCsvData contains 2 useless keys : 'serviceDirectivesNames' and 'serviceDirectivesValues'
+        serviceCsvData['serviceDirectives'] = params['serviceDirectives']
+
+#       controller.showDebug(serviceCsvData)
+        return serviceCsvData
+
+
+    def make(self,allServices):
+        tmp = ''
+        for i in xrange(self.result['maxRounds']):
+            tmp += self.patternService.apply(self.result['champsValeurs'][i]) + "\n"
+#           controller.showDebug('BUILD 1 SERVICE')
+            allServices.count()
+        return tmp
 

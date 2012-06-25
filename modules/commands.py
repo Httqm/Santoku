@@ -22,22 +22,22 @@
 from modules import config
 from modules import controller
 
-controller	= controller.Controller()
+controller = controller.Controller()
 
 
 class AllCommands(object):
-	def __init__(self):
-		self.output	= ''
-		self.commands	= {}
-		self.number	= 0
+    def __init__(self):
+        self.output     = ''
+        self.commands   = {}
+        self.number     = 0
 
 
-	def add(self,commandData):
-		self.commands[commandData['serviceName']]	= commandData['serviceCommand']
-		self.number					= len(self.commands)
+    def add(self,commandData):
+        self.commands[commandData['serviceName']]   = commandData['serviceCommand']
+        self.number                                 = len(self.commands)
 
 
-	def getOutput(self):
-		for serviceName in self.commands:
-			self.output += self.commands[serviceName] + "\n"
-		return self.output
+    def getOutput(self):
+        for serviceName in self.commands:
+            self.output += self.commands[serviceName] + "\n"
+        return self.output

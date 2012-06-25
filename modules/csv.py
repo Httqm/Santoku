@@ -50,6 +50,9 @@ class Csv(object):
     def getRowById(self,params):
         return self.data[params['rowId']]
     """
+    # TODO : improve this to return CSV column data. Use exception if column is missing
+
+
     def getCurrentRow(self):
         return self.data[self.currentRow]
 

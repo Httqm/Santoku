@@ -22,42 +22,46 @@
 from modules import pattern
 from modules import fichier
 from modules import config
+from modules import controller
+
+controller = controller.Controller()
 
 
 class Summary(object):
-	def __init__(self):
-		self.loadFileIni()
-		self.loadPattern()
+
+    def __init__(self):
+        self.loadFileIni()
+        self.loadPattern()
 
 
-	def loadFileIni(self):
-		self.fileIni	= fichier.FileIni({
-				'name'	: config.configFilesPath+config.fileSummaryIni,
-				'fs'	: '',
-				})
-		self.fileIniData	= self.fileIni.getData()
+    def loadFileIni(self):
+        self.fileIni = fichier.FileIni({
+            'name'  : config.configFilesPath+config.fileSummaryIni,
+            'fs'    : '',
+            })
+        self.fileIniData = self.fileIni.getData()
 
 
-	def loadPattern(self):
-		try:
-			self.summaryPattern=pattern.Pattern({
-					'pattern'	: self.fileIniData[config.iniPatternString],
-					'variable2tag'	: self.fileIniData[config.iniVarToTagString]
-					})
-		except KeyError:
-			controller.die({ 'exitMessage' : 'Key error  : key "'+config.iniPatternString+'" doesn\'t exist in "'+self.fileIni.name+'"' })
+    def loadPattern(self):
+        try:
+            self.summaryPattern=pattern.Pattern({
+                'pattern'       : self.fileIniData[config.iniPatternString],
+                'variable2tag'  : self.fileIniData[config.iniVarToTagString]
+                })
+        except KeyError:
+            controller.die({ 'exitMessage' : 'Key error  : key "'+config.iniPatternString+'" doesn\'t exist in "'+self.fileIni.name+'"' })
 
 
-	def make(self,params):
-		return self.summaryPattern.apply({
-				'fileCsv'		: config.configFilesPath+config.csvFileName,
-				'fileHosts'		: config.outputPath+config.outputFileHosts,
-				'fileServices'		: config.outputPath+config.outputFileServices,
-				'fileCommands'		: config.outputPath+config.outputFileCommands,
-				'nbHostsTotal'		: params['hostsTotal'],
-				'nbHostsValid'		: params['hostsValid'],
-				'nbHostsIgnored'	: params['hostsIgnored'],
-				'nbHostsDuplicated'	: params['hostsDuplicated'],
-				'nbServicesTotal'	: params['servicesTotal'],
-				'nbCommandsTotal'	: params['commandsTotal'],
-				})
+    def make(self,params):
+        return self.summaryPattern.apply({
+            'fileCsv'           : config.configFilesPath+config.csvFileName,
+            'fileHosts'         : config.outputPath+config.outputFileHosts,
+            'fileServices'      : config.outputPath+config.outputFileServices,
+            'fileCommands'      : config.outputPath+config.outputFileCommands,
+            'nbHostsTotal'      : params['hostsTotal'],
+            'nbHostsValid'      : params['hostsValid'],
+            'nbHostsIgnored'    : params['hostsIgnored'],
+            'nbHostsDuplicated' : params['hostsDuplicated'],
+            'nbServicesTotal'   : params['servicesTotal'],
+            'nbCommandsTotal'   : params['commandsTotal'],
+            })
