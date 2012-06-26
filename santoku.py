@@ -62,17 +62,21 @@ serviceList = allServices.getList(csvThing.getHeader())
 ########################################## ##########################################################
 # Looping on hosts
 ########################################## ##########################################################
-#for hostId in csvData.keys():
+host = Host({
+    'csv'       : csvThing,
+    'allHosts'  : allHosts
+    })
+
 for hostId in csvThing.getKeys():
 
     csvThing.setCurrentRow({'rowId' : hostId})
 
-    host    = Host({
-#        'data'      : csvThing.getCurrentRow(),
-        'data'      : csvThing,
+    """
+    host = Host({
+        'csv'       : csvThing,
         'allHosts'  : allHosts
         })
-
+    """
     if host.isMarkedToBeIgnored() :
         allHosts.incrementCountOf('ignored')
         continue
@@ -99,7 +103,7 @@ for hostId in csvThing.getKeys():
     for singleServiceCsvName in serviceList:
 
         service = Service({
-            'fileCsv'           : csvThing,
+            'csv'               : csvThing,
             'currentCsvLine'    : csvThing.getCurrentRow(),
             'serviceCsvName'    : singleServiceCsvName
             })

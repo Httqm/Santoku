@@ -46,7 +46,7 @@ class Csv(object):
         return self.data.keys()
 
 
-    def getCell(self,columnName):
+    def getCurrentHostCell(self,columnName):
         try:
             return self.data[self.currentRow][columnName]
         except KeyError:

@@ -30,7 +30,7 @@ controller = controller.Controller()
 class Hostgroups(object):
 
     def __init__(self):
-        self.members={} # hg name => hg members
+        self.members = {} # hg name => hg members
         self.loadFileIni()
         self.loadPattern()
 
@@ -38,13 +38,13 @@ class Hostgroups(object):
     def addHostToGroups(self,params):
         for hg in params['groups']:
             if not hg in self.members:  # if 'hostGroups[hg]' doesn't exist yet, create it.
-                self.members[hg]=[]
+                self.members[hg] = []
             self.members[hg].append(params['host'])	# then store 'host' in it !
 
 
     def loadFileIni(self):
         self.fileIni = fichier.FileIni({
-            'name'  : config.configFilesPath+config.fileHostgroupIni,
+            'name'  : config.configFilesPath + config.fileHostgroupIni,
             'fs'    : '',
             })
         self.fileIniData = self.fileIni.getData()
@@ -52,13 +52,13 @@ class Hostgroups(object):
 
     def loadPattern(self):
         try:
-            self.hostGroupPattern=pattern.Pattern({
-                'file'          : 'TODO pattern HG',
+            self.hostGroupPattern = pattern.Pattern({
+                'file'          : config.configFilesPath + config.fileHostgroupIni,
                 'pattern'       : self.fileIniData[config.iniPatternString],
                 'variable2tag'  : self.fileIniData[config.iniVarToTagString]
                 })
         except KeyError:
-            controller.die({ 'exitMessage' : 'Key error  : key "'+config.iniPatternString+'" doesn\'t exist in "'+self.fileIni.name+'"' })
+            controller.die({ 'exitMessage' : 'Key error  : key "' + config.iniPatternString + '" doesn\'t exist in "' + self.fileIni.name + '"' })
 
 
     def make(self):
@@ -70,6 +70,6 @@ class Hostgroups(object):
             HG['alias']             = hostgroupName
             HG['members']           = members
 
-            result += self.hostGroupPattern.apply(HG)+"\n"
+            result += self.hostGroupPattern.apply(HG) + "\n"
 
         return result

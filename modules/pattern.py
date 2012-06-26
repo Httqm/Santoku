@@ -55,4 +55,3 @@ class Pattern(object):
             self.values[self.variable2tag[tag]]
         except KeyError:
             controller.die({ 'exitMessage' : 'No CSV value given for tag "' + tag + "\" in pattern :\n\n" + self.pattern + "\nMake sure the column names listed in the \"[" + config.iniVarToTagString + ']" stanza of "' + self.file + '" REALLY match "' + config.configFilesPath + config.csvFileName + '" column names.' })
-#            controller.die({ 'exitMessage' : 'No CSV value given for tag "' + tag + '" in pattern : ' + self.pattern })

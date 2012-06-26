@@ -55,8 +55,8 @@ class AllServices(object):
 class Service(object):
 
     def __init__(self,params):
-        self.fileCsv        = params['fileCsv']	# TODO : rename as this is not a CSV file anymore
-        self.currentCsvLine = params['currentCsvLine']
+        self.csv            = params['csv']
+        self.currentCsvLine = params['currentCsvLine']  # TODO : this property conflicts with the purpose of self.csv . Fix it!
         self.csvServiceName = params['serviceCsvName']
         self.cleanName      = self.csvServiceName.replace(config.csvHeaderFs + config.csvHeaderDo,'')
         self.iniFileName    = config.configFilesPath + self.cleanName + '.ini'
@@ -71,7 +71,6 @@ class Service(object):
 
     def loadIniFile(self):
         self.fileIni = FileIni({
-#            'name'  : config.configFilesPath + self.cleanName + '.ini',
             'name'  : self.iniFileName,
             'fs'    : ''
             })
@@ -119,7 +118,6 @@ class Service(object):
 
 
     def getCommandValueFromStanza(self, params):
-        #import re
         match = re.search('\s' + params['directive'] + '\s + (\w*)', self.fileIniData[params['stanzaTitle']])
         if match:
             return match.group(1)
@@ -173,8 +171,7 @@ class Service(object):
     def hasDirectives(self):
         hasDirectives = 1
         for columnName in [self.cleanName + config.csvHeaderFs + config.csvServiceDirectivesNames, self.cleanName + config.csvHeaderFs + config.csvServiceDirectivesValues]:
-#           if(self.fileCsv.columnExists(columnName)):
-            if(self.fileCsv.columnExists(columnName)):
+            if(self.csv.columnExists(columnName)):
                 hasDirectives = hasDirectives and self.currentCsvLine[columnName]
             else:
                 hasDirectives = 0
