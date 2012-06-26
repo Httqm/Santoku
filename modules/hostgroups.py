@@ -53,6 +53,7 @@ class Hostgroups(object):
     def loadPattern(self):
         try:
             self.hostGroupPattern=pattern.Pattern({
+                'file'          : 'TODO pattern HG',
                 'pattern'       : self.fileIniData[config.iniPatternString],
                 'variable2tag'  : self.fileIniData[config.iniVarToTagString]
                 })

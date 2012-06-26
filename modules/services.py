@@ -141,10 +141,12 @@ class Service(object):
 
     def loadPatterns(self):
         self.patternService = Pattern({
+            'file'          : 'TODO file pattern 1',
             'pattern'       : self.fileIniData[config.iniPatternString],
             'variable2tag'  : self.fileIniData[config.iniVarToTagString]
             })
         self.patternDirectives = Pattern({
+            'file'          : 'TODO file pattern 2',
             'pattern'       : self.cfgHostDirectives[config.iniPatternString],
             'variable2tag'  : self.cfgHostDirectives[config.iniVarToTagString]
             })

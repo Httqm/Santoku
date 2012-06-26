@@ -33,6 +33,7 @@ class Pattern(object):
         - variable2tag : dictionary with key = variable name, and value = tag name. This is defined in the [VARIABLE2TAG] section of .ini files
         - values : dictionary with key = variable name, and value = ... value ;-)
         """
+        self.file           = params['file']
         self.pattern        = params['pattern']
         self.variable2tag   = params['variable2tag']
 
@@ -52,4 +53,5 @@ class Pattern(object):
         try:
             self.values[self.variable2tag[tag]]
         except KeyError:
-            controller.die({ 'exitMessage' : 'No CSV value given for tag "' + tag + '" in pattern : ' + self.pattern})
+            controller.die({ 'exitMessage' : 'No CSV value given for tag "' + tag + "\" in pattern :\n\n" + self.pattern + "\n ... found in file \"" + self.file + '"' })
+#            controller.die({ 'exitMessage' : 'No CSV value given for tag "' + tag + '" in pattern : ' + self.pattern })

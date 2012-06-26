@@ -46,10 +46,11 @@ class Csv(object):
         return self.data.keys()
 
 
-    """
-    def getRowById(self,params):
-        return self.data[params['rowId']]
-    """
+    def getCell(self,columnName):
+        try:
+            return self.data[self.currentRow][columnName]
+        except KeyError:
+            controller.die({ 'exitMessage' : 'No column "' + columnName + '"  found in "' + config.configFilesPath + config.csvFileName + '"' })
     # TODO : improve this to return CSV column data. Use exception if column is missing
 
 

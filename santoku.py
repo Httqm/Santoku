@@ -35,8 +35,7 @@ AllCommands = commands.AllCommands
 AllHosts    = hosts.AllHosts
 AllServices = services.AllServices
 Controller  = controller.Controller
-#FileCsv    = fichier.FileCsv
-Csv=csv.Csv
+Csv         = csv.Csv
 FileIni     = fichier.FileIni
 FileOutput  = fichier.FileOutput
 Host        = hosts.Host
@@ -52,20 +51,11 @@ controller  = Controller()
 
 controller.checkConfigValues()
 
-"""
-fileCsv	= FileCsv({
-    'name'  : config.csvFileName,
-    'fs'    : config.csvFileFs
-    })
-csvData     = fileCsv.getData()
-"""
-csvThing=Csv()
-
+csvThing    = Csv()
 allCommands = AllCommands()
 allHosts    = AllHosts()
 hostgroups  = Hostgroups()
 allServices = AllServices()
-#serviceList    = allServices.getList(fileCsv.getHeader())
 serviceList = allServices.getList(csvThing.getHeader())
 
 
@@ -75,12 +65,11 @@ serviceList = allServices.getList(csvThing.getHeader())
 #for hostId in csvData.keys():
 for hostId in csvThing.getKeys():
 
-    #controller.showDebug(hostId)
     csvThing.setCurrentRow({'rowId' : hostId})
 
     host    = Host({
-#       'data'      : csvData[hostId],
-        'data'      : csvThing.getCurrentRow(),
+#        'data'      : csvThing.getCurrentRow(),
+        'data'      : csvThing,
         'allHosts'  : allHosts
         })
 
@@ -88,24 +77,16 @@ for hostId in csvThing.getKeys():
         allHosts.incrementCountOf('ignored')
         continue
 
-#   if(csvData[hostId]['check_command']):
     if(csvThing.currentRowHasCheckCommand()):
         allCommands.add(host.getCheckCommand())
 
     if host.isDuplicated():
         allHosts.incrementCountOf('duplicated')
     else:
-#       csvData[hostId]['hostDirectives'] = host.loadDirectives()
         csvThing.setHostDirectives({'hostDirectives' : host.loadDirectives() })
-
-
-#		allHosts.output += host.applyHostPattern(csvData[hostId])
         allHosts.output += host.applyHostPattern(csvThing.getCurrentRow())
-
         allHosts.incrementCountOf('valid')
-
         hostgroups.addHostToGroups({
-#			'host'		: csvData[hostId][config.csvHeaderHostName],
             'host'      : csvThing.getHostnameFromCurrentRow(),
             'groups'    : host.loadHostGroupsFromCsv()
             })
@@ -118,9 +99,7 @@ for hostId in csvThing.getKeys():
     for singleServiceCsvName in serviceList:
 
         service = Service({
-#			'fileCsv'		: fileCsv,
             'fileCsv'           : csvThing,
-#			'currentCsvLine'	: csvData[hostId],
             'currentCsvLine'    : csvThing.getCurrentRow(),
             'serviceCsvName'    : singleServiceCsvName
             })
@@ -128,20 +107,17 @@ for hostId in csvThing.getKeys():
         if service.isEnabled():
             allCommands.add(service.getCommand())
 
-            serviceName = service.getName()
+            serviceName         = service.getName()
+            serviceDirectives   = ''
 
-            serviceDirectives = ''
             if service.hasDirectives():
                 service.loadDirectivesFromCsvData()
                 serviceDirectives = service.applyServiceDirectivesPattern()
 
             service.buildArrayOfServices({
                 'name'              : serviceName,
-#               'hostName'          : csvData[hostId][config.csvHeaderHostName],
                 'hostName'          : csvThing.getHostnameFromCurrentRow(),
-#               'csvHeader'         : fileCsv.getHeader(),
                 'csvHeader'         : csvThing.getHeader(),
-#               'csvDataLine'       : csvData[hostId],
                 'csvDataLine'       : csvThing.getCurrentRow(),
                 'serviceDirectives' : serviceDirectives
                 })
@@ -169,6 +145,7 @@ outputFileCommands.write(allCommands.getOutput())
 ########################################## ##########################################################
 # Summary
 ########################################## ##########################################################
+
 summary = Summary()
 print summary.make({
     'hostsTotal'        : allHosts.number['valid']+allHosts.number['ignored'],
@@ -178,6 +155,7 @@ print summary.make({
     'servicesTotal'     : allServices.number,
     'commandsTotal'     : allCommands.number
     })
+
 ########################################## ##########################################################
 # the end!
 ########################################## ##########################################################
