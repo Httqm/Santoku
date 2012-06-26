@@ -30,11 +30,11 @@ class Csv(object):
 
     def __init__(self):
         fileCsv = fichier.FileCsv({
-        'name'  : config.csvFileName,
-        'fs'    : config.csvFileFs
-        })
-        self.data   = fileCsv.getData()
-        self.header = fileCsv.getHeader()
+            'name'  : config.csvFileName,
+            'fs'    : config.csvFileFs
+            })
+        self.data       = fileCsv.getData()
+        self.header     = fileCsv.getHeader()
         self.currentRow	= 0
 
 
@@ -62,7 +62,7 @@ class Csv(object):
 
 
     def currentRowHasCheckCommand(self):
-        return 1 if len(str(self.data[self.currentRow]['check_command'])) else 0    # TODO : set 'check_command as config variable
+        return 1 if len(str(self.data[self.currentRow][config.csvHeaderCheckCommand])) else 0
 
 
     def setHostDirectives(self,params):

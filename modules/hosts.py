@@ -125,13 +125,13 @@ class Host(object):
 
     def getCheckCommand(self):
         hostCheckFileIni = FileIni({
-            'name'  : config.configFilesPath + self.hostData['check_command'] + '.ini',
+            'name'  : config.configFilesPath + self.hostData[config.csvHeaderCheckCommand] + '.ini',
             'fs'    : '',
             })
         hostCheckFileIni.loadData()
 
         return {
-            'serviceName'       : self.hostData['check_command'],
+            'serviceName'       : self.hostData[config.csvHeaderCheckCommand],
             'serviceCommand'    : hostCheckFileIni.getData()['COMMAND']
             }
 
