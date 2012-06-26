@@ -184,5 +184,6 @@ class Host(object):
 
 
     def loadHostGroupsFromCsv(self):
-        return self.hostData[config.csvHeaderHostgroups].split(config.csvMultiValuedCellFS)
+#        return self.hostData[config.csvHeaderHostgroups].split(config.csvMultiValuedCellFS)
+        return self.hostData.getCell(config.csvHeaderHostgroups).split(config.csvMultiValuedCellFS)
 

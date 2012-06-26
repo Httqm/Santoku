@@ -59,6 +59,7 @@ class Service(object):
         self.currentCsvLine = params['currentCsvLine']
         self.csvServiceName = params['serviceCsvName']
         self.cleanName      = self.csvServiceName.replace(config.csvHeaderFs + config.csvHeaderDo,'')
+        self.iniFileName    = config.configFilesPath + self.cleanName + '.ini'
         self.loadIniFiles()
         self.loadPatterns()
 
@@ -70,7 +71,8 @@ class Service(object):
 
     def loadIniFile(self):
         self.fileIni = FileIni({
-            'name'  : config.configFilesPath + self.cleanName + '.ini',
+#            'name'  : config.configFilesPath + self.cleanName + '.ini',
+            'name'  : self.iniFileName,
             'fs'    : ''
             })
         self.fileIniData = self.fileIni.getData()
@@ -141,12 +143,12 @@ class Service(object):
 
     def loadPatterns(self):
         self.patternService = Pattern({
-            'file'          : 'TODO file pattern 1',
+            'file'          : self.iniFileName,
             'pattern'       : self.fileIniData[config.iniPatternString],
             'variable2tag'  : self.fileIniData[config.iniVarToTagString]
             })
         self.patternDirectives = Pattern({
-            'file'          : 'TODO file pattern 2',
+            'file'          : config.configFilesPath + config.fileDirectivesIni,
             'pattern'       : self.cfgHostDirectives[config.iniPatternString],
             'variable2tag'  : self.cfgHostDirectives[config.iniVarToTagString]
             })

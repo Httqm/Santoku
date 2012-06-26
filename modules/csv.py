@@ -50,8 +50,7 @@ class Csv(object):
         try:
             return self.data[self.currentRow][columnName]
         except KeyError:
-            controller.die({ 'exitMessage' : 'No column "' + columnName + '"  found in "' + config.configFilesPath + config.csvFileName + '"' })
-    # TODO : improve this to return CSV column data. Use exception if column is missing
+            controller.die({ 'exitMessage' : 'No column "' + columnName + '" found in "' + config.configFilesPath + config.csvFileName + "\".\nFind files where \"" + columnName + "\" is refered to with : grep -r \"" + columnName + "\" *" })
 
 
     def getCurrentRow(self):
