@@ -22,20 +22,20 @@
 from modules import config
 
 
-class Controller(object):
+class Debug(object):
 
     def __init__(self):
         self.mySys = __import__('sys')
 
 
-    def die(self,params):
+    def die(self,message):
         """ Display an error message and leave the program. """
-        print params['exitMessage']
+        print message
         print config.messageDie
         self.mySys.exit(2)
 
 
-    def showDebug(self,message):
+    def show(self,message):
         if config.debug:
             import inspect
             print "\n" \
@@ -47,11 +47,11 @@ class Controller(object):
                 + " ++================== /DEBUG =========================\n" \
 
 
-    def checkConfigValues(self):
-        self.checkCsvFieldAndListSeparatorsAreDifferent()
-
-
-    def checkCsvFieldAndListSeparatorsAreDifferent(self):
-        if config.csvFileFs == config.csvFileParamFs:
-            self.die({'exitMessage':'The values for the CSV field separator and the CSV list separator must be different in ' + config.configFile})
+##    def checkConfigValues(self):
+##        self.checkCsvFieldAndListSeparatorsAreDifferent()
+##
+##
+##    def checkCsvFieldAndListSeparatorsAreDifferent(self):
+##        if config.csvFileFs == config.csvFileParamFs:
+##            self.die({'exitMessage':'The values for the CSV field separator and the CSV list separator must be different in ' + config.configFile})
 
