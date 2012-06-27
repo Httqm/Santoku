@@ -20,254 +20,257 @@
 
 
 from modules import config
-from modules import controller
-import re
+from modules import debug
 
-controller = controller.Controller()
+debug = debug.Debug()
 
 
-########################################## ##########################################################
-# Generic
-########################################## ##########################################################
+##import re
+##
+############################################ ##########################################################
+### Generic
+############################################ ##########################################################
 class Fichier(object):
 
-    def __init__(self,params):
-        self.name   = params['name']
-        self.fs     = params['fs']
-        self.data   = None
+    def __init__(self, params):
+        self.name = params['name']    
 
 
-    def getData(self):
-        self.loadData()
-        self.checkLoadedData()
-        return self.data
-
-
-########################################## ##########################################################
-# .ini files (input)
-########################################## ##########################################################
-class FileIni(Fichier):
-
-    def checkLoadedData(self):
-        """
-        Make sure that all tags ( "$ANYTHING$" ) appearing in 'pattern' also appear in 'VARIABLE2TAG'.
-        And vice-versa.
-        """
-        self.checkStanzasTitlesAreFoundInIniFileLoadedData()
-        self.checkTagsBetweenStanzas({
-            'needle'    : config.iniPatternString,
-            'haystack'  : config.iniVarToTagString
-            })
-
-        self.checkTagsBetweenStanzas({
-            'needle'    : config.iniVarToTagString,
-            'haystack'  : config.iniPatternString
-            })
-
-
-    def checkStanzasTitlesAreFoundInIniFileLoadedData(self):
-        self.searchStanzaTitleInIniFileLoadedData(config.iniPatternString)
-        self.searchStanzaTitleInIniFileLoadedData(config.iniVarToTagString)
-        self.searchStanzaTitleInIniFileLoadedData(config.iniCommandString)
-
-
-    def searchStanzaTitleInIniFileLoadedData(self,key):
+    def readWholeContent(self):
         try:
-            self.data[key]
-        except Exception:
-            controller.die({ 'exitMessage' : '"'+key+'" keyword not found as stanza title in "'+self.name+'"'})
+            theFile         = open (self.name,'r')
+            fileContents    = theFile.read()
+            theFile.close()
+            return fileContents
+        except:
+            debug.die({ 'exitMessage' : 'File "' + self.name + '" not found'})
 
 
-    def checkTagsBetweenStanzas(self,params):
-        """
-        Get ALL needles from the 'needlesStanza', and look for them in the 'haystackStanza'.
-        Needles are tags surrounded with '$' signs, i.e. : $EXAMPLETAG$
-        """
-        # There might be a cleaner way TODO this ;-)
-        if type(self.data[params['needle']]).__name__ == 'str':
-            needlesStanza   = self.data[params['needle']].split("\n")
-        else:
-            needlesStanza   = self.data[params['needle']]
-
-        haystackStanza  = str(self.data[params['haystack']])
-        for line in needlesStanza:
-            match   = re.search('\$([^\$]+)\$', line)
-            if(match):
-                match2 = re.search('(\$'+match.group(1)+'\$)',haystackStanza)
-                if(not match2):
-                    controller.die({ 'exitMessage' : self.name+' : Tag "'+match.group(1)+'" found in "'+params['needle']+'" block, missing in "'+params['haystack']+'" block.'})
-
-
-    def loadData(self):
-        self.checkFileIsThere()
-        self.data           = {}
-        self.sectionType    = ''
-        for line in self.iniFile:
-            if self.lineIsAComment(line) or self.lineIsBlank(line):
-                continue
-
-            if self.lineIsASectionTitle(line):
-                # found a section. Detecting which kind of section it is
-                self.sectionType = self.match.group(1)   # PATTERN|VARIABLE2TAG|COMMAND
-                if self.sectionType == config.iniPatternString or self.sectionType == config.iniCommandString :
-                    self.data[self.sectionType] = ''
-                elif(self.sectionType == config.iniVarToTagString):
-                    self.data[self.sectionType]	= {}
-            else:
-                # loading data from section
-                if self.sectionType == config.iniPatternString or self.sectionType == config.iniCommandString :
-                    self.data[self.sectionType] += line
-
-                elif(self.sectionType == config.iniVarToTagString) :
-                    line = self.removeWhitespaces(line)
-                    self.checkLineMatchesFormat(line)
-                    match = re.search('^(.+)'+config.iniVarToTagStanzaFs+'(.+)$', line)
-                    if(match):
-                        self.data[self.sectionType][match.group(2)] = match.group(1)
-
-
-    def lineIsASectionTitle(self,line):
-        self.match = re.search('\[(.+)\]', line)
-        return 1 if self.match else 0
-
-
-    def checkFileIsThere(self):
-        try:
-            self.iniFile = open(self.name, 'r')
-        except IOError:
-            controller.die({ 'exitMessage' : 'Expected file "'+self.name+'" not found.'})
-
-
-    def lineIsAComment(self,line):
-        match = re.search('^#', line)
-        if(match):
-            return 1
-        else:
-            return 0
-
-
-    def lineIsBlank(self,line):
-        match = re.search('^\n$', line)
-        if(match):
-            return 1
-        else:
-            return 0
-
-
-    def removeWhitespaces(self,line):
-        return line.replace(' ', '').replace("\t", '')	# works but UGLY !!!
-
-
-    def checkLineMatchesFormat(self,line):
-        match = re.search('^\w+'+config.iniVarToTagStanzaFs+'\$\w+\$$', line)
-        if match:
-            return line
-        else:
-            controller.die({ 'exitMessage' : 'In file "'+self.name+'", section ['+self.sectionType+'], the line "'+line.replace("\n",'')+'" doesn\'t match the "variable '+config.iniVarToTagStanzaFs+' $TAG$" format. (not counting whitespaces).'})
-            return 0
-
-
-
-########################################## ##########################################################
-# an input CSV file
-########################################## ##########################################################
-class FileCsv(Fichier):
-
-    def checkLoadedData(self):
-        """
-        Does nothing so far.
-        Just to match the Fichier.getData() method requirement.
-        """
-
-
-    def loadData(self):
-        """ Load data from CSV file into a dictionary """
-        self.getColumnNumbers()
-        self.readCsvDataIgnoringHeaders()
-
-
-    def readCsvDataIgnoringHeaders(self):
-        import fileinput
-        csvData = {}
-        lineNb  = -1    # hack so that the 1st host has the ID '1'
-        for line in fileinput.input([self.name]):
-            lineNb += 1
-            if(lineNb == 0):
-                continue    # skip CSV headers line
-
-            ligne       = line.split(self.fs)
-            hostFields  = {}
-
-            for clefs in self.columNumberToText.keys():
-                hostFields[self.columNumberToText[clefs]] = ligne[clefs].strip('"')
-
-            csvData[lineNb] = hostFields
-
-        self.data   = csvData
-
-
-
-    def getColumnNumbers(self):
-        """
-        Read the first line of the CSV file, then builds 2 dictionaries :
-        - column number to column text
-        - column text to column number
-        """
-        try:
-            inputFile   = open(self.name,'r')
-            self.header = inputFile.readline()
-        except IOError:
-            controller.die({ 'exitMessage' : 'Source CSV file "'+self.name+'" declared in "'+config.configFile+'" not found.'})
-
-        self.columNumberToText  = {}
-        self.columnTextToNumber = {}
-        champs          = self.header.split(self.fs)
-        columnNumber    = 0
-
-        for champ in champs:
-            tmp                                     = champ.strip('"')
-            self.columNumberToText[columnNumber]    = tmp
-            self.columnTextToNumber[tmp]            = columnNumber
-            columnNumber += 1
-
-
-    def getHeader(self):
-        """ Return the header of the CSV file as a list of fields."""
-        return self.header.replace('"', '').split(self.fs)
-
-    """
-    def columnExists(self,columnHeader):
-        # Return 'true' if the specified column name exists (found in CSV headers).
-        return 1 if columnHeader in self.getHeader() else 0
-    """
-
-
-
-########################################## ##########################################################
-# Output files
-########################################## ##########################################################
-class FileOutput(Fichier):
-
-    def __init__(self,params):
-        """ Extends class 'fichier' """
-        self.name = params['name']
-
-
-    def makeHeaderWithWarningMessage(self):
-        """ Generate a basic header for output files showing generation date + a 'do not modify manually' warning """
-        import datetime
-        now = datetime.datetime.now()
-        return "########################################## ##########################################################\n\
-# "+self.name+"\n# Generated by Santoku on "+now.strftime("%Y/%m/%d %H:%M")+"\n\
-# Don't edit manually or changes might be overwritten !\n\
-########################################## ##########################################################\n\n"
-
-
-    def write(self, data):
-        try:
-            outFile = open(self.name,'w')
-            outFile.write(self.makeHeaderWithWarningMessage())
-            outFile.write(data)
-            outFile.close()
-        except Exception, e :
-            controller.die({ 'exitMessage' : 'Can not write results to "'+self.name+'" : '+str(e)})
+############################################ ##########################################################
+### .ini files (input)
+############################################ ##########################################################
+##class FileIni(Fichier):
+##
+##    def checkLoadedData(self):
+##        """
+##        Make sure that all tags ( "$ANYTHING$" ) appearing in 'pattern' also appear in 'VARIABLE2TAG'.
+##        And vice-versa.
+##        """
+##        self.checkStanzasTitlesAreFoundInIniFileLoadedData()
+##        self.checkTagsBetweenStanzas({
+##            'needle'    : config.iniPatternString,
+##            'haystack'  : config.iniVarToTagString
+##            })
+##
+##        self.checkTagsBetweenStanzas({
+##            'needle'    : config.iniVarToTagString,
+##            'haystack'  : config.iniPatternString
+##            })
+##
+##
+##    def checkStanzasTitlesAreFoundInIniFileLoadedData(self):
+##        self.searchStanzaTitleInIniFileLoadedData(config.iniPatternString)
+##        self.searchStanzaTitleInIniFileLoadedData(config.iniVarToTagString)
+##        self.searchStanzaTitleInIniFileLoadedData(config.iniCommandString)
+##
+##
+##    def searchStanzaTitleInIniFileLoadedData(self,key):
+##        try:
+##            self.data[key]
+##        except Exception:
+##            controller.die({ 'exitMessage' : '"'+key+'" keyword not found as stanza title in "'+self.name+'"'})
+##
+##
+##    def checkTagsBetweenStanzas(self,params):
+##        """
+##        Get ALL needles from the 'needlesStanza', and look for them in the 'haystackStanza'.
+##        Needles are tags surrounded with '$' signs, i.e. : $EXAMPLETAG$
+##        """
+##        # There might be a cleaner way TODO this ;-)
+##        if type(self.data[params['needle']]).__name__ == 'str':
+##            needlesStanza   = self.data[params['needle']].split("\n")
+##        else:
+##            needlesStanza   = self.data[params['needle']]
+##
+##        haystackStanza  = str(self.data[params['haystack']])
+##        for line in needlesStanza:
+##            match   = re.search('\$([^\$]+)\$', line)
+##            if(match):
+##                match2 = re.search('(\$'+match.group(1)+'\$)',haystackStanza)
+##                if(not match2):
+##                    controller.die({ 'exitMessage' : self.name+' : Tag "'+match.group(1)+'" found in "'+params['needle']+'" block, missing in "'+params['haystack']+'" block.'})
+##
+##
+##    def loadData(self):
+##        self.checkFileIsThere()
+##        self.data           = {}
+##        self.sectionType    = ''
+##        for line in self.iniFile:
+##            if self.lineIsAComment(line) or self.lineIsBlank(line):
+##                continue
+##
+##            if self.lineIsASectionTitle(line):
+##                # found a section. Detecting which kind of section it is
+##                self.sectionType = self.match.group(1)   # PATTERN|VARIABLE2TAG|COMMAND
+##                if self.sectionType == config.iniPatternString or self.sectionType == config.iniCommandString :
+##                    self.data[self.sectionType] = ''
+##                elif(self.sectionType == config.iniVarToTagString):
+##                    self.data[self.sectionType]	= {}
+##            else:
+##                # loading data from section
+##                if self.sectionType == config.iniPatternString or self.sectionType == config.iniCommandString :
+##                    self.data[self.sectionType] += line
+##
+##                elif(self.sectionType == config.iniVarToTagString) :
+##                    line = self.removeWhitespaces(line)
+##                    self.checkLineMatchesFormat(line)
+##                    match = re.search('^(.+)'+config.iniVarToTagStanzaFs+'(.+)$', line)
+##                    if(match):
+##                        self.data[self.sectionType][match.group(2)] = match.group(1)
+##
+##
+##    def lineIsASectionTitle(self,line):
+##        self.match = re.search('\[(.+)\]', line)
+##        return 1 if self.match else 0
+##
+##
+##    def checkFileIsThere(self):
+##        try:
+##            self.iniFile = open(self.name, 'r')
+##        except IOError:
+##            controller.die({ 'exitMessage' : 'Expected file "'+self.name+'" not found.'})
+##
+##
+##    def lineIsAComment(self,line):
+##        match = re.search('^#', line)
+##        if(match):
+##            return 1
+##        else:
+##            return 0
+##
+##
+##    def lineIsBlank(self,line):
+##        match = re.search('^\n$', line)
+##        if(match):
+##            return 1
+##        else:
+##            return 0
+##
+##
+##    def removeWhitespaces(self,line):
+##        return line.replace(' ', '').replace("\t", '')	# works but UGLY !!!
+##
+##
+##    def checkLineMatchesFormat(self,line):
+##        match = re.search('^\w+'+config.iniVarToTagStanzaFs+'\$\w+\$$', line)
+##        if match:
+##            return line
+##        else:
+##            controller.die({ 'exitMessage' : 'In file "'+self.name+'", section ['+self.sectionType+'], the line "'+line.replace("\n",'')+'" doesn\'t match the "variable '+config.iniVarToTagStanzaFs+' $TAG$" format. (not counting whitespaces).'})
+##            return 0
+##
+##
+##
+############################################ ##########################################################
+### an input CSV file
+############################################ ##########################################################
+##class FileCsv(Fichier):
+##
+##    def checkLoadedData(self):
+##        """
+##        Does nothing so far.
+##        Just to match the Fichier.getData() method requirement.
+##        """
+##
+##
+##    def loadData(self):
+##        """ Load data from CSV file into a dictionary """
+##        self.getColumnNumbers()
+##        self.readCsvDataIgnoringHeaders()
+##
+##
+##    def readCsvDataIgnoringHeaders(self):
+##        import fileinput
+##        csvData = {}
+##        lineNb  = -1    # hack so that the 1st host has the ID '1'
+##        for line in fileinput.input([self.name]):
+##            lineNb += 1
+##            if(lineNb == 0):
+##                continue    # skip CSV headers line
+##
+##            ligne       = line.split(self.fs)
+##            hostFields  = {}
+##
+##            for clefs in self.columNumberToText.keys():
+##                hostFields[self.columNumberToText[clefs]] = ligne[clefs].strip('"')
+##
+##            csvData[lineNb] = hostFields
+##
+##        self.data   = csvData
+##
+##
+##
+##    def getColumnNumbers(self):
+##        """
+##        Read the first line of the CSV file, then builds 2 dictionaries :
+##        - column number to column text
+##        - column text to column number
+##        """
+##        try:
+##            inputFile   = open(self.name,'r')
+##            self.header = inputFile.readline()
+##        except IOError:
+##            controller.die({ 'exitMessage' : 'Source CSV file "'+self.name+'" declared in "'+config.configFile+'" not found.'})
+##
+##        self.columNumberToText  = {}
+##        self.columnTextToNumber = {}
+##        champs          = self.header.split(self.fs)
+##        columnNumber    = 0
+##
+##        for champ in champs:
+##            tmp                                     = champ.strip('"')
+##            self.columNumberToText[columnNumber]    = tmp
+##            self.columnTextToNumber[tmp]            = columnNumber
+##            columnNumber += 1
+##
+##
+##    def getHeader(self):
+##        """ Return the header of the CSV file as a list of fields."""
+##        return self.header.replace('"', '').split(self.fs)
+##
+##    """
+##    def columnExists(self,columnHeader):
+##        # Return 'true' if the specified column name exists (found in CSV headers).
+##        return 1 if columnHeader in self.getHeader() else 0
+##    """
+##
+##
+##
+############################################ ##########################################################
+### Output files
+############################################ ##########################################################
+##class FileOutput(Fichier):
+##
+##    def __init__(self,params):
+##        """ Extends class 'fichier' """
+##        self.name = params['name']
+##
+##
+##    def makeHeaderWithWarningMessage(self):
+##        """ Generate a basic header for output files showing generation date + a 'do not modify manually' warning """
+##        import datetime
+##        now = datetime.datetime.now()
+##        return "########################################## ##########################################################\n\
+### "+self.name+"\n# Generated by Santoku on "+now.strftime("%Y/%m/%d %H:%M")+"\n\
+### Don't edit manually or changes might be overwritten !\n\
+############################################ ##########################################################\n\n"
+##
+##
+##    def write(self, data):
+##        try:
+##            outFile = open(self.name,'w')
+##            outFile.write(self.makeHeaderWithWarningMessage())
+##            outFile.write(data)
+##            outFile.close()
+##        except Exception, e :
+##            controller.die({ 'exitMessage' : 'Can not write results to "'+self.name+'" : '+str(e)})

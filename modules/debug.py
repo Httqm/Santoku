@@ -28,9 +28,9 @@ class Debug(object):
         self.mySys = __import__('sys')
 
 
-    def die(self,message):
+    def die(self, params):
         """ Display an error message and leave the program. """
-        print message
+        print params['exitMessage']
         print config.messageDie
         self.mySys.exit(2)
 

@@ -19,18 +19,22 @@
 #
 
 
+from modules import config
+from modules import csv
 from modules import debug
 
 # local names for imported classes
-Debug = debug.Debug
+Csv     = csv.Csv
+Debug   = debug.Debug
 
 ############################################ ##########################################################
 ### main()
 ############################################ ##########################################################
 debug = Debug()
 
-debug.show('debug !!!!')
-debug.die('ARGL')
+csv = Csv({'fileName' : config.csvFileName})
+
+debug.show(csv.rawData)
 
 
 
@@ -38,9 +42,9 @@ debug.die('ARGL')
 
 
 
-##from modules import config
+
+
 ##from modules import commands
-##from modules import csv
 ##from modules import fichier
 ##from modules import hosts
 ##from modules import hostgroups
@@ -52,7 +56,6 @@ debug.die('ARGL')
 ##AllCommands = commands.AllCommands
 ##AllHosts    = hosts.AllHosts
 ##AllServices = services.AllServices
-##Csv         = csv.Csv
 ##FileIni     = fichier.FileIni
 ##FileOutput  = fichier.FileOutput
 ##Host        = hosts.Host

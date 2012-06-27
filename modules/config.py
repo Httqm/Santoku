@@ -24,29 +24,29 @@
 ############################################ ##########################################################
 ### common
 ##configFile          = __file__  # This is used to point to THIS file in error messages. DON'T CHANGE THIS !
-##configFilesPath     = './config/'
-##
+configFilesPath     = './config/'
+
 ### CSV file
-##csvFileName     = 'home.csv'
+csvFileName     = 'home.csv'
 ###csvFileName    = 'file.csv'
 ###csvFileName    = 'hostsOBS.csv'
 ###csvFileName    = 'hostsOBS_light.csv'
-##csvFileFs       = ';'   # CSV field separator. Must be different from the CSV list separator below.
+csvFileFs       = ';'   # CSV field separator. Must be different from the CSV list separator below.
 ##csvFileParamFs  = '|'   # CSV list separator. This is used when a CSV cell contains several values
-##
+
 ### INI files
 ##fileHostIni         = 'host.ini'
 ##fileHostgroupIni    = 'hostgroup.ini'
 ##fileDirectivesIni   = 'directives.ini'
 ##fileSummaryIni      = 'summary.ini'
-##
+
 ### OUTPUT files
 ##outputPath          = './output/'
 ##outputFileHosts     = 'hosts.cfg'
 ##outputFileServices  = 'services.cfg'
 ##outputFileCommands  = 'commands.cfg'
-##
-##
+
+
 ########################################## ##########################################################
 # OUTPUT MESSAGES & DEBUG
 ########################################## ##########################################################
