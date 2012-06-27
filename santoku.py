@@ -18,6 +18,7 @@
 # along with Santoku.  If not, see <http://www.gnu.org/licenses/>
 #
 
+#in branch simplerPatterns
 
 from modules import config
 from modules import commands
