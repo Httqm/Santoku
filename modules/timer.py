@@ -19,26 +19,16 @@
 #
 
 
-##from modules import config
-##from modules import controller
-##
-##controller = controller.Controller()
-##
-##
-class AllCommands(object):
+import time
+
+class Timer(object):
     def __init__(self):
-        return
-##        self.output     = ''
-#        self.commands   = {}
-#        self.number     = 0
-##
-##
-#    def add(self,commandData):
-#        self.commands[commandData['serviceName']]   = commandData['serviceCommand']
-#        self.number                                 = len(self.commands)
-##
-##
-##    def getOutput(self):
-##        for serviceName in self.commands:
-##            self.output += self.commands[serviceName] + "\n"
-##        return self.output
+        self.start()
+
+
+    def start(self):
+        self.startTime = time.clock()
+
+
+    def stop(self):
+        return time.clock() - self.startTime

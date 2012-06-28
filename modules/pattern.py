@@ -20,8 +20,9 @@
 
 
 from modules import config
-from modules import controller
-controller = controller.Controller()
+from modules import debug
+
+debug = debug.Debug()
 
 
 class Pattern(object):
@@ -34,19 +35,21 @@ class Pattern(object):
         - variable2tag : dictionary with key = variable name, and value = tag name. This is defined in the [VARIABLE2TAG] section of .ini files
         - values : dictionary with key = variable name, and value = ... value ;-)
         """
+        debug.show('a')
         self.file           = params['file']
         self.pattern        = params['pattern']
-        self.variable2tag   = params['variable2tag']
-
+#        self.variable2tag   = params['variable2tag']
 
     def apply(self,values):
         """ Perform substitutions of tags with their values in the pattern """
         patternCopy = self.pattern  # so that pattern is not altered
         self.values = values
+        """
         for tag in self.variable2tag:
             self.checkTagValueExists(tag)
             patternCopy	= patternCopy.replace(tag,str(self.values[self.variable2tag[tag]]))
             # /!\ args for replace must be strings. Otherwise "expected a character buffer object" error
+        """
         return patternCopy
 
 
@@ -54,4 +57,4 @@ class Pattern(object):
         try:
             self.values[self.variable2tag[tag]]
         except KeyError:
-            controller.die({ 'exitMessage' : 'No CSV value given for tag "' + tag + "\" in pattern :\n\n" + self.pattern + "\nMake sure the column names listed in the \"[" + config.iniVarToTagString + ']" stanza of "' + self.file + '" REALLY match "' + config.configFilesPath + config.csvFileName + '" column names.' })
+            debug.die({ 'exitMessage' : 'No CSV value given for tag "' + tag + "\" in pattern :\n\n" + self.pattern + "\nMake sure the column names listed in the \"[" + config.iniVarToTagString + ']" stanza of "' + self.file + '" REALLY match "' + config.configFilesPath + config.csvFileName + '" column names.' })

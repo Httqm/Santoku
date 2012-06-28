@@ -19,29 +19,64 @@
 #
 
 
+from modules import commands
 from modules import config
 from modules import csv
 from modules import debug
+from modules import hosts
+from modules import timer
 
-# local names for imported classes
-Csv     = csv.Csv
-Debug   = debug.Debug
+globalTimer=timer.Timer()
+
 
 ############################################ ##########################################################
 ### main()
 ############################################ ##########################################################
-debug = Debug()
+allCommands = commands.AllCommands()
+debug       = debug.Debug()
+allHosts    = hosts.AllHosts()
 
-csv = Csv({'fileName' : config.csvFileName})
+csv         = csv.Csv({'fileName' : config.csvFileName})
 
-debug.show(csv.data)
+#debug.show(csv.data)
 
-for truc in csv.data:
-    debug.show(str(truc) + ' ==> ' + csv.data[truc]['host_name'])
+host        = hosts.Host({
+                'csv'       : csv,
+                'allHosts'  : allHosts
+                })
+
+########################################## ##########################################################
+# Looping on hosts
+########################################## ##########################################################
+for hostId in csv.data:
+    csv.setCurrentRow(hostId)
+
+#    debug.show(csv.getCellFromCurrentRow('host_name'))
+#    debug.show(str(hostId) + ' ==> ' + csv.data[hostId]['host_name'])
     
+    if host.isMarkedToBeIgnored() :
+        allHosts.incrementCountOf('ignored')
+	debug.show(csv.getCellFromCurrentRow('host_name') + ' IS IGNORED')
+        continue
+
+#    if(csv.currentRowHasCheckCommand()):
+#	debug.show(csv.getCellFromCurrentRow('host_name') + ' HAS CHECK_COMMAND')
+#        allCommands.add(host.getCheckCommand())    # TODO (later)
 
 
-
+    if host.isDuplicated():
+#	debug.show(csv.getCellFromCurrentRow('host_name') + ' IS DUPLICATED')
+        allHosts.incrementCountOf('duplicated')
+    else:
+#	debug.show(csv.getCellFromCurrentRow('host_name') + ' IS NOT DUPLICATED')
+        # manage host directives : TODO
+#        csv.setHostDirectives({'hostDirectives' : host.loadDirectives() })
+        allHosts.output += host.applyHostPattern(csv.getCurrentRow())
+        allHosts.incrementCountOf('valid')
+#        hostgroups.addHostToGroups({
+#            'host'      : csv.getHostnameFromCurrentRow(),
+#            'groups'    : host.loadHostGroupsFromCsv()
+#            })
 
 
 
@@ -49,7 +84,6 @@ for truc in csv.data:
 
 ##from modules import commands
 ##from modules import fichier
-##from modules import hosts
 ##from modules import hostgroups
 ##from modules import pattern
 ##from modules import services
@@ -61,7 +95,6 @@ for truc in csv.data:
 ##AllServices = services.AllServices
 ##FileIni     = fichier.FileIni
 ##FileOutput  = fichier.FileOutput
-##Host        = hosts.Host
 ##Hostgroups  = hostgroups.Hostgroups
 ##Pattern     = pattern.Pattern
 ##Service     = services.Service
@@ -186,3 +219,4 @@ for truc in csv.data:
 ########################################## ##########################################################
 # the end!
 ########################################## ##########################################################
+print globalTimer.stop()

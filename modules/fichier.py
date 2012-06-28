@@ -25,7 +25,7 @@ from modules import debug
 debug = debug.Debug()
 
 
-##import re
+import re
 ##
 ############################################ ##########################################################
 ### Generic
@@ -115,7 +115,73 @@ class FileCsv(object):
 ############################################ ##########################################################
 ### .ini files (input)
 ############################################ ##########################################################
-##class FileIni(Fichier):
+class FileIni(object):
+
+    def __init__(self, params):
+        self.name = params['name']
+
+
+    def checkFileIsThere(self):
+        try:
+            self.iniFile = open(self.name, 'r')
+        except IOError:
+            controller.die({ 'exitMessage' : 'Expected file "'+self.name+'" not found.'})
+
+
+    def loadData(self):
+        self.checkFileIsThere()
+        data           = {}
+        self.sectionType    = ''
+        for line in self.iniFile:
+            if self.lineIsAComment(line) or self.lineIsBlank(line):
+                continue
+
+            if self.lineIsASectionTitle(line):
+                # found a section. Detecting which kind of section it is
+                self.sectionType = self.match.group(1)   # PATTERN|VARIABLE2TAG|COMMAND
+                if self.sectionType == config.iniPatternString or self.sectionType == config.iniCommandString :
+                    data[self.sectionType] = ''
+                """
+                elif(self.sectionType == config.iniVarToTagString):
+                    data[self.sectionType]	= {}
+                """
+
+            else:
+                # loading data from section
+                if self.sectionType == config.iniPatternString or self.sectionType == config.iniCommandString :
+                    data[self.sectionType] += line
+                """
+                elif(self.sectionType == config.iniVarToTagString) :
+                    line = self.removeWhitespaces(line)
+                    self.checkLineMatchesFormat(line)
+                    match = re.search('^(.+)'+config.iniVarToTagStanzaFs+'(.+)$', line)
+                    if(match):
+                        data[self.sectionType][match.group(2)] = match.group(1)
+                """
+        return data
+
+
+    def lineIsAComment(self,line):
+        match = re.search('^#', line)
+        if(match):
+            return 1
+        else:
+            return 0
+
+
+    def lineIsBlank(self,line):
+        match = re.search('^\n$', line)
+        if(match):
+            return 1
+        else:
+            return 0
+
+
+    def lineIsASectionTitle(self,line):
+        self.match = re.search('\[(.+)\]', line)
+        return 1 if self.match else 0
+
+
 ##
 ##    def checkLoadedData(self):
 ##        """
@@ -167,60 +233,14 @@ class FileCsv(object):
 ##                    controller.die({ 'exitMessage' : self.name+' : Tag "'+match.group(1)+'" found in "'+params['needle']+'" block, missing in "'+params['haystack']+'" block.'})
 ##
 ##
-##    def loadData(self):
-##        self.checkFileIsThere()
-##        self.data           = {}
-##        self.sectionType    = ''
-##        for line in self.iniFile:
-##            if self.lineIsAComment(line) or self.lineIsBlank(line):
-##                continue
-##
-##            if self.lineIsASectionTitle(line):
-##                # found a section. Detecting which kind of section it is
-##                self.sectionType = self.match.group(1)   # PATTERN|VARIABLE2TAG|COMMAND
-##                if self.sectionType == config.iniPatternString or self.sectionType == config.iniCommandString :
-##                    self.data[self.sectionType] = ''
-##                elif(self.sectionType == config.iniVarToTagString):
-##                    self.data[self.sectionType]	= {}
-##            else:
-##                # loading data from section
-##                if self.sectionType == config.iniPatternString or self.sectionType == config.iniCommandString :
-##                    self.data[self.sectionType] += line
-##
-##                elif(self.sectionType == config.iniVarToTagString) :
-##                    line = self.removeWhitespaces(line)
-##                    self.checkLineMatchesFormat(line)
-##                    match = re.search('^(.+)'+config.iniVarToTagStanzaFs+'(.+)$', line)
-##                    if(match):
-##                        self.data[self.sectionType][match.group(2)] = match.group(1)
 ##
 ##
-##    def lineIsASectionTitle(self,line):
-##        self.match = re.search('\[(.+)\]', line)
-##        return 1 if self.match else 0
 ##
 ##
-##    def checkFileIsThere(self):
-##        try:
-##            self.iniFile = open(self.name, 'r')
-##        except IOError:
-##            controller.die({ 'exitMessage' : 'Expected file "'+self.name+'" not found.'})
 ##
 ##
-##    def lineIsAComment(self,line):
-##        match = re.search('^#', line)
-##        if(match):
-##            return 1
-##        else:
-##            return 0
 ##
 ##
-##    def lineIsBlank(self,line):
-##        match = re.search('^\n$', line)
-##        if(match):
-##            return 1
-##        else:
-##            return 0
 ##
 ##
 ##    def removeWhitespaces(self,line):

@@ -30,15 +30,32 @@ class Csv(object):
 
     def __init__(self, params):
         self.fileName   = params['fileName']
-        self.data       = self.getData()
+        self.data       = self.loadDataFromFile()
+        self.currentRow	= 0
 
 
-    def getData(self):
+    def loadDataFromFile(self):
         csvFile = fichier.FileCsv({
                 'name'  : self.fileName,
                 })
 #        debug.show(csvFile.loadContentIntoDict())
         return csvFile.loadContentIntoDict()
+
+
+    def setCurrentRow(self, rowId):
+        self.currentRow = rowId
+
+
+    def getCellFromCurrentRow(self, cellName):
+        return self.data[self.currentRow][cellName]
+
+
+    def currentRowHasCheckCommand(self):
+        return 1 if len(str(self.data[self.currentRow][config.csvHeaderCheckCommand])) else 0
+
+
+    def getCurrentRow(self):
+        return self.data[self.currentRow]
 
 
 ##    def getRawData(self):
@@ -63,8 +80,6 @@ class Csv(object):
 ##        self.currentRow	= 0
 ##
 ##
-##    def setCurrentRow(self,params):
-##        self.currentRow = params['rowId']
 ##
 ##
 ##    def getKeys(self):
@@ -78,16 +93,12 @@ class Csv(object):
 ##            debug.die({ 'exitMessage' : 'No column "' + columnName + '" found in "' + config.configFilesPath + config.csvFileName + "\".\nFind files where \"" + columnName + "\" is refered to with : grep -r \"" + columnName + "\" *" })
 ##
 ##
-##    def getCurrentRow(self):
-##        return self.data[self.currentRow]
 ##
 ##
 ##    def getHostnameFromCurrentRow(self):
 ##        return self.data[self.currentRow][config.csvHeaderHostName]
 ##
 ##
-##    def currentRowHasCheckCommand(self):
-##        return 1 if len(str(self.data[self.currentRow][config.csvHeaderCheckCommand])) else 0
 ##
 ##
 ##    def setHostDirectives(self,params):

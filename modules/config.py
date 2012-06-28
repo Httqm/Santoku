@@ -35,7 +35,7 @@ csvFileFs       = ';'   # CSV field separator. Must be different from the CSV li
 ##csvFileParamFs  = '|'   # CSV list separator. This is used when a CSV cell contains several values
 
 ### INI files
-##fileHostIni         = 'host.ini'
+fileHostIni         = 'host.ini'
 ##fileHostgroupIni    = 'hostgroup.ini'
 ##fileDirectivesIni   = 'directives.ini'
 ##fileSummaryIni      = 'summary.ini'
@@ -63,9 +63,9 @@ debug       = 1 # 0|1, enable output of controller.showDebug messages
 ##csvMultiValuedCellFS        = '|'
 ##csvHeaderDo                 = 'do'
 ##csvHeaderFs                 = ':'
-##csvHeaderHostName           = 'host_name'
-##csvHeaderIgnoreHost         = 'ignore_host'
-##csvHeaderCheckCommand       = 'check_command'
+csvHeaderHostName           = 'host_name'
+csvHeaderIgnoreHost         = 'ignore_host'
+csvHeaderCheckCommand       = 'check_command'
 ##csvHeaderUse                = 'use'
 ##csvHeaderHostgroups         = 'hostgroups'
 ##csvGenericService           = 'generic_service'
@@ -82,10 +82,10 @@ debug       = 1 # 0|1, enable output of controller.showDebug messages
 ### But just in case you don't like the way they are (cosmetics) or need a workaround for any reason :
 ### HAVE FUN !
 ############################################ ##########################################################
-##iniPatternString    = 'PATTERN'
+iniPatternString    = 'PATTERN'
 ##iniVarToTagString   = 'VARIABLE2TAG'
 ##iniVarToTagStanzaFs = '='
-##iniCommandString    = 'COMMAND'
+iniCommandString    = 'COMMAND'
 ##
 ##
 ############################################ ##########################################################
