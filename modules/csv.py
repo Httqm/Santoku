@@ -30,15 +30,28 @@ class Csv(object):
 
     def __init__(self, params):
         self.fileName   = params['fileName']
-        self.rawData    = self.getRawData()
+        self.data       = self.getData()
 
 
-    def getRawData(self):
-        csvFile = fichier.Fichier({
+    def getData(self):
+        csvFile = fichier.FileCsv({
                 'name'  : self.fileName,
-#                'fs'    : config.csvFileFs
                 })
-        return csvFile.readWholeContent()
+#        debug.show(csvFile.loadContentIntoDict())
+        return csvFile.loadContentIntoDict()
+
+
+##    def getRawData(self):
+##        csvFile = fichier.Fichier({
+##                'name'  : self.fileName,
+##                })
+##        return csvFile.readWholeContent()
+
+
+##    # TODO : allow parsing csv by row, and retrieve data as csv[rowId][columnName]
+##    def getCleanData(self):
+##        rawData    = self.getRawData()
+##        return 0
 
 ##    def __init__(self):
 ##        fileCsv = fichier.FileCsv({

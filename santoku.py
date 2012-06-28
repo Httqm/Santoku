@@ -34,8 +34,11 @@ debug = Debug()
 
 csv = Csv({'fileName' : config.csvFileName})
 
-debug.show(csv.rawData)
+debug.show(csv.data)
 
+for truc in csv.data:
+    debug.show(str(truc) + ' ==> ' + csv.data[truc]['host_name'])
+    
 
 
 

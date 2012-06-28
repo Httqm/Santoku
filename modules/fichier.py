@@ -30,20 +30,86 @@ debug = debug.Debug()
 ############################################ ##########################################################
 ### Generic
 ############################################ ##########################################################
-class Fichier(object):
+##class Fichier(object):
+##
+##    def __init__(self, params):
+##        self.name = params['name']
+##
+##
+##    def readWholeContent(self):
+##        try:
+##            theFile         = open (self.name,'r')
+##            fileContents    = theFile.read()
+##            theFile.close()
+##            return fileContents
+##        except:
+##            debug.die({ 'exitMessage' : 'File "' + self.name + '" not found'})
+
+
+
+############################################ ##########################################################
+### an input CSV file
+############################################ ##########################################################
+class FileCsv(object):
 
     def __init__(self, params):
-        self.name = params['name']    
+        self.name = params['name']
+        self.fs   = config.csvFileFs
+#        self.data = self.loadContentIntoDict()
 
 
-    def readWholeContent(self):
+    def loadContentIntoDict(self):
+        """ Load data from CSV file into a dictionary """
+        self.getColumnNumbers()
+        return self.readCsvDataIgnoringHeaders()
+
+
+    def getColumnNumbers(self):
+        """
+        Read the header of the CSV file, then builds 2 dictionaries :
+        - column number to column text
+        - column text to column number
+        """
         try:
-            theFile         = open (self.name,'r')
-            fileContents    = theFile.read()
-            theFile.close()
-            return fileContents
-        except:
-            debug.die({ 'exitMessage' : 'File "' + self.name + '" not found'})
+            inputFile   = open(self.name,'r')
+            self.header = inputFile.readline()
+            inputFile.close()
+        except IOError:
+            debug.die({ 'exitMessage' : 'Source CSV file "'+self.name+'" declared in "'+config.configFile+'" not found.'})
+
+        self.columNumberToText  = {}
+        self.columnTextToNumber = {}
+        champs          = self.header.split(self.fs)
+        columnNumber    = 0
+
+        for champ in champs:
+            tmp                                     = champ.strip('"')
+            self.columNumberToText[columnNumber]    = tmp
+#            self.columnTextToNumber[tmp]            = columnNumber	# TODO : useless ?
+            columnNumber += 1
+
+
+    def readCsvDataIgnoringHeaders(self):
+        import fileinput
+        csvData = {}
+        lineNb  = -1    # hack so that the 1st host has the ID '1'
+        for line in fileinput.input([self.name]):
+            lineNb += 1
+            if(lineNb == 0):
+                continue    # skip CSV headers line
+
+            ligne       = line.split(self.fs)
+            hostFields  = {}
+
+            for clefs in self.columNumberToText.keys():
+                hostFields[self.columNumberToText[clefs]] = ligne[clefs].strip('"')
+
+            csvData[lineNb] = hostFields
+
+#        self.data   = csvData
+#        debug.show(self.data) # TODO : continue here
+        return csvData
+
 
 
 ############################################ ##########################################################
