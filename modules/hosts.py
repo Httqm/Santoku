@@ -139,6 +139,13 @@ class Host(object):
     def applyHostPattern(self,values):
         return self.allHosts.patternHost.apply(values) + "\n"
 
+
+    def loadHostGroupsFromCsv(self):
+#        return self.csv.getCurrentHostCell(config.csvHeaderHostgroups).split(config.csvMultiValuedCellFS)
+        return self.csv.getCellFromCurrentRow(config.csvHeaderHostgroups).split(config.csvMultiValuedCellFS)
+
+
+
 #    def loadDirectives(self):
 #        self.checkCsvHostDirectivesExist()
 #        directives          = ''
@@ -166,12 +173,6 @@ class Host(object):
 
 ##
 ##
-##
-##
-##
-##
-##
-##
 ##    def checkCsvHostDirectivesExist(self):
 ##        self.searchCsvHostDirectivesNames()
 ##        self.searchCsvHostDirectivesValues()
@@ -189,10 +190,3 @@ class Host(object):
 ##            self.csv.getCurrentHostCell(config.csvHostDirectivesValues)
 ##        except KeyError:
 ##            controller.die({ 'exitMessage' : 'Key error : key "' + config.csvHostDirectivesValues + '" not found in "' + config.csvFileName + '"'})
-##
-##
-##
-##
-##    def loadHostGroupsFromCsv(self):
-##        return self.csv.getCurrentHostCell(config.csvHeaderHostgroups).split(config.csvMultiValuedCellFS)
-

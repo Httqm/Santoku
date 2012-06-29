@@ -36,13 +36,13 @@ csvFileFs       = ';'   # CSV field separator. Must be different from the CSV li
 
 ### INI files
 fileHostIni         = 'host.ini'
-##fileHostgroupIni    = 'hostgroup.ini'
+fileHostgroupIni    = 'hostgroup.ini'
 ##fileDirectivesIni   = 'directives.ini'
 ##fileSummaryIni      = 'summary.ini'
 
 ### OUTPUT files
-##outputPath          = './output/'
-##outputFileHosts     = 'hosts.cfg'
+outputPath          = './output/'
+outputFileHosts     = 'hosts.cfg'
 ##outputFileServices  = 'services.cfg'
 ##outputFileCommands  = 'commands.cfg'
 
@@ -60,14 +60,14 @@ debug       = 1 # 0|1, enable output of controller.showDebug messages
 ### But just in case you don't like the way they are (cosmetics) or need a workaround for any reason :
 ### HAVE FUN !
 ############################################ ##########################################################
-##csvMultiValuedCellFS        = '|'
+csvMultiValuedCellFS        = '|'
 ##csvHeaderDo                 = 'do'
 ##csvHeaderFs                 = ':'
 csvHeaderHostName           = 'host_name'
 csvHeaderIgnoreHost         = 'ignore_host'
 csvHeaderCheckCommand       = 'check_command'
 ##csvHeaderUse                = 'use'
-##csvHeaderHostgroups         = 'hostgroups'
+csvHeaderHostgroups         = 'hostgroups'
 ##csvGenericService           = 'generic_service'
 ##csvHostDirectivesNames      = 'hostDirectivesNames'
 ##csvHostDirectivesValues     = 'hostDirectivesValues'

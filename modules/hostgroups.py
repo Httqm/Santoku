@@ -22,11 +22,11 @@
 from modules import pattern
 from modules import fichier
 from modules import config
-from modules import controller
-
-controller = controller.Controller()
-
-
+from modules import debug
+##
+##debug = debug.Debug()
+##
+##
 class Hostgroups(object):
 
     def __init__(self):
@@ -35,7 +35,7 @@ class Hostgroups(object):
         self.loadPattern()
 
 
-    def addHostToGroups(self,params):
+    def addHostToGroups(self, params):
         for hg in params['groups']:
             if not hg in self.members:  # if 'hostGroups[hg]' doesn't exist yet, create it.
                 self.members[hg] = []
@@ -47,7 +47,7 @@ class Hostgroups(object):
             'name'  : config.configFilesPath + config.fileHostgroupIni,
             'fs'    : '',
             })
-        self.fileIniData = self.fileIni.getData()
+        self.fileIniData = self.fileIni.loadData()
 
 
     def loadPattern(self):
@@ -55,10 +55,10 @@ class Hostgroups(object):
             self.hostGroupPattern = pattern.Pattern({
                 'file'          : config.configFilesPath + config.fileHostgroupIni,
                 'pattern'       : self.fileIniData[config.iniPatternString],
-                'variable2tag'  : self.fileIniData[config.iniVarToTagString]
+#                'variable2tag'  : self.fileIniData[config.iniVarToTagString]
                 })
         except KeyError:
-            controller.die({ 'exitMessage' : 'Key error  : key "' + config.iniPatternString + '" doesn\'t exist in "' + self.fileIni.name + '"' })
+            debug.die({ 'exitMessage' : 'Key error  : key "' + config.iniPatternString + '" doesn\'t exist in "' + self.fileIni.name + '"' })
 
 
     def make(self):

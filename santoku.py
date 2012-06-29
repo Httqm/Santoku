@@ -23,6 +23,8 @@ from modules import commands
 from modules import config
 from modules import csv
 from modules import debug
+from modules import fichier
+from modules import hostgroups
 from modules import hosts
 from modules import timer
 
@@ -35,6 +37,7 @@ globalTimer=timer.Timer()
 allCommands = commands.AllCommands()
 debug       = debug.Debug()
 allHosts    = hosts.AllHosts()
+hostgroups  = hostgroups.Hostgroups()
 
 csv         = csv.Csv({'fileName' : config.csvFileName})
 
@@ -73,10 +76,69 @@ for hostId in csv.data:
 #        csv.setHostDirectives({'hostDirectives' : host.loadDirectives() })
         allHosts.output += host.applyHostPattern(csv.getCurrentRow())
         allHosts.incrementCountOf('valid')
-#        hostgroups.addHostToGroups({
-#            'host'      : csv.getHostnameFromCurrentRow(),
-#            'groups'    : host.loadHostGroupsFromCsv()
-#            })
+        hostgroups.addHostToGroups({
+            'host'      : csv.getCellFromCurrentRow('host_name'),
+            'groups'    : host.loadHostGroupsFromCsv()
+            })
+
+    ###################################### ##########################################################
+    # Looping on services
+    ###################################### ##########################################################
+
+    # TODO
+
+    ###################################### ##########################################################
+    # /Looping on services
+    ###################################### ##########################################################
+
+# host loop done : we've seen all hosts. Let's build hostgroups
+allHosts.output += hostgroups.make()
+
+
+########################################## ##########################################################
+# Write results to files
+########################################## ##########################################################
+
+outputFileHosts     = fichier.Fichier({ 'name' : config.outputPath+config.outputFileHosts })
+outputFileHosts.write(allHosts.output)
+
+##outputFileServices  = FileOutput({ 'name' : config.outputPath+config.outputFileServices })
+##outputFileServices.write(allServices.output)
+
+##outputFileCommands  = FileOutput({ 'name' : config.outputPath+config.outputFileCommands })
+##outputFileCommands.write(allCommands.getOutput())
+
+
+########################################## ##########################################################
+# Summary
+########################################## ##########################################################
+##
+##summary = Summary()
+##print summary.make({
+##    'hostsTotal'        : allHosts.number['valid']+allHosts.number['ignored'],
+##    'hostsValid'        : allHosts.number['valid'],
+##    'hostsIgnored'      : allHosts.number['ignored'],
+##    'hostsDuplicated'   : allHosts.number['duplicated'],
+##    'servicesTotal'     : allServices.number,
+##    'commandsTotal'     : allCommands.number
+##    })
+
+########################################## ##########################################################
+# the end!
+########################################## ##########################################################
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
