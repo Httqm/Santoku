@@ -59,14 +59,15 @@ class AllHosts(object):
 
 
     def loadPatterns(self):
-        debug.show(config.configFilesPath + config.fileHostIni)
-        debug.show(self.iniFileData[config.iniPatternString])
+#        debug.show(config.configFilesPath + config.fileHostIni)
+#        debug.show(self.iniFileData[config.iniPatternString])
 
         self.patternHost = pattern.Pattern({
             'file'          : config.configFilesPath + config.fileHostIni,
             'pattern'       : self.iniFileData[config.iniPatternString],
 #            'variable2tag'  : self.iniFileData[config.iniVarToTagString]   # remove this
             })
+#        debug.show(self.patternHost)
         """
         self.patternDirectives = pattern.Pattern({
             'file'          : config.configFilesPath + config.fileDirectivesIni,
@@ -74,6 +75,8 @@ class AllHosts(object):
             'variable2tag'  : self.directives[config.iniVarToTagString]
             })
         """
+
+
 
 
 ##
@@ -141,7 +144,6 @@ class Host(object):
 
 
     def loadHostGroupsFromCsv(self):
-#        return self.csv.getCurrentHostCell(config.csvHeaderHostgroups).split(config.csvMultiValuedCellFS)
         return self.csv.getCellFromCurrentRow(config.csvHeaderHostgroups).split(config.csvMultiValuedCellFS)
 
 

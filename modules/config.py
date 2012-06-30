@@ -19,14 +19,14 @@
 #
 
 
-############################################ ##########################################################
-### FILES AND FOLDERS
-############################################ ##########################################################
-### common
+########################################## ##########################################################
+# FILES AND FOLDERS
+########################################## ##########################################################
+# common
 ##configFile          = __file__  # This is used to point to THIS file in error messages. DON'T CHANGE THIS !
 configFilesPath     = './config/'
 
-### CSV file
+# CSV file
 csvFileName     = 'home.csv'
 ###csvFileName    = 'file.csv'
 ###csvFileName    = 'hostsOBS.csv'
@@ -34,13 +34,13 @@ csvFileName     = 'home.csv'
 csvFileFs       = ';'   # CSV field separator. Must be different from the CSV list separator below.
 ##csvFileParamFs  = '|'   # CSV list separator. This is used when a CSV cell contains several values
 
-### INI files
+# INI files
 fileHostIni         = 'host.ini'
 fileHostgroupIni    = 'hostgroup.ini'
 ##fileDirectivesIni   = 'directives.ini'
 ##fileSummaryIni      = 'summary.ini'
 
-### OUTPUT files
+# OUTPUT files
 outputPath          = './output/'
 outputFileHosts     = 'hosts.cfg'
 ##outputFileServices  = 'services.cfg'
@@ -53,13 +53,13 @@ outputFileHosts     = 'hosts.cfg'
 messageDie  = 'Tenno Heika Banzai !!! (seppuku...)'
 debug       = 1 # 0|1, enable output of controller.showDebug messages
 
-############################################ ##########################################################
-### CSV COSMETICS
-### You needn't change these values : Santoku works fine as is.
-### Values are defined here to avoid hardcoded strings.
-### But just in case you don't like the way they are (cosmetics) or need a workaround for any reason :
-### HAVE FUN !
-############################################ ##########################################################
+########################################## ##########################################################
+# CSV COSMETICS
+# You needn't change these values : Santoku works fine as is.
+# Values are defined here to avoid hardcoded strings.
+# But just in case you don't like the way they are (cosmetics) or need a workaround for any reason :
+# HAVE FUN !
+########################################## ##########################################################
 csvMultiValuedCellFS        = '|'
 ##csvHeaderDo                 = 'do'
 ##csvHeaderFs                 = ':'
@@ -73,21 +73,21 @@ csvHeaderHostgroups         = 'hostgroups'
 ##csvHostDirectivesValues     = 'hostDirectivesValues'
 ##csvServiceDirectivesNames   = 'serviceDirectivesNames'
 ##csvServiceDirectivesValues  = 'serviceDirectivesValues'
-##
-##
-############################################ ##########################################################
-### INI COSMETICS
-### You needn't change these values : Santoku works fine as is.
-### Values are defined here to avoid hardcoded strings.
-### But just in case you don't like the way they are (cosmetics) or need a workaround for any reason :
-### HAVE FUN !
-############################################ ##########################################################
+
+
+########################################## ##########################################################
+# INI COSMETICS
+# You needn't change these values : Santoku works fine as is.
+# Values are defined here to avoid hardcoded strings.
+# But just in case you don't like the way they are (cosmetics) or need a workaround for any reason :
+# HAVE FUN !
+########################################## ##########################################################
 iniPatternString    = 'PATTERN'
 ##iniVarToTagString   = 'VARIABLE2TAG'
 ##iniVarToTagStanzaFs = '='
 iniCommandString    = 'COMMAND'
-##
-##
+iniTagChar          = '$'
+
 ############################################ ##########################################################
 ### NAGIOS / SHINKEN .cfg DIRECTIVES
 ### Values below are there just to avoid hardcoding.

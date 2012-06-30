@@ -24,7 +24,7 @@ from modules import debug
 
 debug = debug.Debug()
 
-
+# See http://docs.python.org/library/string.html#template-strings
 class Pattern(object):
 
     def __init__(self,params):
@@ -35,10 +35,21 @@ class Pattern(object):
         - variable2tag : dictionary with key = variable name, and value = tag name. This is defined in the [VARIABLE2TAG] section of .ini files
         - values : dictionary with key = variable name, and value = ... value ;-)
         """
-        debug.show('a')
-        self.file           = params['file']
+        self.file           = params['file']    # used in debug messages only
         self.pattern        = params['pattern']
 #        self.variable2tag   = params['variable2tag']
+        self.searchTags()
+
+
+    def searchTags(self):
+        import re
+        tagRegExp   = '\\' + config.iniTagChar + '.*\\' + config.iniTagChar
+        self.tagList       = re.findall(tagRegExp, self.pattern)
+        if(self.tagList):
+            debug.show('FOUND : ' + str(self.tagList))
+        else:    
+            debug.die({'exitMessage': 'No tag matching pattern "' + tagRegExp + '" found in "' + self.file + '"'})
+
 
     def apply(self,values):
         """ Perform substitutions of tags with their values in the pattern """
@@ -50,6 +61,7 @@ class Pattern(object):
             patternCopy	= patternCopy.replace(tag,str(self.values[self.variable2tag[tag]]))
             # /!\ args for replace must be strings. Otherwise "expected a character buffer object" error
         """
+#        debug.show(patternCopy)
         return patternCopy
 
 

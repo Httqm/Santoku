@@ -59,7 +59,7 @@ for hostId in csv.data:
     
     if host.isMarkedToBeIgnored() :
         allHosts.incrementCountOf('ignored')
-	debug.show(csv.getCellFromCurrentRow('host_name') + ' IS IGNORED')
+#	debug.show(csv.getCellFromCurrentRow('host_name') + ' IS IGNORED')
         continue
 
 #    if(csv.currentRowHasCheckCommand()):
