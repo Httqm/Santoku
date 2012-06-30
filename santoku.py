@@ -74,7 +74,19 @@ for hostId in csv.data:
 #	debug.show(csv.getCellFromCurrentRow('host_name') + ' IS NOT DUPLICATED')
         # manage host directives : TODO
 #        csv.setHostDirectives({'hostDirectives' : host.loadDirectives() })
-        allHosts.output += host.applyHostPattern(csv.getCurrentRow())
+
+#        allHosts.output += host.applyHostPattern(csv.getCurrentRow())
+        allHosts.output += host.applyHostPattern({
+'use':'a template',
+'CHECK_COMMAND':'a command',
+'HOST_NAME':csv.getCellFromCurrentRow('host_name'),
+'ALIAS':'alias',
+'ADDRESS':'somewhere',
+'PARENT':'mum and dad',
+'HOSTDIRECTIVES':'directives!'
+})
+
+
         allHosts.incrementCountOf('valid')
         hostgroups.addHostToGroups({
             'host'      : csv.getCellFromCurrentRow('host_name'),
@@ -92,7 +104,7 @@ for hostId in csv.data:
     ###################################### ##########################################################
 
 # host loop done : we've seen all hosts. Let's build hostgroups
-allHosts.output += hostgroups.make()
+#allHosts.output += hostgroups.make()
 
 
 ########################################## ##########################################################

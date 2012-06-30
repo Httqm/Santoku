@@ -43,7 +43,8 @@ class Pattern(object):
 
     def searchTags(self):
         import re
-        tagRegExp   = '\\' + config.iniTagChar + '.*\\' + config.iniTagChar
+#        tagRegExp   = '\\' + config.iniTagChar + '.*\\' + config.iniTagChar
+        tagRegExp   = '\\' + config.iniTagChar + '.*\\b'
         self.tagList       = re.findall(tagRegExp, self.pattern)
         if(self.tagList):
             debug.show('FOUND : ' + str(self.tagList))
@@ -53,16 +54,18 @@ class Pattern(object):
 
     def apply(self,values):
         """ Perform substitutions of tags with their values in the pattern """
-        patternCopy = self.pattern  # so that pattern is not altered
-        self.values = values
-        """
-        for tag in self.variable2tag:
-            self.checkTagValueExists(tag)
-            patternCopy	= patternCopy.replace(tag,str(self.values[self.variable2tag[tag]]))
-            # /!\ args for replace must be strings. Otherwise "expected a character buffer object" error
-        """
-#        debug.show(patternCopy)
-        return patternCopy
+#        patternCopy = self.pattern  # so that pattern is not altered # TODO : is this still necessary ?
+#        debug.show('patternCopy : ' + patternCopy)
+        from string import Template
+#        template = Template(patternCopy)
+        template = Template(self.pattern)
+        try:
+            patternWithSubstitutedValues = template.safe_substitute(values)
+            debug.show(patternWithSubstitutedValues)
+            return patternWithSubstitutedValues
+        except KeyError,e: # TODO : improve this
+            debug.show('key error : ' + str(e))
+            return ''
 
 
     def checkTagValueExists(self,tag):
