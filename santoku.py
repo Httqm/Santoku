@@ -75,16 +75,19 @@ for hostId in csv.data:
         # manage host directives : TODO
 #        csv.setHostDirectives({'hostDirectives' : host.loadDirectives() })
 
+        """
 #        allHosts.output += host.applyHostPattern(csv.getCurrentRow())
         allHosts.output += host.applyHostPattern({
-'use':'a template',
-'CHECK_COMMAND':'a command',
-'HOST_NAME':csv.getCellFromCurrentRow('host_name'),
-'ALIAS':'alias',
-'ADDRESS':'somewhere',
-'PARENT':'mum and dad',
-'HOSTDIRECTIVES':'directives!'
-})
+            'use':'a template',
+            'CHECK_COMMAND':'a command',
+            'host_name':csv.getCellFromCurrentRow('host_name'),
+            'ALIAS':'alias',
+            'ADDRESS':'somewhere',
+            'PARENT':'mum and dad',
+            'HOSTDIRECTIVES':'directives!'
+            })
+        """
+        allHosts.output += host.applyHostPattern()
 
 
         allHosts.incrementCountOf('valid')

@@ -43,13 +43,12 @@ class Pattern(object):
 
     def searchTags(self):
         import re
-#        tagRegExp   = '\\' + config.iniTagChar + '.*\\' + config.iniTagChar
-        tagRegExp   = '\\' + config.iniTagChar + '.*\\b'
-        self.tagList       = re.findall(tagRegExp, self.pattern)
-        if(self.tagList):
-            debug.show('FOUND : ' + str(self.tagList))
-        else:    
+        tagRegExp   = '\\' + config.iniTagChar + '(.*)\\b'
+        tagList     = re.findall(tagRegExp, self.pattern)
+        if(not tagList):
             debug.die({'exitMessage': 'No tag matching pattern "' + tagRegExp + '" found in "' + self.file + '"'})
+#        debug.show('FOUND : ' + str(tagList))
+        return tagList
 
 
     def apply(self,values):

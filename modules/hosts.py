@@ -139,8 +139,20 @@ class Host(object):
         return 1 if match else 0
 
 
-    def applyHostPattern(self,values):
-        return self.allHosts.patternHost.apply(values) + "\n"
+    def buildTagValues(self):
+        tags=self.allHosts.patternHost.searchTags()
+#        debug.show('tag values 1 : ' + str(tags))
+        self.tagsAndValues={}
+        for tag in tags:
+            self.tagsAndValues[tag]=self.csv.getCellFromCurrentRow(tag)
+        debug.show('tag values : ' + str(self.tagsAndValues))
+
+
+#    def applyHostPattern(self,values):
+    def applyHostPattern(self):
+        self.buildTagValues()
+#        return self.allHosts.patternHost.apply(values) + "\n"
+        return self.allHosts.patternHost.apply(self.tagsAndValues) + "\n"
 
 
     def loadHostGroupsFromCsv(self):

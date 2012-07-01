@@ -46,8 +46,12 @@ class Csv(object):
         self.currentRow = rowId
 
 
-    def getCellFromCurrentRow(self, cellName):
-        return self.data[self.currentRow][cellName]
+    def getCellFromCurrentRow(self, cellName): # TODO : except on unknown column name
+        try:
+            return self.data[self.currentRow][cellName]
+        except KeyError:
+            debug.die({ 'exitMessage' : 'No column "' + cellName + '" (CaSe SeNsItIvE !) found in "' + config.configFilesPath + config.csvFileName + "\".\nThis is usually caused by an error in a .ini file. Find files where \"" + cellName + "\" is refered to with : grep -r \"" + cellName + "\" *" })
+
 
 
     def currentRowHasCheckCommand(self):
