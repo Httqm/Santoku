@@ -47,16 +47,12 @@ class Pattern(object):
         tagList     = re.findall(tagRegExp, self.pattern)
         if(not tagList):
             debug.die({'exitMessage': 'No tag matching pattern "' + tagRegExp + '" found in "' + self.file + '"'})
-#        debug.show('FOUND : ' + str(tagList))
         return tagList
 
 
     def apply(self,values):
         """ Perform substitutions of tags with their values in the pattern """
-#        patternCopy = self.pattern  # so that pattern is not altered # TODO : is this still necessary ?
-#        debug.show('patternCopy : ' + patternCopy)
         from string import Template
-#        template = Template(patternCopy)
         template = Template(self.pattern)
         try:
             patternWithSubstitutedValues = template.safe_substitute(values)
@@ -64,11 +60,14 @@ class Pattern(object):
             return patternWithSubstitutedValues
         except KeyError,e: # TODO : improve this
             debug.show('key error : ' + str(e))
-            return ''
+            return None
 
 
+    """
+    # TODO : dead code ?
     def checkTagValueExists(self,tag):
         try:
             self.values[self.variable2tag[tag]]
         except KeyError:
             debug.die({ 'exitMessage' : 'No CSV value given for tag "' + tag + "\" in pattern :\n\n" + self.pattern + "\nMake sure the column names listed in the \"[" + config.iniVarToTagString + ']" stanza of "' + self.file + '" REALLY match "' + config.configFilesPath + config.csvFileName + '" column names.' })
+    """

@@ -37,7 +37,7 @@ csvFileFs       = ';'   # CSV field separator. Must be different from the CSV li
 # INI files
 fileHostIni         = 'host.ini'
 fileHostgroupIni    = 'hostgroup.ini'
-##fileDirectivesIni   = 'directives.ini'
+fileDirectivesIni   = 'directives.ini'
 ##fileSummaryIni      = 'summary.ini'
 
 # OUTPUT files
@@ -69,8 +69,8 @@ csvHeaderCheckCommand       = 'check_command'
 ##csvHeaderUse                = 'use'
 csvHeaderHostgroups         = 'hostgroups'
 ##csvGenericService           = 'generic_service'
-##csvHostDirectivesNames      = 'hostDirectivesNames'
-##csvHostDirectivesValues     = 'hostDirectivesValues'
+csvHostDirectivesNames      = 'hostDirectivesNames'
+csvHostDirectivesValues     = 'hostDirectivesValues'
 ##csvServiceDirectivesNames   = 'serviceDirectivesNames'
 ##csvServiceDirectivesValues  = 'serviceDirectivesValues'
 

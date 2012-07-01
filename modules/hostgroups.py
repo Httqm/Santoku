@@ -23,10 +23,8 @@ from modules import pattern
 from modules import fichier
 from modules import config
 from modules import debug
-##
-##debug = debug.Debug()
-##
-##
+
+
 class Hostgroups(object):
 
     def __init__(self):

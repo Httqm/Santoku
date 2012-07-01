@@ -46,49 +46,45 @@ class AllHosts(object):
 
     def loadIniFiles(self):
         self.loadIniFile()
-#        self.loadDirectives()  # TODO
+        self.loadDirectives()
 
 
     def loadIniFile(self):
-        self.fileIniHost = fichier.FileIni({
+        fileIniHost = fichier.FileIni({
             'name'  : config.configFilesPath + config.fileHostIni,
             'fs'    : '',
             })
-        self.iniFileData = self.fileIniHost.loadData()  # <== TODO 1ST
+        self.iniFileData = fileIniHost.loadData()
 #        self.checkIniFile()	# TODO
+
+
+    def loadDirectives(self):
+        fileIniDirectives = fichier.FileIni({
+            'name'  : config.configFilesPath + config.fileDirectivesIni,
+            'fs'    : '',
+            })
+        self.directives = fileIniDirectives.loadData()
+#        debug.show(self.directives)
 
 
     def loadPatterns(self):
 #        debug.show(config.configFilesPath + config.fileHostIni)
 #        debug.show(self.iniFileData[config.iniPatternString])
-
         self.patternHost = pattern.Pattern({
             'file'          : config.configFilesPath + config.fileHostIni,
             'pattern'       : self.iniFileData[config.iniPatternString],
 #            'variable2tag'  : self.iniFileData[config.iniVarToTagString]   # remove this
             })
 #        debug.show(self.patternHost)
-        """
         self.patternDirectives = pattern.Pattern({
             'file'          : config.configFilesPath + config.fileDirectivesIni,
             'pattern'       : self.directives[config.iniPatternString],
-            'variable2tag'  : self.directives[config.iniVarToTagString]
+#            'variable2tag'  : self.directives[config.iniVarToTagString]
             })
-        """
 
 
 
 
-##
-##
-##    def loadDirectives(self):
-##        fileIniDirectives = FileIni({
-##            'name'  : config.configFilesPath + config.fileDirectivesIni,
-##            'fs'    : '',
-##            })
-##        self.directives = fileIniDirectives.getData()
-##
-##
 ##    def checkIniFile(self):
 ##        self.searchPatternStanza()
 ##        self.searchVariablesStanza()
@@ -108,13 +104,12 @@ class AllHosts(object):
 ##        except KeyError:
 ##            controller.die({ 'exitMessage' : 'Key error  : key "' + config.iniVarToTagString + '" not found in "' + self.fileIniHost.name})
 ##    # /TODO
-##
-##
-##
-##
-##
-##
-##
+
+
+
+
+
+
 class Host(object):
     def __init__(self,params):
         self.csv        = params['csv']
@@ -140,18 +135,15 @@ class Host(object):
 
 
     def buildTagValues(self):
-        tags=self.allHosts.patternHost.searchTags()
-#        debug.show('tag values 1 : ' + str(tags))
-        self.tagsAndValues={}
+        tags = self.allHosts.patternHost.searchTags()
+        self.tagsAndValues = {}
         for tag in tags:
-            self.tagsAndValues[tag]=self.csv.getCellFromCurrentRow(tag)
-        debug.show('tag values : ' + str(self.tagsAndValues))
+            self.tagsAndValues[tag] = self.csv.getCellFromCurrentRow(tag)
+#        debug.show('tag values : ' + str(self.tagsAndValues))
 
 
-#    def applyHostPattern(self,values):
     def applyHostPattern(self):
         self.buildTagValues()
-#        return self.allHosts.patternHost.apply(values) + "\n"
         return self.allHosts.patternHost.apply(self.tagsAndValues) + "\n"
 
 
@@ -159,16 +151,44 @@ class Host(object):
         return self.csv.getCellFromCurrentRow(config.csvHeaderHostgroups).split(config.csvMultiValuedCellFS)
 
 
+    def loadDirectives(self):
+        self.checkCsvHostDirectivesExist()
+        directives          = ''
+        directivesNames     = self.csv.getCellFromCurrentRow(config.csvHostDirectivesNames).split(config.csvMultiValuedCellFS)
+        directivesValues    = self.csv.getCellFromCurrentRow(config.csvHostDirectivesValues).split(config.csvMultiValuedCellFS)
 
-#    def loadDirectives(self):
-#        self.checkCsvHostDirectivesExist()
-#        directives          = ''
-#        directivesNames     = self.csv.getCurrentHostCell(config.csvHostDirectivesNames).split(config.csvMultiValuedCellFS)
-#        directivesValues    = self.csv.getCurrentHostCell(config.csvHostDirectivesValues).split(config.csvMultiValuedCellFS)
+#        debug.show(directivesNames)
+#        debug.show(directivesValues)
+        for index,value in enumerate(directivesNames):
+#            debug.show('LOAD DIRECTIVES : '+str(index)+' '+value)
+            directives += self.allHosts.patternDirectives.apply({ 'directiveName' : directivesNames[index], 'directiveValue' : directivesValues[index]})
+#        debug.show(directives)
+        return directives
 
-#        for index,value in enumerate(directivesNames):
-#            directives += self.allHosts.patternDirectives.apply({ 'directiveName' : directivesNames[index], 'directiveValue' : directivesValues[index]})
-#        return directives
+
+    def checkCsvHostDirectivesExist(self):
+        self.searchCsvHostDirectivesNames()
+        self.searchCsvHostDirectivesValues()
+
+
+    def searchCsvHostDirectivesNames(self):
+        try:
+            self.csv.getCellFromCurrentRow(config.csvHostDirectivesNames)
+        except KeyError:
+            controller.die({ 'exitMessage' : 'Key error : key "' + config.csvHostDirectivesNames + '" not found in "' + config.csvFileName + '"'})
+
+
+    def searchCsvHostDirectivesValues(self):
+        try:
+            self.csv.getCellFromCurrentRow(config.csvHostDirectivesValues)
+        except KeyError:
+            controller.die({ 'exitMessage' : 'Key error : key "' + config.csvHostDirectivesValues + '" not found in "' + config.csvFileName + '"'})
+
+
+
+
+
+
 
 
 
@@ -184,23 +204,3 @@ class Host(object):
 ##            'serviceCommand'    : hostCheckFileIni.getData()['COMMAND']
 ##            }
 #        return
-
-##
-##
-##    def checkCsvHostDirectivesExist(self):
-##        self.searchCsvHostDirectivesNames()
-##        self.searchCsvHostDirectivesValues()
-##
-##
-##    def searchCsvHostDirectivesNames(self):
-##        try:
-##            self.csv.getCurrentHostCell(config.csvHostDirectivesNames)
-##        except KeyError:
-##            controller.die({ 'exitMessage' : 'Key error : key "' + config.csvHostDirectivesNames + '" not found in "' + config.csvFileName + '"'})
-##
-##
-##    def searchCsvHostDirectivesValues(self):
-##        try:
-##            self.csv.getCurrentHostCell(config.csvHostDirectivesValues)
-##        except KeyError:
-##            controller.die({ 'exitMessage' : 'Key error : key "' + config.csvHostDirectivesValues + '" not found in "' + config.csvFileName + '"'})

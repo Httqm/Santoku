@@ -72,21 +72,16 @@ for hostId in csv.data:
         allHosts.incrementCountOf('duplicated')
     else:
 #	debug.show(csv.getCellFromCurrentRow('host_name') + ' IS NOT DUPLICATED')
-        # manage host directives : TODO
-#        csv.setHostDirectives({'hostDirectives' : host.loadDirectives() })
 
-        """
-#        allHosts.output += host.applyHostPattern(csv.getCurrentRow())
-        allHosts.output += host.applyHostPattern({
-            'use':'a template',
-            'CHECK_COMMAND':'a command',
-            'host_name':csv.getCellFromCurrentRow('host_name'),
-            'ALIAS':'alias',
-            'ADDRESS':'somewhere',
-            'PARENT':'mum and dad',
-            'HOSTDIRECTIVES':'directives!'
-            })
-        """
+
+
+        # manage host directives : TODO
+        csv.setHostDirectives({'hostDirectives' : host.loadDirectives() })
+#        debug.show(host.loadDirectives())
+        # /host directives
+
+
+
         allHosts.output += host.applyHostPattern()
 
 

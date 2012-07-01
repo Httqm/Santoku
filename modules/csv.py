@@ -62,6 +62,10 @@ class Csv(object):
         return self.data[self.currentRow]
 
 
+    def setHostDirectives(self,params):
+        self.data[self.currentRow]['hostDirectives'] = params['hostDirectives']
+
+
 ##    def getRawData(self):
 ##        csvFile = fichier.Fichier({
 ##                'name'  : self.fileName,
@@ -105,8 +109,6 @@ class Csv(object):
 ##
 ##
 ##
-##    def setHostDirectives(self,params):
-##        self.data[self.currentRow]['hostDirectives'] = params['hostDirectives']
 ##
 ##
 ##    def getHeader(self):
