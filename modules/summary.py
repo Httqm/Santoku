@@ -22,9 +22,9 @@
 from modules import pattern
 from modules import fichier
 from modules import config
-from modules import controller
+from modules import debug
 
-controller = controller.Controller()
+debug = debug.Debug()
 
 
 class Summary(object):
@@ -39,7 +39,8 @@ class Summary(object):
             'name'  : config.configFilesPath + config.fileSummaryIni,
             'fs'    : '',
             })
-        self.fileIniData = self.fileIni.getData()
+#        self.fileIniData = self.fileIni.getData()
+        self.fileIniData = self.fileIni.loadData()
 
 
     def loadPattern(self):
@@ -47,10 +48,10 @@ class Summary(object):
             self.summaryPattern = pattern.Pattern({
                 'file'          : config.configFilesPath + config.fileSummaryIni,
                 'pattern'       : self.fileIniData[config.iniPatternString],
-                'variable2tag'  : self.fileIniData[config.iniVarToTagString]
+#                'variable2tag'  : self.fileIniData[config.iniVarToTagString]
                 })
         except KeyError:
-            controller.die({ 'exitMessage' : 'Key error  : key "' + config.iniPatternString + '" doesn\'t exist in "' + self.fileIni.name + '"' })
+            debug.die({ 'exitMessage' : 'Key error  : key "' + config.iniPatternString + '" doesn\'t exist in "' + self.fileIni.name + '"' })
 
 
     def make(self,params):
@@ -63,6 +64,6 @@ class Summary(object):
             'nbHostsValid'      : params['hostsValid'],
             'nbHostsIgnored'    : params['hostsIgnored'],
             'nbHostsDuplicated' : params['hostsDuplicated'],
-            'nbServicesTotal'   : params['servicesTotal'],
-            'nbCommandsTotal'   : params['commandsTotal'],
+#            'nbServicesTotal'   : params['servicesTotal'],
+#            'nbCommandsTotal'   : params['commandsTotal'],
             })

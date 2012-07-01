@@ -38,13 +38,13 @@ csvFileFs       = ';'   # CSV field separator. Must be different from the CSV li
 fileHostIni         = 'host.ini'
 fileHostgroupIni    = 'hostgroup.ini'
 fileDirectivesIni   = 'directives.ini'
-##fileSummaryIni      = 'summary.ini'
+fileSummaryIni      = 'summary.ini'
 
 # OUTPUT files
 outputPath          = './output/'
 outputFileHosts     = 'hosts.cfg'
-##outputFileServices  = 'services.cfg'
-##outputFileCommands  = 'commands.cfg'
+outputFileServices  = 'services.cfg'
+outputFileCommands  = 'commands.cfg'
 
 
 ########################################## ##########################################################

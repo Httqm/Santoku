@@ -26,6 +26,7 @@ from modules import debug
 from modules import fichier
 from modules import hostgroups
 from modules import hosts
+from modules import summary
 from modules import timer
 
 globalTimer=timer.Timer()
@@ -40,9 +41,6 @@ allHosts    = hosts.AllHosts()
 hostgroups  = hostgroups.Hostgroups()
 
 csv         = csv.Csv({'fileName' : config.csvFileName})
-
-#debug.show(csv.data)
-
 host        = hosts.Host({
                 'csv'       : csv,
                 'allHosts'  : allHosts
@@ -68,22 +66,10 @@ for hostId in csv.data:
 
 
     if host.isDuplicated():
-#	debug.show(csv.getCellFromCurrentRow('host_name') + ' IS DUPLICATED')
         allHosts.incrementCountOf('duplicated')
     else:
-#	debug.show(csv.getCellFromCurrentRow('host_name') + ' IS NOT DUPLICATED')
-
-
-
-        # manage host directives : TODO
-        csv.setHostDirectives({'hostDirectives' : host.loadDirectives() })
-#        debug.show(host.loadDirectives())
-        # /host directives
-
-
-
+        csv.setHostDirectives({'hostDirectives' : host.loadDirectives() }) # TODO : hardcoded stuff ?
         allHosts.output += host.applyHostPattern()
-
 
         allHosts.incrementCountOf('valid')
         hostgroups.addHostToGroups({
@@ -122,16 +108,16 @@ outputFileHosts.write(allHosts.output)
 ########################################## ##########################################################
 # Summary
 ########################################## ##########################################################
-##
-##summary = Summary()
-##print summary.make({
-##    'hostsTotal'        : allHosts.number['valid']+allHosts.number['ignored'],
-##    'hostsValid'        : allHosts.number['valid'],
-##    'hostsIgnored'      : allHosts.number['ignored'],
-##    'hostsDuplicated'   : allHosts.number['duplicated'],
-##    'servicesTotal'     : allServices.number,
-##    'commandsTotal'     : allCommands.number
-##    })
+
+summary = summary.Summary()
+print summary.make({
+    'hostsTotal'        : allHosts.number['valid'] + allHosts.number['ignored'],
+    'hostsValid'        : allHosts.number['valid'],
+    'hostsIgnored'      : allHosts.number['ignored'],
+    'hostsDuplicated'   : allHosts.number['duplicated'],
+#    'servicesTotal'     : allServices.number,
+#    'commandsTotal'     : allCommands.number
+    })
 
 ########################################## ##########################################################
 # the end!
