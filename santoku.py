@@ -136,8 +136,8 @@ outputFileHosts.write(allHosts.output)
 outputFileServices  = fichier.Fichier({ 'name' : config.outputPath+config.outputFileServices })
 outputFileServices.write(allServices.output)
 
-##outputFileCommands  = fichier.Fichier({ 'name' : config.outputPath+config.outputFileCommands })
-##outputFileCommands.write(allCommands.getOutput())
+outputFileCommands  = fichier.Fichier({ 'name' : config.outputPath+config.outputFileCommands })
+outputFileCommands.write(allCommands.getOutput())
 
 
 ########################################## ##########################################################
@@ -150,8 +150,8 @@ print summary.make({
     'hostsValid'        : allHosts.number['valid'],
     'hostsIgnored'      : allHosts.number['ignored'],
     'hostsDuplicated'   : allHosts.number['duplicated'],
-#    'servicesTotal'     : allServices.number,
-#    'commandsTotal'     : allCommands.number
+    'servicesTotal'     : allServices.number,
+    'commandsTotal'     : allCommands.number
     })
 
 ########################################## ##########################################################

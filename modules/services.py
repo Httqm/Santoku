@@ -260,7 +260,7 @@ class Service(object):
         tmp = ''
         for i in xrange(self.result['maxRounds']):
             tmp += self.patternService.apply(self.result['champsValeurs'][i]) + "\n"
-            debug.show('BUILD 1 SERVICE')
+#            debug.show('BUILD 1 SERVICE')
             allServices.count()
         return tmp
 

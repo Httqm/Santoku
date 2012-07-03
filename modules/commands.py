@@ -19,7 +19,6 @@
 #
 
 
-##from modules import config
 from modules import debug
 
 debug = debug.Debug()
@@ -28,19 +27,17 @@ debug = debug.Debug()
 class AllCommands(object):
 
     def __init__(self):
-##        self.output     = ''
+        self.output     = ''
         self.commands   = {}
         self.number     = 0
 
 
     def add(self,commandData):
-        return None
         self.commands[commandData['serviceName']]   = commandData['serviceCommand']
         self.number                                 = len(self.commands)
 
-##
-##
-##    def getOutput(self):
-##        for serviceName in self.commands:
-##            self.output += self.commands[serviceName] + "\n"
-##        return self.output
+
+    def getOutput(self):
+        for serviceName in self.commands:
+            self.output += self.commands[serviceName] + "\n"
+        return self.output
