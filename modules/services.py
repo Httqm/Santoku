@@ -57,6 +57,7 @@ class Service(object):
         self.csv            = params['csv']
         self.currentCsvLine = params['currentCsvLine']  # TODO : this property conflicts with the purpose of self.csv . Fix it!
         self.csvServiceName = params['serviceCsvName']
+        self.allServices    = params['allServices']
         self.cleanName      = self.csvServiceName.replace(config.csvHeaderFs + config.csvHeaderDo,'')
         self.iniFileName    = config.configFilesPath + self.cleanName + '.ini'
         self.loadIniFiles()
@@ -256,11 +257,12 @@ class Service(object):
         return serviceCsvData
 
 
-    def make(self,allServices):
+#    def make(self,allServices):
+    def make(self):
         tmp = ''
         for i in xrange(self.result['maxRounds']):
             tmp += self.patternService.apply(self.result['champsValeurs'][i]) + "\n"
 #            debug.show('BUILD 1 SERVICE')
-            allServices.count()
+            self.allServices.count()
         return tmp
 

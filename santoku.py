@@ -65,10 +65,9 @@ for hostId in csv.data:
 #	debug.show(csv.getCellFromCurrentRow('host_name') + ' IS IGNORED')
         continue
 
-#    if(csv.currentRowHasCheckCommand()):
+    if(csv.currentRowHasCheckCommand()):
 #	debug.show(csv.getCellFromCurrentRow('host_name') + ' HAS CHECK_COMMAND')
-#        allCommands.add(host.getCheckCommand())    # TODO (later)
-
+        allCommands.add(host.getCheckCommand())
 
     if host.isDuplicated():
         allHosts.incrementCountOf('duplicated')
@@ -78,7 +77,7 @@ for hostId in csv.data:
 
         allHosts.incrementCountOf('valid')
         hostgroups.addHostToGroups({
-            'host'      : csv.getCellFromCurrentRow('host_name'),
+            'host'      : csv.getCellFromCurrentRow(config.csvHeaderHostName),
             'groups'    : host.loadHostGroupsFromCsv()
             })
 
@@ -92,7 +91,8 @@ for hostId in csv.data:
         service = services.Service({
             'csv'               : csv,
             'currentCsvLine'    : csv.getCurrentRow(),
-            'serviceCsvName'    : singleServiceCsvName
+            'serviceCsvName'    : singleServiceCsvName,
+            'allServices'       : allServices
             })
 
         if service.isEnabled():
@@ -113,7 +113,8 @@ for hostId in csv.data:
                 'serviceDirectives' : serviceDirectives
                 })
 
-            allServices.output += service.make(allServices)	# <== TODO : clean this
+#            allServices.output += service.make(allServices)	# <== TODO : clean this
+            allServices.output += service.make()
 
     ###################################### ##########################################################
     # /Looping on services

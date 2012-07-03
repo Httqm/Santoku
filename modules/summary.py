@@ -37,7 +37,7 @@ class Summary(object):
     def loadFileIni(self):
         self.fileIni = fichier.FileIni({
             'name'  : config.configFilesPath + config.fileSummaryIni,
-            'fs'    : '',
+#            'fs'    : '',
             })
 #        self.fileIniData = self.fileIni.getData()
         self.fileIniData = self.fileIni.loadData()

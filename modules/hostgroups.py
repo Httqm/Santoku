@@ -43,7 +43,7 @@ class Hostgroups(object):
     def loadFileIni(self):
         self.fileIni = fichier.FileIni({
             'name'  : config.configFilesPath + config.fileHostgroupIni,
-            'fs'    : '',
+#            'fs'    : '',
             })
         self.fileIniData = self.fileIni.loadData()
 

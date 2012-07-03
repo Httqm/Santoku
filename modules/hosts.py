@@ -52,7 +52,7 @@ class AllHosts(object):
     def loadIniFile(self):
         fileIniHost = fichier.FileIni({
             'name'  : config.configFilesPath + config.fileHostIni,
-            'fs'    : '',
+#            'fs'    : '',
             })
         self.iniFileData = fileIniHost.loadData()
 #        self.checkIniFile()	# TODO
@@ -61,7 +61,7 @@ class AllHosts(object):
     def loadDirectives(self):
         fileIniDirectives = fichier.FileIni({
             'name'  : config.configFilesPath + config.fileDirectivesIni,
-            'fs'    : '',
+#            'fs'    : '',
             })
         self.directives = fileIniDirectives.loadData()
 #        debug.show(self.directives)
@@ -104,10 +104,6 @@ class AllHosts(object):
 ##        except KeyError:
 ##            controller.die({ 'exitMessage' : 'Key error  : key "' + config.iniVarToTagString + '" not found in "' + self.fileIniHost.name})
 ##    # /TODO
-
-
-
-
 
 
 class Host(object):
@@ -185,22 +181,14 @@ class Host(object):
             controller.die({ 'exitMessage' : 'Key error : key "' + config.csvHostDirectivesValues + '" not found in "' + config.csvFileName + '"'})
 
 
+    def getCheckCommand(self):
+        checkCommandName = self.csv.getCellFromCurrentRow(config.csvHeaderCheckCommand)
+        hostCheckFileIni = fichier.FileIni({
+            'name'  : config.configFilesPath + checkCommandName + '.ini',
+            })
+        hostCheckFileIni.loadData()
 
-
-
-
-
-
-
-#    def getCheckCommand(self):
-##        hostCheckFileIni = FileIni({
-##            'name'  : config.configFilesPath + self.csv.getCurrentHostCell(config.csvHeaderCheckCommand) + '.ini',
-##            'fs'    : '',
-##            })
-##        hostCheckFileIni.loadData()
-##
-##        return {
-##            'serviceName'       : self.csv.getCurrentHostCell(config.csvHeaderCheckCommand),
-##            'serviceCommand'    : hostCheckFileIni.getData()['COMMAND']
-##            }
-#        return
+        return {
+            'serviceName'       : checkCommandName,
+            'serviceCommand'    : hostCheckFileIni.loadData()['COMMAND']
+            }
