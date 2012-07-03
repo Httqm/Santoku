@@ -59,20 +59,14 @@ class Hostgroups(object):
             debug.die({ 'exitMessage' : 'Key error  : key "' + config.iniPatternString + '" doesn\'t exist in "' + self.fileIni.name + '"' })
 
 
-    def make(self): # TODO : fix this !
-        return
+    def make(self):
         result = ''
         for hostgroupName in self.members:
             HG                      = {}
             members                 = ', '.join(self.members[hostgroupName])    # hosts of 'hostgroupName', as a string
-            """
-            HG['hostgroup_name']    = hostgroupName
-            HG['alias']             = hostgroupName
-            HG['members']           = members
-            """
-            HG['HOSTGROUPNAME']    = hostgroupName
-            HG['HOSTGROUPALIAS']             = hostgroupName
-            HG['HOSTGROUPMEMBERS']           = members
+            HG['hostGroupName']     = hostgroupName
+            HG['hostGroupAlias']    = hostgroupName
+            HG['hostGroupMembers']  = members
 
             result += self.hostGroupPattern.apply(HG) + "\n"
 

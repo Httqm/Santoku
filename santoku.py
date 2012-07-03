@@ -86,10 +86,8 @@ for hostId in csv.data:
     # Looping on services
     ###################################### ##########################################################
 
-    # serviceList is the list of all '*:do' CSV columns : ['check_filesystem:do', 'check_bidule:do']
+    # serviceList is the list of all '*:do' CSV columns : ['check_something:do', 'check_somestuff:do', ...]
     for singleServiceCsvName in serviceList:
-
-        pass
 
         service = services.Service({
             'csv'               : csv,
@@ -117,13 +115,15 @@ for hostId in csv.data:
 
             allServices.output += service.make(allServices)	# <== TODO : clean this
 
-
     ###################################### ##########################################################
     # /Looping on services
     ###################################### ##########################################################
 
-# host loop done : we've seen all hosts. Let's build hostgroups
-#allHosts.output += hostgroups.make()
+########################################## ##########################################################
+# /Looping on hosts
+########################################## ##########################################################
+
+allHosts.output += hostgroups.make()
 
 
 ########################################## ##########################################################
