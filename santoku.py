@@ -26,6 +26,7 @@ from modules import debug
 from modules import fichier
 from modules import hostgroups
 from modules import hosts
+from modules import services
 from modules import summary
 from modules import timer
 
@@ -37,6 +38,7 @@ globalTimer=timer.Timer()
 ############################################ ##########################################################
 allCommands = commands.AllCommands()
 debug       = debug.Debug()
+
 allHosts    = hosts.AllHosts()
 hostgroups  = hostgroups.Hostgroups()
 
@@ -45,6 +47,9 @@ host        = hosts.Host({
                 'csv'       : csv,
                 'allHosts'  : allHosts
                 })
+
+allServices = services.AllServices()
+serviceList = allServices.getList(csv.header)
 
 ########################################## ##########################################################
 # Looping on hosts
@@ -81,7 +86,37 @@ for hostId in csv.data:
     # Looping on services
     ###################################### ##########################################################
 
-    # TODO
+    # serviceList is the list of all '*:do' CSV columns : ['check_filesystem:do', 'check_bidule:do']
+    for singleServiceCsvName in serviceList:
+
+        pass
+
+        service = services.Service({
+            'csv'               : csv,
+            'currentCsvLine'    : csv.getCurrentRow(),
+            'serviceCsvName'    : singleServiceCsvName
+            })
+
+        if service.isEnabled():
+            allCommands.add(service.getCommand())
+
+            serviceName         = service.getName()
+            serviceDirectives   = ''
+
+            if service.hasDirectives():
+                service.loadDirectivesFromCsvData()
+                serviceDirectives = service.applyServiceDirectivesPattern()
+
+            service.buildArrayOfServices({
+                'name'              : serviceName,
+                'hostName'          : csv.getCellFromCurrentRow('host_name'),
+                'csvHeader'         : csv.header,
+                'csvDataLine'       : csv.getCurrentRow(),
+                'serviceDirectives' : serviceDirectives
+                })
+
+            allServices.output += service.make(allServices)	# <== TODO : clean this
+
 
     ###################################### ##########################################################
     # /Looping on services
@@ -98,10 +133,10 @@ for hostId in csv.data:
 outputFileHosts     = fichier.Fichier({ 'name' : config.outputPath+config.outputFileHosts })
 outputFileHosts.write(allHosts.output)
 
-##outputFileServices  = FileOutput({ 'name' : config.outputPath+config.outputFileServices })
-##outputFileServices.write(allServices.output)
+outputFileServices  = fichier.Fichier({ 'name' : config.outputPath+config.outputFileServices })
+outputFileServices.write(allServices.output)
 
-##outputFileCommands  = FileOutput({ 'name' : config.outputPath+config.outputFileCommands })
+##outputFileCommands  = fichier.Fichier({ 'name' : config.outputPath+config.outputFileCommands })
 ##outputFileCommands.write(allCommands.getOutput())
 
 

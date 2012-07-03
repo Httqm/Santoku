@@ -22,14 +22,13 @@
 from modules import config
 from modules import fichier
 from modules import pattern
-from modules import controller
+from modules import debug
 import re
 
 
 Pattern     = pattern.Pattern
 FileIni     = fichier.FileIni
-
-controller  = controller.Controller()
+debug       = debug.Debug()
 
 
 class AllServices(object):
@@ -72,9 +71,9 @@ class Service(object):
     def loadIniFile(self):
         self.fileIni = FileIni({
             'name'  : self.iniFileName,
-            'fs'    : ''
+#            'fs'    : ''
             })
-        self.fileIniData = self.fileIni.getData()
+        self.fileIniData = self.fileIni.loadData()
         self.checkFileIni()
 
 
@@ -85,79 +84,79 @@ class Service(object):
                 'serviceCommand'    : self.fileIniData['COMMAND']
                 }
         except KeyError:
-            controller.die({ 'exitMessage' : 'No command specified for service "' + self.cleanName + '" in config file "' + self.fileIni.name + '"'})
+            debug.die({ 'exitMessage' : 'No command specified for service "' + self.cleanName + '" in config file "' + self.fileIni.name + '"'})
 
 
     def checkFileIni(self):
         self.checkFileIniPatternWasLoaded()
-        self.checkFileIniVarToTagWasLoaded()
-        self.checkFileIniCommandNamesMatch()
-        self.checkFileIniBothTagSurroundingCharsAreThere()
-
-
-    def checkFileIniBothTagSurroundingCharsAreThere(self):
-        for stanzaTitle in self.fileIniData:
-            match = re.search('(("|\s)\$[a-zA-Z_:]*("|\s|/))|(("|\s)[a-zA-Z_:]*\$("|\s|/))', str(self.fileIniData[stanzaTitle]))
-            if(match):
-                controller.die({ 'exitMessage' : 'Missing leading/trailing "$" in expression "' + match.group(0) + '" in the "[' + stanzaTitle + ']" section of "' + self.fileIni.name + '"'})
-
-
-    def checkFileIniCommandNamesMatch(self):
-        commandInPatternStanza = self.getCommandValueFromStanza({
-            'directive'     : config.commandDirectiveInServiceDefinition,
-            'stanzaTitle'   : config.iniPatternString
-            })
-
-        commandInCommandStanza = self.getCommandValueFromStanza({
-            'directive'     : config.commandDirectiveInCommandDefinition,
-            'stanzaTitle'   : config.iniCommandString
-            })
-
-        if commandInPatternStanza != commandInCommandStanza:
-            controller.die({ 'exitMessage' : 'Commands don\'t match between the "' + config.iniPatternString + '" (' + config.commandDirectiveInServiceDefinition + ' ' + commandInPatternStanza + ') and the "' + config.iniCommandString + '" (' + config.commandDirectiveInCommandDefinition + ' ' + commandInCommandStanza + ') stanzas of config file "' + self.fileIni.name + '"'})
-
-
-    def getCommandValueFromStanza(self, params):
-        match = re.search('\s' + params['directive'] + '\s + (\w*)', self.fileIniData[params['stanzaTitle']])
-        if match:
-            return match.group(1)
-        else:
-            controller.die({ 'exitMessage' : '"' + params['directive'] + '" directive not found in "' + params['stanzaTitle'] + '" stanza of config file "' + self.fileIni.name + '"'})
-
-
+##        self.checkFileIniVarToTagWasLoaded()
+##        self.checkFileIniCommandNamesMatch()
+##        self.checkFileIniBothTagSurroundingCharsAreThere()
+##
+##
+##    def checkFileIniBothTagSurroundingCharsAreThere(self):
+##        for stanzaTitle in self.fileIniData:
+##            match = re.search('(("|\s)\$[a-zA-Z_:]*("|\s|/))|(("|\s)[a-zA-Z_:]*\$("|\s|/))', str(self.fileIniData[stanzaTitle]))
+##            if(match):
+##                debug.die({ 'exitMessage' : 'Missing leading/trailing "$" in expression "' + match.group(0) + '" in the "[' + stanzaTitle + ']" section of "' + self.fileIni.name + '"'})
+##
+##
+##    def checkFileIniCommandNamesMatch(self):
+##        commandInPatternStanza = self.getCommandValueFromStanza({
+##            'directive'     : config.commandDirectiveInServiceDefinition,
+##            'stanzaTitle'   : config.iniPatternString
+##            })
+##
+##        commandInCommandStanza = self.getCommandValueFromStanza({
+##            'directive'     : config.commandDirectiveInCommandDefinition,
+##            'stanzaTitle'   : config.iniCommandString
+##            })
+##
+##        if commandInPatternStanza != commandInCommandStanza:
+##            debug.die({ 'exitMessage' : 'Commands don\'t match between the "' + config.iniPatternString + '" (' + config.commandDirectiveInServiceDefinition + ' ' + commandInPatternStanza + ') and the "' + config.iniCommandString + '" (' + config.commandDirectiveInCommandDefinition + ' ' + commandInCommandStanza + ') stanzas of config file "' + self.fileIni.name + '"'})
+##
+##
+##    def getCommandValueFromStanza(self, params):
+##        match = re.search('\s' + params['directive'] + '\s + (\w*)', self.fileIniData[params['stanzaTitle']])
+##        if match:
+##            return match.group(1)
+##        else:
+##            debug.die({ 'exitMessage' : '"' + params['directive'] + '" directive not found in "' + params['stanzaTitle'] + '" stanza of config file "' + self.fileIni.name + '"'})
+##
+##
     def checkFileIniPatternWasLoaded(self):
         try:
             self.fileIniData[config.iniPatternString]
         except KeyError:
-            controller.die({ 'exitMessage' : 'Key error  : key "' + config.iniPatternString + '" not found in "' + self.fileIni.name})
-
-
-    def checkFileIniVarToTagWasLoaded(self):
-        try:
-            self.fileIniData[config.iniVarToTagString]
-        except KeyError:
-            controller.die({ 'exitMessage' : 'Key error  : key "' + config.iniVarToTagString + '" not found in "' + self.fileIni.name})
-
-
+            debug.die({ 'exitMessage' : 'Key error  : key "' + config.iniPatternString + '" not found in "' + self.fileIni.name})
+##
+##
+##    def checkFileIniVarToTagWasLoaded(self):
+##        try:
+##            self.fileIniData[config.iniVarToTagString]
+##        except KeyError:
+##            debug.die({ 'exitMessage' : 'Key error  : key "' + config.iniVarToTagString + '" not found in "' + self.fileIni.name})
+##
+##
     def loadPatterns(self):
-        self.patternService = Pattern({
+        self.patternService = pattern.Pattern({
             'file'          : self.iniFileName,
             'pattern'       : self.fileIniData[config.iniPatternString],
-            'variable2tag'  : self.fileIniData[config.iniVarToTagString]
+##            'variable2tag'  : self.fileIniData[config.iniVarToTagString]
             })
-        self.patternDirectives = Pattern({
+        self.patternDirectives = pattern.Pattern({
             'file'          : config.configFilesPath + config.fileDirectivesIni,
             'pattern'       : self.cfgHostDirectives[config.iniPatternString],
-            'variable2tag'  : self.cfgHostDirectives[config.iniVarToTagString]
+##            'variable2tag'  : self.cfgHostDirectives[config.iniVarToTagString]
             })
 
 
     def loadDirectivesIni(self):
         fileDirectivesIni = FileIni({
             'name'  : config.configFilesPath + config.fileDirectivesIni,
-            'fs'    : ''
+#            'fs'    : ''
             })
-        self.cfgHostDirectives = fileDirectivesIni.getData()
+        self.cfgHostDirectives = fileDirectivesIni.loadData()
 
 
     def isEnabled(self):
@@ -178,23 +177,23 @@ class Service(object):
         return hasDirectives
 
 
-    def loadDirectivesFromCsvData(self):
-        self.directives	= {
-            'names'     : self.currentCsvLine[self.cleanName + config.csvHeaderFs + config.csvServiceDirectivesNames].split(config.csvMultiValuedCellFS),
-            'values'    : self.currentCsvLine[self.cleanName + config.csvHeaderFs + config.csvServiceDirectivesValues].split(config.csvMultiValuedCellFS)		
-            }
-
-
-    def applyServiceDirectivesPattern(self):
-        self.serviceDirectives = ''
-        for name,value in enumerate(self.directives['names']):
-            self.serviceDirectives += self.patternDirectives.apply({
-                'directiveName'     : self.directives['names'][name],
-                'directiveValue'    : self.directives['values'][name]
-                })
-        return self.serviceDirectives
-
-
+##    def loadDirectivesFromCsvData(self):
+##        self.directives	= {
+##            'names'     : self.currentCsvLine[self.cleanName + config.csvHeaderFs + config.csvServiceDirectivesNames].split(config.csvMultiValuedCellFS),
+##            'values'    : self.currentCsvLine[self.cleanName + config.csvHeaderFs + config.csvServiceDirectivesValues].split(config.csvMultiValuedCellFS)
+##            }
+##
+##
+##    def applyServiceDirectivesPattern(self):
+##        self.serviceDirectives = ''
+##        for name,value in enumerate(self.directives['names']):
+##            self.serviceDirectives += self.patternDirectives.apply({
+##                'directiveName'     : self.directives['names'][name],
+##                'directiveValue'    : self.directives['values'][name]
+##                })
+##        return self.serviceDirectives
+##
+##
     def buildArrayOfServices(self,params):
         """
         Return an associative array containing all service(s) data ready to be injected into pattern.
@@ -229,13 +228,13 @@ class Service(object):
             currentRound += 1
 
         self.result	= { 'champsValeurs' : champsValeurs, 'maxRounds' : maxRounds }
-#       controller.showDebug(self.result)
+#       debug.show(self.result)
 #       return self.result
 
 
     def loadServiceData(self,params):
         """
-        For the current host and the current service, return : 
+        For the current host and the current service, return :
         - 'clean' CSV header lines (without the 'serviceName:')
         - cell values (including multiple values and field separators if any)
         """
@@ -253,7 +252,7 @@ class Service(object):
         # serviceCsvData contains 2 useless keys : 'serviceDirectivesNames' and 'serviceDirectivesValues'
         serviceCsvData['serviceDirectives'] = params['serviceDirectives']
 
-#       controller.showDebug(serviceCsvData)
+#       debug.show(serviceCsvData)
         return serviceCsvData
 
 
@@ -261,7 +260,7 @@ class Service(object):
         tmp = ''
         for i in xrange(self.result['maxRounds']):
             tmp += self.patternService.apply(self.result['champsValeurs'][i]) + "\n"
-#           controller.showDebug('BUILD 1 SERVICE')
+            debug.show('BUILD 1 SERVICE')
             allServices.count()
         return tmp
 

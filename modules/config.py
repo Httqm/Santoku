@@ -61,18 +61,18 @@ debug       = 1 # 0|1, enable output of controller.showDebug messages
 # HAVE FUN !
 ########################################## ##########################################################
 csvMultiValuedCellFS        = '|'
-##csvHeaderDo                 = 'do'
-##csvHeaderFs                 = ':'
+csvHeaderDo                 = 'do'
+csvHeaderFs                 = ':'
 csvHeaderHostName           = 'host_name'
 csvHeaderIgnoreHost         = 'ignore_host'
 csvHeaderCheckCommand       = 'check_command'
-##csvHeaderUse                = 'use'
+csvHeaderUse                = 'use'
 csvHeaderHostgroups         = 'hostgroups'
-##csvGenericService           = 'generic_service'
+csvGenericService           = 'generic_service'
 csvHostDirectivesNames      = 'hostDirectivesNames'
 csvHostDirectivesValues     = 'hostDirectivesValues'
-##csvServiceDirectivesNames   = 'serviceDirectivesNames'
-##csvServiceDirectivesValues  = 'serviceDirectivesValues'
+csvServiceDirectivesNames   = 'serviceDirectivesNames'
+csvServiceDirectivesValues  = 'serviceDirectivesValues'
 
 
 ########################################## ##########################################################

@@ -35,11 +35,11 @@ class Csv(object):
 
 
     def loadDataFromFile(self):
-        csvFile = fichier.FileCsv({
-                'name'  : self.fileName,
-                })
+        csvFile = fichier.FileCsv({ 'name' : self.fileName })
 #        debug.show(csvFile.loadContentIntoDict())
-        return csvFile.loadContentIntoDict()
+        csvFileContents = csvFile.loadContentIntoDict()
+        self.header     = csvFile.getHeader()   # csvFile.header only exists after csvFile.loadContentIntoDict() was run
+        return csvFileContents
 
 
     def setCurrentRow(self, rowId):
@@ -111,10 +111,7 @@ class Csv(object):
 ##
 ##
 ##
-##    def getHeader(self):
-##        return self.header
 ##
 ##
-##    def columnExists(self,columnHeader):
-##        return 1 if columnHeader in self.header else 0
-
+    def columnExists(self,columnHeader):
+        return 1 if columnHeader in self.header else 0

@@ -56,7 +56,7 @@ class Pattern(object):
         template = Template(self.pattern)
         try:
             patternWithSubstitutedValues = template.safe_substitute(values)
-            debug.show(patternWithSubstitutedValues)
+#            debug.show(patternWithSubstitutedValues)
             return patternWithSubstitutedValues
         except KeyError,e: # TODO : improve this
             debug.show('key error : ' + str(e))

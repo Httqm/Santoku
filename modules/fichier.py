@@ -23,7 +23,7 @@ import re
 from modules import config
 from modules import debug
 
-debug = debug.Debug()
+debug = debug.Debug
 
 
 ########################################## ##########################################################
@@ -129,6 +129,10 @@ class FileCsv(object):
 #        debug.show(self.data) # TODO : continue here
         return csvData
 
+
+    def getHeader(self):
+        """ Return the header of the CSV file as a list of fields."""
+        return self.header.replace('"', '').split(self.fs)
 
 
 ############################################ ##########################################################

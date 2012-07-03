@@ -20,22 +20,24 @@
 
 
 ##from modules import config
-##from modules import controller
-##
-##controller = controller.Controller()
-##
-##
+from modules import debug
+
+debug = debug.Debug()
+
+
 class AllCommands(object):
+
     def __init__(self):
-        return
 ##        self.output     = ''
-#        self.commands   = {}
-#        self.number     = 0
-##
-##
-#    def add(self,commandData):
-#        self.commands[commandData['serviceName']]   = commandData['serviceCommand']
-#        self.number                                 = len(self.commands)
+        self.commands   = {}
+        self.number     = 0
+
+
+    def add(self,commandData):
+        return None
+        self.commands[commandData['serviceName']]   = commandData['serviceCommand']
+        self.number                                 = len(self.commands)
+
 ##
 ##
 ##    def getOutput(self):
