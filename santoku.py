@@ -40,7 +40,7 @@ debug       = debug.Debug()
 allHosts    = hosts.AllHosts()
 hostgroups  = hostgroups.Hostgroups()
 
-csv         = csv.Csv({'fileName' : config.csvFileName})
+csv         = csv.Csv({'fileName': config.csvFileName})
 host        = hosts.Host({
                 'csv'       : csv,
                 'allHosts'  : allHosts
@@ -56,7 +56,7 @@ for hostId in csv.data:
 
     csv.setCurrentRow(hostId)
 
-    if host.isMarkedToBeIgnored() :
+    if host.isMarkedToBeIgnored():
         allHosts.incrementCountOf('ignored')
         continue
 
@@ -66,7 +66,7 @@ for hostId in csv.data:
     if host.isDuplicated():
         allHosts.incrementCountOf('duplicated')
     else:
-        csv.setHostDirectives({'hostDirectives' : host.loadDirectives() }) # TODO : hardcoded stuff ?
+        csv.setHostDirectives({'hostDirectives': host.loadDirectives() }) # TODO : hardcoded stuff ?
         allHosts.output += host.applyHostPattern()
 
         allHosts.incrementCountOf('valid')
@@ -124,13 +124,13 @@ allHosts.output += hostgroups.make()
 # Write results to files
 ########################################## ##########################################################
 
-outputFileHosts     = fichier.Fichier({ 'name' : config.outputPath+config.outputFileHosts })
+outputFileHosts     = fichier.Fichier({ 'name': config.outputPath+config.outputFileHosts })
 outputFileHosts.write(allHosts.output)
 
-outputFileServices  = fichier.Fichier({ 'name' : config.outputPath+config.outputFileServices })
+outputFileServices  = fichier.Fichier({ 'name': config.outputPath+config.outputFileServices })
 outputFileServices.write(allServices.output)
 
-outputFileCommands  = fichier.Fichier({ 'name' : config.outputPath+config.outputFileCommands })
+outputFileCommands  = fichier.Fichier({ 'name': config.outputPath+config.outputFileCommands })
 outputFileCommands.write(allCommands.getOutput())
 
 ########################################## ##########################################################
