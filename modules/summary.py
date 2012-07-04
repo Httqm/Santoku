@@ -30,32 +30,29 @@ debug = debug.Debug()
 class Summary(object):
 
     def __init__(self):
-        self.loadFileIni()
-        self.loadPattern()
+        self._loadFileIni()
+        self._loadPattern()
 
 
-    def loadFileIni(self):
-        self.fileIni = fichier.FileIni({
+    def _loadFileIni(self):
+        self._fileIni = fichier.FileIni({
             'name'  : config.configFilesPath + config.fileSummaryIni,
-#            'fs'    : '',
             })
-#        self.fileIniData = self.fileIni.getData()
-        self.fileIniData = self.fileIni.loadData()
+        self._fileIniData = self._fileIni.loadData()
 
 
-    def loadPattern(self):
+    def _loadPattern(self):
         try:
-            self.summaryPattern = pattern.Pattern({
+            self._summaryPattern = pattern.Pattern({
                 'file'          : config.configFilesPath + config.fileSummaryIni,
-                'pattern'       : self.fileIniData[config.iniPatternString],
-#                'variable2tag'  : self.fileIniData[config.iniVarToTagString]
+                'pattern'       : self._fileIniData[config.iniPatternString],
                 })
         except KeyError:
-            debug.die({ 'exitMessage' : 'Key error  : key "' + config.iniPatternString + '" doesn\'t exist in "' + self.fileIni.name + '"' })
+            debug.die({ 'exitMessage' : 'Key error  : key "' + config.iniPatternString + '" doesn\'t exist in "' + self._fileIni.name + '"' })
 
 
-    def make(self,params):
-        return self.summaryPattern.apply({
+    def make(self, params):
+        return self._summaryPattern.apply({
             'fileCsv'           : config.configFilesPath + config.csvFileName,
             'fileHosts'         : config.outputPath + config.outputFileHosts,
             'fileServices'      : config.outputPath + config.outputFileServices,

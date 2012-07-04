@@ -28,46 +28,42 @@ from modules import debug
 class Hostgroups(object):
 
     def __init__(self):
-        self.members = {} # hg name => hg members
-        self.loadFileIni()
-        self.loadPattern()
+        self._hostGroupToMembers = {}  # dict : {'hostGroupName': listOfMembers}
+        self._loadFileIni()
+        self._loadPattern()
 
 
     def addHostToGroups(self, params):
-        for hg in params['groups']:
-            if not hg in self.members:  # if 'hostGroups[hg]' doesn't exist yet, create it.
-                self.members[hg] = []
-            self.members[hg].append(params['host'])	# then store 'host' in it !
+        for group in params['groups']:
+            if not group in self._hostGroupToMembers:                 # if 'hostGroups[group]' doesn't exist yet, create it.
+                self._hostGroupToMembers[group] = []
+            self._hostGroupToMembers[group].append(params['host'])    # then store 'host' in it !
 
 
-    def loadFileIni(self):
-        self.fileIni = fichier.FileIni({
-            'name'  : config.configFilesPath + config.fileHostgroupIni,
-#            'fs'    : '',
-            })
-        self.fileIniData = self.fileIni.loadData()
+    def _loadFileIni(self):
+        self._fileIni       = fichier.FileIni({ 'name': config.configFilesPath + config.fileHostgroupIni })
+        self._fileIniData   = self._fileIni.loadData()
 
 
-    def loadPattern(self):
+    def _loadPattern(self):
         try:
-            self.hostGroupPattern = pattern.Pattern({
+            self._hostGroupPattern = pattern.Pattern({
                 'file'          : config.configFilesPath + config.fileHostgroupIni,
-                'pattern'       : self.fileIniData[config.iniPatternString],
-#                'variable2tag'  : self.fileIniData[config.iniVarToTagString]
+                'pattern'       : self._fileIniData[config.iniPatternString],
                 })
         except KeyError:
-            debug.die({ 'exitMessage' : 'Key error  : key "' + config.iniPatternString + '" doesn\'t exist in "' + self.fileIni.name + '"' })
+            debug.die({ 'exitMessage' : 'Key error  : key "' + config.iniPatternString + '" doesn\'t exist in "' + self._fileIni.name + '"' })
 
 
     def make(self):
         result = ''
-        for hostgroupName in self.members:
-            HG                      = {}
-            members                 = ', '.join(self.members[hostgroupName])    # hosts of 'hostgroupName', as a string
-            HG['hostGroupName']     = hostgroupName
-            HG['hostGroupAlias']    = hostgroupName
-            HG['hostGroupMembers']  = members
+        for hostgroupName in self._hostGroupToMembers:
+            theHostGroup                        = {}
+            theMembers                          = ', '.join(self._hostGroupToMembers[hostgroupName])    # hosts of 'hostgroupName', as a string
+            theHostGroup['hostGroupName']       = hostgroupName
+            theHostGroup['hostGroupAlias']      = hostgroupName
+            theHostGroup['hostGroupMembers']    = theMembers
 
-            result += self.hostGroupPattern.apply(HG) + "\n"
+            result += self._hostGroupPattern.apply(theHostGroup) + "\n"
 
         return result

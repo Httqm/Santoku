@@ -24,10 +24,9 @@ from modules import debug
 
 debug = debug.Debug()
 
-# See http://docs.python.org/library/string.html#template-strings
 class Pattern(object):
 
-    def __init__(self,params):
+    def __init__(self, params):
         """
         A pattern is used to substitute tags with values and build .cfg files.
 
@@ -35,39 +34,27 @@ class Pattern(object):
         - variable2tag : dictionary with key = variable name, and value = tag name. This is defined in the [VARIABLE2TAG] section of .ini files
         - values : dictionary with key = variable name, and value = ... value ;-)
         """
-        self.file           = params['file']    # used in debug messages only
-        self.pattern        = params['pattern']
-#        self.variable2tag   = params['variable2tag']
+        self._file      = params['file']    # used in debug messages only
+        self._pattern   = params['pattern']
         self.searchTags()
 
 
     def searchTags(self):
         import re
         tagRegExp   = '\\' + config.iniTagChar + '(.*)\\b'
-        tagList     = re.findall(tagRegExp, self.pattern)
+        tagList     = re.findall(tagRegExp, self._pattern)
         if(not tagList):
-            debug.die({'exitMessage': 'No tag matching pattern "' + tagRegExp + '" found in "' + self.file + '"'})
+            debug.die({'exitMessage': 'No tag matching pattern "' + tagRegExp + '" found in "' + self._file + '"'})
         return tagList
 
 
-    def apply(self,values):
+    def apply(self, values):
         """ Perform substitutions of tags with their values in the pattern """
         from string import Template
-        template = Template(self.pattern)
+        template = Template(self._pattern)
         try:
             patternWithSubstitutedValues = template.safe_substitute(values)
-#            debug.show(patternWithSubstitutedValues)
             return patternWithSubstitutedValues
-        except KeyError,e: # TODO : improve this
+        except (KeyError, e): # TODO : improve this
             debug.show('key error : ' + str(e))
             return None
-
-
-    """
-    # TODO : dead code ?
-    def checkTagValueExists(self,tag):
-        try:
-            self.values[self.variable2tag[tag]]
-        except KeyError:
-            debug.die({ 'exitMessage' : 'No CSV value given for tag "' + tag + "\" in pattern :\n\n" + self.pattern + "\nMake sure the column names listed in the \"[" + config.iniVarToTagString + ']" stanza of "' + self.file + '" REALLY match "' + config.configFilesPath + config.csvFileName + '" column names.' })
-    """

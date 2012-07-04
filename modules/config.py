@@ -51,7 +51,7 @@ outputFileCommands  = 'commands.cfg'
 # OUTPUT MESSAGES & DEBUG
 ########################################## ##########################################################
 messageDie  = 'Tenno Heika Banzai !!! (seppuku...)'
-debug       = 1 # 0|1, enable output of controller.showDebug messages
+debug       = 1 # 0|1, enable output of debug.show()
 
 ########################################## ##########################################################
 # CSV COSMETICS

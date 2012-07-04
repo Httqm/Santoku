@@ -27,17 +27,17 @@ debug = debug.Debug()
 class AllCommands(object):
 
     def __init__(self):
-        self.output     = ''
-        self.commands   = {}
+        self._output    = ''
+        self._commands  = {}
         self.number     = 0
 
 
-    def add(self,commandData):
-        self.commands[commandData['serviceName']]   = commandData['serviceCommand']
-        self.number                                 = len(self.commands)
+    def add(self, commandData):
+        self._commands[commandData['serviceName']]  = commandData['serviceCommand']
+        self.number                                 = len(self._commands)
 
 
     def getOutput(self):
-        for serviceName in self.commands:
-            self.output += self.commands[serviceName] + "\n"
-        return self.output
+        for serviceName in self._commands:
+            self._output += self._commands[serviceName] + "\n"
+        return self._output
