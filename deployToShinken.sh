@@ -25,27 +25,28 @@ trap "echo;echo 'Interrupted by CTRL-c.';exit 1;" INT
 ########################################## ##########################################################
 # CONFIG
 ########################################## ##########################################################
-useSsh=1		# If 1, deliver files through SSH. Otherwise simply 'cp' them.
+useSsh=1                                                # If 1, deliver files through SSH. Otherwise simply 'cp' them.
 
 # config values for local host
-sourceFolder='./output/'											# final '/' expected
+sourceFolder='./output/'                                # final '/' expected
 logFile='./checkConf.log'
 
 # config values for Shinken host
-shinkenHost='192.168.1.101'										# unused if Shinken host == localhost
-shinkenSshUser='root'												# unused if Shinken host == localhost
+shinkenHost='192.168.1.101'                             # unused if Shinken host == localhost
+shinkenSshUser='root'                                   # unused if Shinken host == localhost
 
-shinkenBaseFolder='/usr/local/shinken/'						# final '/' expected
-shinkenEtcFolder=$shinkenBaseFolder'etc/'						# final '/' expected
-shinkenEtcHostsFolder=$shinkenEtcFolder'hosts/'				# final '/' expected
-shinkenEtcServicesFolder=$shinkenEtcFolder'services/'		# final '/' expected
+shinkenFolderBase='/usr/local/shinken/'                 # final '/' expected
+shinkenFolderEtc=$shinkenFolderBase'etc/'               # final '/' expected
+shinkenFolderEtcHosts=$shinkenFolderEtc'hosts/'         # final '/' expected
+shinkenFolderEtcServices=$shinkenFolderEtc'services/'   # final '/' expected
 
 backupSuffix='_PREVIOUS_VERSION'
 
 
-shinkenCheckBin=$shinkenBaseFolder'bin/shinken-arbiter'
+shinkenCheckBin=$shinkenFolderBase'bin/shinken-arbiter'
 shinkenRestartCmd='/etc/init.d/shinken restart'
-shinkenConfigFile=$shinkenEtcFolder'nagios.cfg'
+shinkenConfigFile=$shinkenFolderEtc'nagios.cfg'
+
 
 # misc
 stringOk='[ OK ]'
@@ -94,11 +95,13 @@ function backupFile {
 
 
 function checkShinkenConfig {
-	command="$shinkenCheckBin -v -c $shinkenConfigFile 1>$logFile 2>&1"
+	command="$shinkenCheckBin -v -c $shinkenConfigFile"
 	if [ $useSsh -eq 1 ]; then
-		ssh $shinkenSshUser@$shinkenHost "$command"
+#		echo 'COMMAND : ' "ssh $shinkenSshUser@$shinkenHost" "$command"
+		ssh $shinkenSshUser@$shinkenHost "$command" >$logFile
 	else
-		 echo $command
+		# TODO : test/fix this
+		echo $command
 		$(command)
 	fi
 	}
@@ -125,15 +128,15 @@ function showCheckConfLog {
 # main()
 ########################################## ##########################################################
 
-for fileOrFolder in "$shinkenEtcFolder" "$shinkenEtcHostsFolder" "$shinkenEtcServicesFolder" "$shinkenCheckBin" "$shinkenConfigFile";do
+for fileOrFolder in "$shinkenFolderEtc" "$shinkenFolderEtcHosts" "$shinkenFolderEtcServices" "$shinkenCheckBin" "$shinkenConfigFile";do
 	checkFileOrFolderExists "$fileOrFolder"
 done
 
 
 echo -n ' Copying files ............... '
-copyFileToShinkenFileTree ${sourceFolder}commands.cfg $shinkenEtcFolder
-copyFileToShinkenFileTree ${sourceFolder}hosts.cfg $shinkenEtcHostsFolder
-copyFileToShinkenFileTree ${sourceFolder}services.cfg $shinkenEtcServicesFolder
+copyFileToShinkenFileTree ${sourceFolder}commands.cfg $shinkenFolderEtc
+copyFileToShinkenFileTree ${sourceFolder}hosts.cfg $shinkenFolderEtcHosts
+copyFileToShinkenFileTree ${sourceFolder}services.cfg $shinkenFolderEtcServices
 echo $stringOk
 
 
