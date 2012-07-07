@@ -50,7 +50,10 @@ class Csv(object):
         try:
             return self.data[self._currentRow][cellName]
         except KeyError:
-            debug.die({ 'exitMessage' : 'No column "' + cellName + '" (CaSe SeNsItIvE !) found in "' + config.configFilesPath + config.csvFileName + "\".\nThis is usually caused by an error in a .ini file. Find files where \"" + cellName + "\" is refered to with : grep -r \"" + cellName + "\" *" })
+            debug.die({ 'exitMessage' : 'No column "' + cellName + '" (CaSe SeNsItIvE !) found in "' \
+                + config.configFilesPath + config.csvFileName + "\".\nThis is either caused by : \n" \
+                + " - wrong column name in the CSV file\n" \
+                + ' - OR by an error in a .ini file. Find files where \"' + cellName + "\" is refered to with : grep -r \"" + cellName + "\" *" })
 
 
     def currentRowHasCheckCommand(self):

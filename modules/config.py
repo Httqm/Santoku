@@ -23,7 +23,7 @@
 # FILES AND FOLDERS
 ########################################## ##########################################################
 # common
-##configFile          = __file__  # This is used to point to THIS file in error messages. DON'T CHANGE THIS !
+configFile          = __file__  # This is used to point to THIS file in error messages. DON'T CHANGE THIS !
 configFilesPath     = './config/'
 
 # CSV file

@@ -61,8 +61,8 @@ class Fichier(object):
             outFile.write(self._makeHeaderWithWarningMessage())
             outFile.write(data)
             outFile.close()
-        except (Exception, e) :
-            debug.die({ 'exitMessage' : 'Can not write results to "' + self._name + '" : ' + str(e)})
+        except IOError as e :
+            debug.die({ 'exitMessage' : 'Can not write results to "' + self._name + '" : ' + e.strerror})
 
 
 
