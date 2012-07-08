@@ -78,18 +78,18 @@ class Service(object):
     def getCommand(self):
         try:
             return {
-                'serviceName'           : self._cleanName,
-                'serviceCommand'        : self._fileIniData['COMMAND']
+                'serviceName'       : self._cleanName,
+                'serviceCommand'    : self._fileIniData['COMMAND']
                 }
         except KeyError:
-            debug.die({ 'exitMessage'   : 'No command specified for service "' + self._cleanName + '" in config file "' + self._fileIni.name + '"' })
+            debug.die({ 'exitMessage': 'No command specified for service "' + self._cleanName + '" in config file "' + self._fileIni.name + '"' })
 
 
     def _checkFileIniPatternWasLoaded(self):
         try:
             self._fileIniData[config.iniPatternString]
         except KeyError:
-            debug.die({ 'exitMessage' : 'Key error  : key "' + config.iniPatternString + '" not found in "' + self._fileIni.name})
+            debug.die({ 'exitMessage': 'Key error : key "' + config.iniPatternString + '" not found in "' + self._fileIni.name })
 
 
     def _loadPatterns(self):
@@ -159,7 +159,7 @@ class Service(object):
 
             currentRound += 1
 
-        self._result	= { 'champsValeurs' : champsValeurs, 'maxRounds' : maxRounds }
+        self._result	= { 'champsValeurs': champsValeurs, 'maxRounds': maxRounds }
 
 
     def _loadServiceData(self, params):
@@ -191,6 +191,23 @@ class Service(object):
             tmp += self._patternService.apply(self._result['champsValeurs'][i]) + "\n"
             self._allServices.count()
         return tmp
+
+
+    def loadDirectivesFromCsvData(self):
+        self.directives	= {
+            'names'     : self._currentCsvLine[self._cleanName + config.csvHeaderFs + config.csvServiceDirectivesNames].split(config.csvMultiValuedCellFS),
+            'values'    : self._currentCsvLine[self._cleanName + config.csvHeaderFs + config.csvServiceDirectivesValues].split(config.csvMultiValuedCellFS)
+            }
+
+
+    def applyServiceDirectivesPattern(self):
+        self.serviceDirectives = ''
+        for name,value in enumerate(self.directives['names']):
+            self.serviceDirectives += self._patternDirectives.apply({
+                'directiveName'     : self.directives['names'][name],
+                'directiveValue'    : self.directives['values'][name]
+                })
+        return self.serviceDirectives
 
 
     def _checkFileIni(self):
@@ -237,20 +254,3 @@ class Service(object):
 ##            self._fileIniData[config.iniVarToTagString]
 ##        except KeyError:
 ##            debug.die({ 'exitMessage' : 'Key error  : key "' + config.iniVarToTagString + '" not found in "' + self._fileIni.name})
-##
-##
-##    def loadDirectivesFromCsvData(self):
-##        self.directives	= {
-##            'names'     : self._currentCsvLine[self._cleanName + config.csvHeaderFs + config.csvServiceDirectivesNames].split(config.csvMultiValuedCellFS),
-##            'values'    : self._currentCsvLine[self._cleanName + config.csvHeaderFs + config.csvServiceDirectivesValues].split(config.csvMultiValuedCellFS)
-##            }
-##
-##
-##    def applyServiceDirectivesPattern(self):
-##        self.serviceDirectives = ''
-##        for name,value in enumerate(self.directives['names']):
-##            self.serviceDirectives += self._patternDirectives.apply({
-##                'directiveName'     : self.directives['names'][name],
-##                'directiveValue'    : self.directives['values'][name]
-##                })
-##        return self.serviceDirectives
