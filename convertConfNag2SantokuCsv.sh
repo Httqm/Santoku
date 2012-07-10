@@ -1,0 +1,61 @@
+#!/bin/bash
+
+from=(	hostName	hostDirectivesList	ipAddress	parent	hostGroupsList\
+	cpuCheck	cpuWarn	cpuCrit\
+	storageInodesCheck_ServiceDirectivesList	storageInodesCheck_ServiceDirectivesValues	storageInodesCheck_target	storageInodesCheck_warn	storageInodesCheck_crit	storageInodesCheck_fsList	storageInodesCheck\
+	loadCheck	loadWarn	loadCrit\
+	sshMysqlCheck_Desc	sshMysqlCheck_ServiceDirectivesList	sshMysqlCheck_ServiceDirectivesValues	sshMysqlCheck_Host	sshMysqlCheck_User	sshMysqlCheck_Password	sshMysqlCheck_Warn	sshMysqlCheck_Crit	sshMysqlCheck\
+	sshMysqlDbSizeCheck_Description	sshMysqlDbSizeCheck_ServiceDirectivesList	sshMysqlDbSizeCheck_ServiceDirectivesValues	sshMysqlDbSizeCheck_Host	sshMysqlDbSizeCheck_User	sshMysqlDbSizeCheck_Password	sshMysqlDbSizeCheck_DbName	sshMysqlDbSizeCheck_Warn	sshMysqlDbSizeCheck_Crit	sshMysqlDbSizeCheck\
+	sshMysqlUserProcessCheck_Description	sshMysqlUserProcessCheck_ServiceDirectivesList	sshMysqlUserProcessCheck_ServiceDirectivesValues	sshMysqlUserProcessCheck_Host	sshMysqlUserProcessCheck_User	sshMysqlUserProcessCheck_Password	sshMysqlUserProcessCheck_Warn	sshMysqlUserProcessCheck_Crit	sshMysqlUserProcessCheck\
+	sshLoadWarn	sshLoadCrit	sshLoadCheck\
+	sshSnmpLoadCheck_ServiceDirectivesList	sshSnmpLoadCheck_ServiceDirectivesValues	sshSnmpLoadCheck_Target	sshSnmpLoadCheck_Desc	sshSnmpLoadCheck_Warn	sshSnmpLoadCheck_Crit	sshSnmpLoadCheck\
+	sshProcessCheck_ServiceDirectivesList	sshProcessCheck_ServiceDirectivesValues	sshProcessCheck_Name	sshProcessCheck_Arg	sshProcessCheck_User	sshProcessCheck_Warn	sshProcessCheck_Crit	sshProcessCheck\
+	webCheck_ServiceDirectivesList	webCheck_ServiceDirectivesValues	webCheck_Desc	webCheck_Warn	webCheck_Crit	webCheck_Url	webCheck_MatchString	webCheck_ProxyHttp	webCheck_FormMode	webCheck_FormName	webCheck_FormFieldsNames	webCheck_FormFieldsValues	webCheck_HtPrompt	webCheck_HtUser	webCheck_HtPassword	webCheck\
+	webCheckVs_ServiceDirectivesList	webCheckVs_ServiceDirectivesValues	webCheckVs_Desc	webCheckVs_Warn	webCheckVs_Crit	webCheckVs_HttpProxy	webCheckVs_Url	webCheckVs_MatchString	webCheckVs_RefUrl	webCheckVs_RefMatchString	webCheckVs\
+	nscaCheck_ServiceDirectivesList	nscaCheck_ServiceDirectivesValues	nscaCheck_Desc	nscaCheck_Warn	nscaCheck_Crit	nscaCheck\
+	fileAgeCheck_description	fileAgeCheck_ServiceDirectivesList	fileAgeCheck_ServiceDirectivesValues	fileAgeCheck_file	fileAgeCheck_maxAgeMinutes	fileAgeCheck\
+	sshFileNumberCheck_folderList	sshFileNumberCheck_warn	sshFileNumberCheck_crit	sshFileNumberCheck\
+	)
+
+
+
+to=(	host_name	hostDirectivesNames	address		parents	hostgroups\
+	check_cpu:do	check_cpu:warn	check_cpu:crit\	
+	check_ssh_linux_storage_inodes:serviceDirectivesNames	check_ssh_linux_storage_inodes:serviceDirectivesValues check_ssh_linux_storage_inodes:target	check_ssh_linux_storage_inodes:warn	check_ssh_linux_storage_inodes:crit	check_ssh_linux_storage_inodes:fsList	check_ssh_linux_storage_inodes:do\
+	check_load:do	check_load:warn	check_load:crit\
+	check_ssh_mysql:description	check_ssh_mysql:serviceDirectivesNames	check_ssh_mysql:serviceDirectivesValues	check_ssh_mysql:host	check_ssh_mysql:user	check_ssh_mysql:password	check_ssh_mysql:warn	check_ssh_mysql:crit	check_ssh_mysql:do\
+	check_ssh_mysql_db_size_Description	check_ssh_mysql_db_size_serviceDirectivesNames	check_ssh_mysql_db_size_serviceDirectivesValues	check_ssh_mysql_db_size_Host	check_ssh_mysql_db_size_User	check_ssh_mysql_db_size_Password	check_ssh_mysql_db_size_DbName	check_ssh_mysql_db_size_Warn	check_ssh_mysql_db_size_Crit	check_ssh_mysql_db_size:do\
+	check_ssh_mysql_user_process:description	check_ssh_mysql_user_process:serviceDirectivesNames	check_ssh_mysql_user_process:serviceDirectivesValues	check_ssh_mysql_user_process:host	check_ssh_mysql_user_process:user	check_ssh_mysql_user_process:password	check_ssh_mysql_user_process:warn	check_ssh_mysql_user_process:crit	check_ssh_mysql_user_process:do\
+	check_ssh_load:warn	check_ssh_load:crit	check_ssh_load:do\
+	check_ssh_snmp_load:serviceDirectivesNames	check_ssh_snmp_load:serviceDirectivesValues	check_ssh_snmp_load:target	check_ssh_snmp_load:description	check_ssh_snmp_load:warn	check_ssh_snmp_load:crit	check_ssh_snmp_load:do\
+	check_ssh_process:serviceDirectivesNames	check_ssh_process:serviceDirectivesValues	check_ssh_process:name	check_ssh_process:arg	check_ssh_process:user	check_ssh_process:warn	check_ssh_process:crit	check_ssh_process:do\
+	check_web:serviceDirectivesNames	check_web:serviceDirectivesValues	check_web:description	check_web:warn	check_web:crit	check_web:url	check_web:matchString	check_web:proxyHttp	check_web:formMode	check_web:formName	check_web:formFieldsNames	check_web:formFieldsValues	check_web:htPrompt	check_web:htUser	check_web:htPassword	check_web:do\
+	check_web_vs:serviceDirectivesNames	check_web_vs:serviceDirectivesValues	check_web_vs:description	check_web_vs:warn	check_web_vs:crit	check_web_vs:httpProxy	check_web_vs:url	check_web_vs:matchString	check_web_vs:refUrl	check_web_vs:refMatchString	check_web_vs:do\
+	check_nsca:serviceDirectivesNames	check_nsca:serviceDirectivesValues	check_nsca:description	check_nsca:warn	check_nsca:crit	check_nsca:do\
+	check_ssh_file_age:description	check_ssh_file_age:serviceDirectivesNames	check_ssh_file_age:serviceDirectivesValues	check_ssh_file_age:file	check_ssh_file_age:maxAgeMinutes	check_ssh_file_age:do\
+	check_ssh_file_number:folderList	check_ssh_file_number:warn	check_ssh_file_number:crit	check_ssh_file_number:do\
+	)
+
+columns2Delete="App system hostExists HostHideNagvis snmpCommunity snmpCommunity "
+columns2Add="ignore_host check_command use alias"
+
+
+sourceFile="original.csv"
+destFile="new.csv"
+
+# ARGS :
+# $1 : from
+# $2 : to
+# $3 : file 
+function convert {
+#	echo $1 $2 $3
+	sed -i "s/$1/$2/g" $3
+	}
+
+cp $sourceFile $destFile
+
+for key in ${!from[*]};do
+	echo Changing \"${from[$key]}\" into \"${to[$key]}\"...
+	convert ${from[$key]} ${to[$key]} $destFile
+#	echo
+done
