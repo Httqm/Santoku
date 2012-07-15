@@ -27,10 +27,8 @@ configFile          = __file__  # This is used to point to THIS file in error me
 configFilesPath     = './config/'
 
 # CSV file
-csvFileName     = 'home.csv'
-###csvFileName    = 'file.csv'
-###csvFileName    = 'hostsOBS.csv'
-###csvFileName    = 'hostsOBS_light.csv'
+#csvFileName     = 'confNag.csv'
+csvFileName     = 'new.csv'
 csvFileFs       = ';'   # CSV field separator. Must be different from the CSV list separator below.
 ##csvFileParamFs  = '|'   # CSV list separator. This is used when a CSV cell contains several values
 

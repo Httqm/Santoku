@@ -247,8 +247,6 @@ class Service(object):
 ##            debug.die({ 'exitMessage' : '"' + params['directive'] + '" directive not found in "' + params['stanzaTitle'] + '" stanza of config file "' + self._fileIni.name + '"'})
 ##
 ##
-##
-##
 ##    def _checkFileIniVarToTagWasLoaded(self):
 ##        try:
 ##            self._fileIniData[config.iniVarToTagString]

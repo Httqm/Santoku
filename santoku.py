@@ -60,6 +60,8 @@ for hostId in csv.data:
         allHosts.incrementCountOf('ignored')
         continue
 
+#    debug.show(csv.getCellFromCurrentRow('host_name'))
+
     if(csv.currentRowHasCheckCommand()):
         allCommands.add(host.getCheckCommand())
 

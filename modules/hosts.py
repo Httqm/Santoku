@@ -102,6 +102,7 @@ class Host(object):
 
 
     def isMarkedToBeIgnored(self):
+#        debug.show(self._csv.getCellFromCurrentRow('host_name'))
         return 1 if self._csv.getCellFromCurrentRow(config.csvHeaderIgnoreHost) == '1' else 0
 
 
@@ -110,9 +111,16 @@ class Host(object):
         A host may appear on several lines of the source CSV file.
         This is especially true with 'virtual' hosts that are not attached to a physical machine.
         Such hosts are then called 'duplicated'.
+        As a host_name may also appear as a parent, we only try to match the specified host_name
+        with all the known host_names.
         """
         import re
-        match = re.search(self._csv.getCellFromCurrentRow(config.csvHeaderHostName), self._allHosts.output)
+        match = re.search(config.csvHeaderHostName \
+            + '\s*' \
+            + self._csv.getCellFromCurrentRow(config.csvHeaderHostName) \
+            , self._allHosts.output)
+#        if match:
+#            debug.show(self._csv.getCellFromCurrentRow(config.csvHeaderHostName)+' IS DUPLICATED')
         return 1 if match else 0
 
 
