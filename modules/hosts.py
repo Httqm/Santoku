@@ -19,10 +19,12 @@
 #
 
 
+import re
 from modules import config
 from modules import fichier
 from modules import pattern
 from modules import debug
+
 
 debug = debug.Debug()
 
@@ -72,6 +74,17 @@ class AllHosts(object):
             })
 
 
+    def clean(self):
+        self._removeDirectivesHavingNoValue()
+
+
+    def _removeDirectivesHavingNoValue(self):
+        directivesList = ['check_command']
+        #re.sub(pattern, repl, string, count=0, flags=0)
+        #self.output = re.sub('^\s*check_command\s*$', '', self.output)
+        for directive in directivesList:
+            self.output = re.sub(r'\s+' + directive + '\s+\n', r'\n', self.output)
+#        debug.show(self.output)
 
 
 ##    def checkIniFile(self):
@@ -106,7 +119,7 @@ class Host(object):
         return 1 if self._csv.getCellFromCurrentRow(config.csvHeaderIgnoreHost) == '1' else 0
 
 
-    def isDuplicated(self):
+    def isAlreadyRegisteredInHostsCfg(self):
         """
         A host may appear on several lines of the source CSV file.
         This is especially true with 'virtual' hosts that are not attached to a physical machine.

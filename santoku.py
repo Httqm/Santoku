@@ -65,13 +65,15 @@ for hostId in csv.data:
     if(csv.currentRowHasCheckCommand()):
         allCommands.add(host.getCheckCommand())
 
-    if host.isDuplicated():
+
+    # TODO / BUG ? : if a host is duplicated, only the values on its 1st host definition will be considered
+    if host.isAlreadyRegisteredInHostsCfg():
         allHosts.incrementCountOf('duplicated')
     else:
+        allHosts.incrementCountOf('valid')
         csv.setHostDirectives({'hostDirectives': host.loadDirectives() }) # TODO : hardcoded stuff ?
         allHosts.output += host.applyHostPattern()
 
-        allHosts.incrementCountOf('valid')
         hostgroups.addHostToGroups({
             'host'      : csv.getCellFromCurrentRow(config.csvHeaderHostName),
             'groups'    : host.loadHostGroupsFromCsv()
@@ -126,6 +128,7 @@ allHosts.output += hostgroups.make()
 # Write results to files
 ########################################## ##########################################################
 
+allHosts.clean()
 outputFileHosts     = fichier.Fichier({ 'name': config.outputPath+config.outputFileHosts })
 outputFileHosts.write(allHosts.output)
 
