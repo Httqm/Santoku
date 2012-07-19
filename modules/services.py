@@ -75,6 +75,13 @@ class Service(object):
         self._checkFileIni()
 
 
+    def _checkFileIni(self):
+        self._checkFileIniPatternWasLoaded()
+##        self._checkFileIniVarToTagWasLoaded()
+        self._checkFileIniCommandNamesMatch()
+##        self._checkFileIniBothTagSurroundingCharsAreThere()
+
+
     def getCommand(self):
         try:
             return {
@@ -210,11 +217,6 @@ class Service(object):
         return self.serviceDirectives
 
 
-    def _checkFileIni(self):
-        self._checkFileIniPatternWasLoaded()
-##        self._checkFileIniVarToTagWasLoaded()
-##        self._checkFileIniCommandNamesMatch()
-##        self._checkFileIniBothTagSurroundingCharsAreThere()
 ##
 ##
 ##    def _checkFileIniBothTagSurroundingCharsAreThere(self):
@@ -224,29 +226,29 @@ class Service(object):
 ##                debug.die({ 'exitMessage' : 'Missing leading/trailing "$" in expression "' + match.group(0) + '" in the "[' + stanzaTitle + ']" section of "' + self._fileIni.name + '"'})
 ##
 ##
-##    def _checkFileIniCommandNamesMatch(self):
-##        commandInPatternStanza = self.getCommandValueFromStanza({
-##            'directive'     : config.commandDirectiveInServiceDefinition,
-##            'stanzaTitle'   : config.iniPatternString
-##            })
-##
-##        commandInCommandStanza = self.getCommandValueFromStanza({
-##            'directive'     : config.commandDirectiveInCommandDefinition,
-##            'stanzaTitle'   : config.iniCommandString
-##            })
-##
-##        if commandInPatternStanza != commandInCommandStanza:
-##            debug.die({ 'exitMessage' : 'Commands don\'t match between the "' + config.iniPatternString + '" (' + config.commandDirectiveInServiceDefinition + ' ' + commandInPatternStanza + ') and the "' + config.iniCommandString + '" (' + config.commandDirectiveInCommandDefinition + ' ' + commandInCommandStanza + ') stanzas of config file "' + self._fileIni.name + '"'})
-##
-##
-##    def getCommandValueFromStanza(self, params):
-##        match = re.search('\s' + params['directive'] + '\s + (\w*)', self._fileIniData[params['stanzaTitle']])
-##        if match:
-##            return match.group(1)
-##        else:
-##            debug.die({ 'exitMessage' : '"' + params['directive'] + '" directive not found in "' + params['stanzaTitle'] + '" stanza of config file "' + self._fileIni.name + '"'})
-##
-##
+    def _checkFileIniCommandNamesMatch(self):
+        commandInPatternStanza = self.getCommandValueFromStanza({
+            'directive'     : config.commandDirectiveInServiceDefinition,
+            'stanzaTitle'   : config.iniPatternString
+            })
+
+        commandInCommandStanza = self.getCommandValueFromStanza({
+            'directive'     : config.commandDirectiveInCommandDefinition,
+            'stanzaTitle'   : config.iniCommandString
+            })
+
+        if commandInPatternStanza != commandInCommandStanza:
+            debug.die({ 'exitMessage' : 'Commands don\'t match between the "' + config.iniPatternString + '" (' + config.commandDirectiveInServiceDefinition + ' ' + commandInPatternStanza + ') and the "' + config.iniCommandString + '" (' + config.commandDirectiveInCommandDefinition + ' ' + commandInCommandStanza + ') stanzas of config file "' + self._iniFileName + '"'})
+
+
+    def getCommandValueFromStanza(self, params):
+        match = re.search('\s' + params['directive'] + '\s + (\w*)', self._fileIniData[params['stanzaTitle']])
+        if match:
+            return match.group(1)
+        else:
+            debug.die({ 'exitMessage' : '"' + params['directive'] + '" directive not found in "' + params['stanzaTitle'] + '" stanza of config file "' + self._iniFileName + '"'})
+
+#self._iniFileName
 ##    def _checkFileIniVarToTagWasLoaded(self):
 ##        try:
 ##            self._fileIniData[config.iniVarToTagString]

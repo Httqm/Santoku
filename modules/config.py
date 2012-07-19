@@ -92,8 +92,8 @@ iniTagChar          = '$'
 ###
 ### DON'T CHANGE THIS !
 ############################################ ##########################################################
-##commandDirectiveInServiceDefinition	= 'check_command'
-##commandDirectiveInCommandDefinition	= 'command_name'
+commandDirectiveInServiceDefinition	= 'check_command'
+commandDirectiveInCommandDefinition	= 'command_name'
 ##defaultCommands="""
 ##define command {
 ##	command_name	notify-host-by-email
