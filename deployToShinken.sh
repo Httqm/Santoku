@@ -118,7 +118,7 @@ function restartShinken {
 
 function showCheckConfLog {
 	echo $stringKo
-	grep "Error:" $logFile
+	grep -i "error\s*:" $logFile
 	echo
 	echo "Read full details in $logFile"
 	}
