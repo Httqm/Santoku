@@ -71,7 +71,7 @@ for hostId in csv.data:
         allHosts.incrementCountOf('duplicated')
     else:
         allHosts.incrementCountOf('valid')
-        csv.setHostDirectives({'hostDirectives': host.loadDirectives() }) # TODO : hardcoded stuff ?
+        csv.setHostDirectives({'hostDirectives': host.loadDirectives() })
         allHosts.output += host.applyHostPattern()
 
         hostgroups.addHostToGroups({
@@ -106,7 +106,7 @@ for hostId in csv.data:
             service.buildArrayOfServices({
                 'name'              : serviceName,
                 'hostName'          : csv.getCellFromCurrentRow('host_name'),
-                'csvHeader'         : csv.header,
+#                'csvHeader'         : csv.header,  # cleaning services.py _loadServiceData
                 'csvDataLine'       : csv.getCurrentRow(),
                 'serviceDirectives' : serviceDirectives
                 })

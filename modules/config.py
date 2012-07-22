@@ -54,7 +54,7 @@ debug       = 1 # 0|1, enable output of debug.show()
 ########################################## ##########################################################
 # CSV COSMETICS
 # You needn't change these values : Santoku works fine as is.
-# Values are defined here to avoid hardcoded strings.
+# Values are defined here to avoid hardcoding.
 # But just in case you don't like the way they are (cosmetics) or need a workaround for any reason :
 # HAVE FUN !
 ########################################## ##########################################################
@@ -76,22 +76,20 @@ csvServiceDirectivesValues  = 'serviceDirectivesValues'
 ########################################## ##########################################################
 # INI COSMETICS
 # You needn't change these values : Santoku works fine as is.
-# Values are defined here to avoid hardcoded strings.
+# Values are defined here to avoid hardcoding.
 # But just in case you don't like the way they are (cosmetics) or need a workaround for any reason :
 # HAVE FUN !
 ########################################## ##########################################################
 iniPatternString    = 'PATTERN'
-##iniVarToTagString   = 'VARIABLE2TAG'
-##iniVarToTagStanzaFs = '='
 iniCommandString    = 'COMMAND'
 iniTagChar          = '$'
 
-############################################ ##########################################################
-### NAGIOS / SHINKEN .cfg DIRECTIVES
-### Values below are there just to avoid hardcoding.
-###
-### DON'T CHANGE THIS !
-############################################ ##########################################################
+########################################## ##########################################################
+# NAGIOS / SHINKEN .cfg DIRECTIVES
+# Values below are there just to avoid hardcoding.
+#
+# DON'T CHANGE THIS !
+########################################## ##########################################################
 commandDirectiveInServiceDefinition	= 'check_command'
 commandDirectiveInCommandDefinition	= 'command_name'
 ##defaultCommands="""

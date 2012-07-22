@@ -27,7 +27,7 @@ class Directives(object):
 
     def loadIniFile(self):
         fileIniDirectives = fichier.FileIni({
-            'name'  : config.configFilesPath + config.fileHostIni
+            'name': config.configFilesPath + config.fileHostIni
             })
-        self.iniFileData = fileIniDirectives.getData() # loadData ?
-        # TODO : not working yet
+        self.iniFileData = fileIniDirectives.getData()
+

@@ -55,6 +55,9 @@ class Pattern(object):
         try:
             patternWithSubstitutedValues = template.safe_substitute(values)
             return patternWithSubstitutedValues
-        except (KeyError, e): # TODO : improve this
-            debug.show('key error : ' + str(e))
+        # TODO : exceptions below are not optimal :-(
+        except NameError as e:
+            debug.die({'exitMessage': '(pattern.py) key error : ' + str(e) })
+        except KeyError as e:
+            debug.show('key error : ' + e.strerror)
             return None

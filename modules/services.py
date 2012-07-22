@@ -55,7 +55,7 @@ class Service(object):
 
     def __init__(self, params):
         self._csv               = params['csv']
-        self._currentCsvLine    = params['currentCsvLine']  # TODO : this property conflicts with the purpose of self._csv . Fix it!
+#        self._currentCsvLine    = params['currentCsvLine']  # (FIXED) : this property conflicts with the purpose of self._csv . Fix it!
         self._csvServiceName    = params['serviceCsvName']
         self._allServices       = params['allServices']
         self._cleanName         = self._csvServiceName.replace(config.csvHeaderFs + config.csvHeaderDo,'')
@@ -76,8 +76,10 @@ class Service(object):
 
 
     def _checkFileIni(self):
-        self._checkFileIniPatternWasLoaded()
-##        self._checkFileIniVarToTagWasLoaded()
+#        self._searchSection(config.iniPatternString)
+        self._fileIni.searchSection(config.iniPatternString)
+#        self._searchSection(config.iniCommandString)
+        self._fileIni.searchSection(config.iniCommandString)
         self._checkFileIniCommandNamesMatch()
 ##        self._checkFileIniBothTagSurroundingCharsAreThere()
 
@@ -86,17 +88,28 @@ class Service(object):
         try:
             return {
                 'serviceName'       : self._cleanName,
-                'serviceCommand'    : self._fileIniData['COMMAND']
+#                'serviceCommand'    : self._fileIniData['COMMAND']
+                'serviceCommand'    : self._fileIniData[config.iniCommandString]
                 }
         except KeyError:
             debug.die({ 'exitMessage': 'No command specified for service "' + self._cleanName + '" in config file "' + self._fileIni.name + '"' })
 
 
-    def _checkFileIniPatternWasLoaded(self):
-        try:
-            self._fileIniData[config.iniPatternString]
-        except KeyError:
-            debug.die({ 'exitMessage': 'Key error : key "' + config.iniPatternString + '" not found in "' + self._fileIni.name })
+#    def _checkFileIniPatternWasLoaded(self):
+#        try:
+#            self._fileIniData[config.iniPatternString]
+#        except KeyError:
+#            debug.die({ 'exitMessage': 'Key error : key "' + config.iniPatternString + '" not found in "' + self._fileIni.name })
+
+
+#    def _searchSection(self, sectionTitle):
+#        debug.show(sectionTitle)
+#        try:
+#            self._fileIniData[sectionTitle]
+#        except KeyError:
+#            debug.die({ 'exitMessage': 'Key error : key "' + config.iniPatternString + '" not found in "' + self._fileIni.name })
+#            debug.die({ 'exitMessage': 'No "' + sectionTitle + '" section found in "' + self._fileIni.name + '"' })
+#        debug.show(sectionTitle + ' is OK in ' + self._fileIni.name)
 
 
     def _loadPatterns(self):
@@ -116,7 +129,8 @@ class Service(object):
 
 
     def isEnabled(self):
-        return 1 if self._currentCsvLine[self._csvServiceName] == '1' else 0
+#        return 1 if self._currentCsvLine[self._csvServiceName] == '1' else 0
+        return 1 if self._csv.getCellFromCurrentRow(self._csvServiceName) == '1' else 0
 
 
     def getName(self):
@@ -125,9 +139,12 @@ class Service(object):
 
     def hasDirectives(self):
         hasDirectives = 1
-        for columnName in [self._cleanName + config.csvHeaderFs + config.csvServiceDirectivesNames, self._cleanName + config.csvHeaderFs + config.csvServiceDirectivesValues]:
+        self._nameOfColumnHavingServiceDirectivesNames    = self._cleanName + config.csvHeaderFs + config.csvServiceDirectivesNames
+        self._nameOfColumnHavingServiceDirectivesValues   = self._cleanName + config.csvHeaderFs + config.csvServiceDirectivesValues
+        for columnName in [self._nameOfColumnHavingServiceDirectivesNames, self._nameOfColumnHavingServiceDirectivesValues]:
             if(self._csv.columnExists(columnName)):
-                hasDirectives = hasDirectives and self._currentCsvLine[columnName]
+#                hasDirectives = hasDirectives and self._currentCsvLine[columnName]
+                hasDirectives = hasDirectives and self._csv.getCellFromCurrentRow(columnName)
             else:
                 hasDirectives = 0
         return hasDirectives
@@ -178,7 +195,8 @@ class Service(object):
         serviceCsvData = {}
 
         # storing CSV data in a dict to play with it later
-        for field in params['csvHeader']:   # TODO : clean this : csvHeader 
+#        for field in params['csvHeader']:   # TODO (FIXED): clean this : csvHeader. use ""csv.header"" instead and remove 1 line in santoku.py
+        for field in self._csv.header:
             match = re.search(self._cleanName + config.csvHeaderFs + '.*', field)
             if(match):
                 # parsing all CSV columns related to this service
@@ -186,7 +204,6 @@ class Service(object):
 
         # appending 'serviceDirectives'
         # serviceCsvData contains 2 useless keys : 'serviceDirectivesNames' and 'serviceDirectivesValues'
-	# TODO : clean ?
         serviceCsvData['serviceDirectives'] = params['serviceDirectives']
 
         return serviceCsvData
@@ -202,8 +219,10 @@ class Service(object):
 
     def loadDirectivesFromCsvData(self):
         self.directives	= {
-            'names'     : self._currentCsvLine[self._cleanName + config.csvHeaderFs + config.csvServiceDirectivesNames].split(config.csvMultiValuedCellFS),
-            'values'    : self._currentCsvLine[self._cleanName + config.csvHeaderFs + config.csvServiceDirectivesValues].split(config.csvMultiValuedCellFS)
+#            'names'     : self._currentCsvLine[self._cleanName + config.csvHeaderFs + config.csvServiceDirectivesNames].split(config.csvMultiValuedCellFS),
+#            'values'    : self._currentCsvLine[self._cleanName + config.csvHeaderFs + config.csvServiceDirectivesValues].split(config.csvMultiValuedCellFS)
+            'names'     : self._csv.getCellFromCurrentRow(self._nameOfColumnHavingServiceDirectivesNames).split(config.csvMultiValuedCellFS),
+            'values'    : self._csv.getCellFromCurrentRow(self._nameOfColumnHavingServiceDirectivesValues).split(config.csvMultiValuedCellFS),
             }
 
 
@@ -217,36 +236,35 @@ class Service(object):
         return self.serviceDirectives
 
 
-##
-##
 ##    def _checkFileIniBothTagSurroundingCharsAreThere(self):
-##        for stanzaTitle in self._fileIniData:
-##            match = re.search('(("|\s)\$[a-zA-Z_:]*("|\s|/))|(("|\s)[a-zA-Z_:]*\$("|\s|/))', str(self._fileIniData[stanzaTitle]))
+##        for sectionTitle in self._fileIniData:
+##            match = re.search('(("|\s)\$[a-zA-Z_:]*("|\s|/))|(("|\s)[a-zA-Z_:]*\$("|\s|/))', str(self._fileIniData[sectionTitle]))
 ##            if(match):
-##                debug.die({ 'exitMessage' : 'Missing leading/trailing "$" in expression "' + match.group(0) + '" in the "[' + stanzaTitle + ']" section of "' + self._fileIni.name + '"'})
-##
-##
+##                debug.die({ 'exitMessage' : 'Missing leading/trailing "$" in expression "' + match.group(0) + '" in the "[' + sectionTitle + ']" section of "' + self._fileIni.name + '"'})
+
+
     def _checkFileIniCommandNamesMatch(self):
-        commandInPatternStanza = self.getCommandValueFromStanza({
+        commandInPatternSection = self.getCommandValueFromSection({
             'directive'     : config.commandDirectiveInServiceDefinition,
-            'stanzaTitle'   : config.iniPatternString
+            'sectionTitle'   : config.iniPatternString
             })
 
-        commandInCommandStanza = self.getCommandValueFromStanza({
+        commandInCommandSection = self.getCommandValueFromSection({
             'directive'     : config.commandDirectiveInCommandDefinition,
-            'stanzaTitle'   : config.iniCommandString
+            'sectionTitle'   : config.iniCommandString
             })
 
-        if commandInPatternStanza != commandInCommandStanza:
-            debug.die({ 'exitMessage' : 'Commands don\'t match between the "' + config.iniPatternString + '" (' + config.commandDirectiveInServiceDefinition + ' ' + commandInPatternStanza + ') and the "' + config.iniCommandString + '" (' + config.commandDirectiveInCommandDefinition + ' ' + commandInCommandStanza + ') stanzas of config file "' + self._iniFileName + '"'})
+        if commandInPatternSection != commandInCommandSection:
+            debug.die({ 'exitMessage' : 'Commands don\'t match between the "' + config.iniPatternString + '" (' + config.commandDirectiveInServiceDefinition + ' ' + commandInPatternSection + ') and the "' + config.iniCommandString + '" (' + config.commandDirectiveInCommandDefinition + ' ' + commandInCommandSection + ') sections of config file "' + self._iniFileName + '"'})
 
 
-    def getCommandValueFromStanza(self, params):
-        match = re.search('\s' + params['directive'] + '\s + (\w*)', self._fileIniData[params['stanzaTitle']])
+    def getCommandValueFromSection(self, params):
+        match = re.search('\s' + params['directive'] + '\s + (\w*)', self._fileIniData[params['sectionTitle']])
         if match:
             return match.group(1)
         else:
-            debug.die({ 'exitMessage' : '"' + params['directive'] + '" directive not found in "' + params['stanzaTitle'] + '" stanza of config file "' + self._iniFileName + '"'})
+            debug.die({ 'exitMessage' : '"' + params['directive'] + '" directive not found in "' + params['sectionTitle'] + '" section of config file "' + self._iniFileName + '"'})
+
 
 #self._iniFileName
 ##    def _checkFileIniVarToTagWasLoaded(self):

@@ -52,25 +52,24 @@ class AllHosts(object):
 
 
     def _loadIniFile(self):
-        fileIniHost         = fichier.FileIni({ 'name': config.configFilesPath + config.fileHostIni })
-        self._iniFileData   = fileIniHost.loadData()
-#        self.checkIniFile()	# TODO
+        self._fileIniHost   = fichier.FileIni({'name': config.configFilesPath + config.fileHostIni})
+        self._iniFileData   = self._fileIniHost.loadData()
+        self.checkIniFile()
 
 
     def _loadDirectives(self):
-        fileIniDirectives   = fichier.FileIni({ 'name': config.configFilesPath + config.fileDirectivesIni })
+        fileIniDirectives   = fichier.FileIni({'name': config.configFilesPath + config.fileDirectivesIni})
         self._directives    = fileIniDirectives.loadData()
 
 
-    # TODO : fix this : loadPatterns is private, but self.pattern* below seem to be public :-(
     def _loadPatterns(self):
         self.patternHost = pattern.Pattern({
-            'file'          : config.configFilesPath + config.fileHostIni,
-            'pattern'       : self._iniFileData[config.iniPatternString],
+            'file'      : config.configFilesPath + config.fileHostIni,
+            'pattern'   : self._iniFileData[config.iniPatternString],
             })
         self.patternDirectives = pattern.Pattern({
-            'file'          : config.configFilesPath + config.fileDirectivesIni,
-            'pattern'       : self._directives[config.iniPatternString],
+            'file'      : config.configFilesPath + config.fileDirectivesIni,
+            'pattern'   : self._directives[config.iniPatternString],
             })
 
 
@@ -79,33 +78,24 @@ class AllHosts(object):
 
 
     def _removeDirectivesHavingNoValue(self):
-        directivesList = ['check_command']
-        #re.sub(pattern, repl, string, count=0, flags=0)
-        #self.output = re.sub('^\s*check_command\s*$', '', self.output)
+        directivesList = ['check_command', 'parents', '_SSHLOGIN']	# <== hardcoded stuff. TODO : fix this !
         for directive in directivesList:
             self.output = re.sub(r'\s+' + directive + '\s+\n', r'\n', self.output)
-#        debug.show(self.output)
 
 
-##    def checkIniFile(self):
-##        self.searchPatternStanza()
+    def checkIniFile(self): # TODO (FIXED) : checking .ini file is up to the fichierIni class + check command stanza is there
+#        self.searchPatternStanza()
 ##        self.searchVariablesStanza()
-##
-##
-##    # TODO : duplicate code below !!!!!
-##    def searchPatternStanza(self):
-##        try:
-##            self._iniFileData[config.iniPatternString]
-##        except KeyError:
-##            debug.die({ 'exitMessage' : 'Key error  : key "' + config.iniPatternString + '" not found in "' + self.fileIniHost.name})
-##
-##
-##    def searchVariablesStanza(self):
-##        try:
-##            self._iniFileData[config.iniVarToTagString]
-##        except KeyError:
-##            debug.die({ 'exitMessage' : 'Key error  : key "' + config.iniVarToTagString + '" not found in "' + self.fileIniHost.name})
-##    # /TODO
+        self._fileIniHost.searchSection(config.iniPatternString)
+
+
+# moved to fichierIni class
+#    def searchPatternStanza(self):
+#        try:
+#            self._iniFileData[config.iniPatternString]
+#        except KeyError:
+#            debug.die({ 'exitMessage' : 'Key error  : key "' + config.iniPatternString + '" not found in "' + self._fileIniHost.name})
+
 
 
 class Host(object):
@@ -115,7 +105,6 @@ class Host(object):
 
 
     def isMarkedToBeIgnored(self):
-#        debug.show(self._csv.getCellFromCurrentRow('host_name'))
         return 1 if self._csv.getCellFromCurrentRow(config.csvHeaderIgnoreHost) == '1' else 0
 
 
@@ -153,7 +142,7 @@ class Host(object):
         return self._csv.getCellFromCurrentRow(config.csvHeaderHostgroups).split(config.csvMultiValuedCellFS)
 
 
-    def loadDirectives(self):   # TODO : should this be public ?
+    def loadDirectives(self):
         self._checkCsvHostDirectivesExist()
         directives          = ''
         directivesNames     = self._csv.getCellFromCurrentRow(config.csvHostDirectivesNames).split(config.csvMultiValuedCellFS)
@@ -173,21 +162,21 @@ class Host(object):
         try:
             self._csv.getCellFromCurrentRow(config.csvHostDirectivesNames)
         except KeyError:
-            debug.die({ 'exitMessage': 'Key error : key "' + config.csvHostDirectivesNames + '" not found in "' + config.csvFileName + '"'})
+            debug.die({'exitMessage': 'Key error : key "' + config.csvHostDirectivesNames + '" not found in "' + config.csvFileName + '"'})
 
 
     def _searchCsvHostDirectivesValues(self):
         try:
             self._csv.getCellFromCurrentRow(config.csvHostDirectivesValues)
         except KeyError:
-            debug.die({ 'exitMessage': 'Key error : key "' + config.csvHostDirectivesValues + '" not found in "' + config.csvFileName + '"'})
+            debug.die({'exitMessage': 'Key error : key "' + config.csvHostDirectivesValues + '" not found in "' + config.csvFileName + '"'})
 
 
     def getCheckCommand(self):
         checkCommandName = self._csv.getCellFromCurrentRow(config.csvHeaderCheckCommand)
-        hostCheckFileIni = fichier.FileIni({ 'name': config.configFilesPath + checkCommandName + '.ini' })
+        hostCheckFileIni = fichier.FileIni({'name': config.configFilesPath + checkCommandName + '.ini'})
         hostCheckFileIni.loadData()
         return {
             'serviceName'       : checkCommandName,
-            'serviceCommand'    : hostCheckFileIni.loadData()['COMMAND']	# TODO : hardcoded keyword /!\
+            'serviceCommand'    : hostCheckFileIni.loadData()[config.iniCommandString]
             }
