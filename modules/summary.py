@@ -35,20 +35,18 @@ class Summary(object):
 
 
     def _loadFileIni(self):
-        self._fileIni = fichier.FileIni({
-            'name'  : config.configFilesPath + config.fileSummaryIni,
-            })
-        self._fileIniData = self._fileIni.loadData()
+        self._fileIni       = fichier.FileIni({'name': config.configFilesPath + config.fileSummaryIni})
+        self._fileIniData   = self._fileIni.loadData()
 
 
     def _loadPattern(self):
         try:
             self._summaryPattern = pattern.Pattern({
-                'file'          : config.configFilesPath + config.fileSummaryIni,
-                'pattern'       : self._fileIniData[config.iniPatternString],
+                'file'      : config.configFilesPath + config.fileSummaryIni,
+                'pattern'   : self._fileIniData[config.iniPatternString],
                 })
         except KeyError:
-            debug.die({ 'exitMessage' : 'Key error  : key "' + config.iniPatternString + '" doesn\'t exist in "' + self._fileIni.name + '"' })
+            debug.die({'exitMessage': 'Key error  : key "' + config.iniPatternString + '" doesn\'t exist in "' + self._fileIni.name + '"'})
 
 
     def make(self, params):

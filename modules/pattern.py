@@ -31,7 +31,6 @@ class Pattern(object):
         A pattern is used to substitute tags with values and build .cfg files.
 
         - pattern is a block of text containing tags identified by special chars. ex : $TAG$. Patterns and tags are defined in .ini files.
-        - variable2tag : dictionary with key = variable name, and value = tag name. This is defined in the [VARIABLE2TAG] section of .ini files
         - values : dictionary with key = variable name, and value = ... value ;-)
         """
         self._file      = params['file']    # used in debug messages only

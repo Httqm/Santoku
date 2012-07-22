@@ -41,18 +41,18 @@ class Hostgroups(object):
 
 
     def _loadFileIni(self):
-        self._fileIni       = fichier.FileIni({ 'name': config.configFilesPath + config.fileHostgroupIni })
+        self._fileIni       = fichier.FileIni({'name': config.configFilesPath + config.fileHostgroupIni})
         self._fileIniData   = self._fileIni.loadData()
 
 
     def _loadPattern(self):
         try:
             self._hostGroupPattern = pattern.Pattern({
-                'file'          : config.configFilesPath + config.fileHostgroupIni,
-                'pattern'       : self._fileIniData[config.iniPatternString],
+                'file'      : config.configFilesPath + config.fileHostgroupIni,
+                'pattern'   : self._fileIniData[config.iniPatternString],
                 })
         except KeyError:
-            debug.die({ 'exitMessage' : 'Key error  : key "' + config.iniPatternString + '" doesn\'t exist in "' + self._fileIni.name + '"' })
+            debug.die({'exitMessage': 'Key error  : key "' + config.iniPatternString + '" doesn\'t exist in "' + self._fileIni.name + '"' })
 
 
     def make(self):

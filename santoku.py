@@ -106,7 +106,6 @@ for hostId in csv.data:
             service.buildArrayOfServices({
                 'name'              : serviceName,
                 'hostName'          : csv.getCellFromCurrentRow('host_name'),
-#                'csvHeader'         : csv.header,  # cleaning services.py _loadServiceData
                 'csvDataLine'       : csv.getCurrentRow(),
                 'serviceDirectives' : serviceDirectives
                 })
@@ -129,13 +128,13 @@ allHosts.output += hostgroups.make()
 ########################################## ##########################################################
 
 allHosts.clean()
-outputFileHosts     = fichier.Fichier({ 'name': config.outputPath+config.outputFileHosts })
+outputFileHosts     = fichier.Fichier({'name': config.outputPath+config.outputFileHosts})
 outputFileHosts.write(allHosts.output)
 
-outputFileServices  = fichier.Fichier({ 'name': config.outputPath+config.outputFileServices })
+outputFileServices  = fichier.Fichier({'name': config.outputPath+config.outputFileServices})
 outputFileServices.write(allServices.output)
 
-outputFileCommands  = fichier.Fichier({ 'name': config.outputPath+config.outputFileCommands })
+outputFileCommands  = fichier.Fichier({'name': config.outputPath+config.outputFileCommands})
 outputFileCommands.write(allCommands.getOutput())
 
 ########################################## ##########################################################

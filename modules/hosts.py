@@ -83,18 +83,8 @@ class AllHosts(object):
             self.output = re.sub(r'\s+' + directive + '\s+\n', r'\n', self.output)
 
 
-    def checkIniFile(self): # TODO (FIXED) : checking .ini file is up to the fichierIni class + check command stanza is there
-#        self.searchPatternStanza()
-##        self.searchVariablesStanza()
+    def checkIniFile(self):
         self._fileIniHost.searchSection(config.iniPatternString)
-
-
-# moved to fichierIni class
-#    def searchPatternStanza(self):
-#        try:
-#            self._iniFileData[config.iniPatternString]
-#        except KeyError:
-#            debug.die({ 'exitMessage' : 'Key error  : key "' + config.iniPatternString + '" not found in "' + self._fileIniHost.name})
 
 
 
@@ -149,7 +139,10 @@ class Host(object):
         directivesValues    = self._csv.getCellFromCurrentRow(config.csvHostDirectivesValues).split(config.csvMultiValuedCellFS)
 
         for index,value in enumerate(directivesNames):
-            directives += self._allHosts.patternDirectives.apply({ 'directiveName': directivesNames[index], 'directiveValue' : directivesValues[index]})
+            directives += self._allHosts.patternDirectives.apply({
+                'directiveName'     : directivesNames[index],
+                'directiveValue'    : directivesValues[index]
+                })
         return directives
 
 

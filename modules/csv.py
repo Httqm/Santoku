@@ -49,18 +49,19 @@ class Csv(object):
         try:
             return self.data[self._currentRow][cellName]
         except KeyError:
-            debug.die({ 'exitMessage': 'No column "' + cellName + '" (CaSe SeNsItIvE !) found in "' \
+            debug.die({'exitMessage': 'No column "' + cellName + '" (CaSe SeNsItIvE !) found in "' \
                 + config.configFilesPath + config.csvFileName + "\".\nThis is either caused by : \n" \
                 + " - wrong column name in the CSV file\n" \
                 + ' - OR by an error in a .ini file. Find files where \"' + cellName + "\" is refered to with : grep -r \"" \
-                + cellName + "\" *" })
+                + cellName + "\" *"
+                })
 
 
     def currentRowHasCheckCommand(self):
         try:
             return 1 if len(str(self.data[self._currentRow][config.csvHeaderCheckCommand])) else 0
         except KeyError:
-            debug.die({ 'exitMessage': 'No column "' + config.csvHeaderCheckCommand + '" found in "' \
+            debug.die({'exitMessage': 'No column "' + config.csvHeaderCheckCommand + '" found in "' \
                 + config.configFilesPath + config.csvFileName + "\"."})
 
 

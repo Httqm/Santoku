@@ -38,13 +38,13 @@ class Debug(object):
     def show(self, message):
         if config.debug:
             import inspect
-            print ( "\n" \
+            print ("\n" \
                 + " ++=================== DEBUG =========================\n" \
                 + ' || FILE    : ' + str(inspect.stack()[1][1]) + "\n" \
                 + ' || LINE    : ' + str(inspect.stack()[1][2]) + "\n" \
                 + ' || CALLER  : ' + str(inspect.stack()[1][3]) + "\n" \
                 + ' || MESSAGE : ' + str(message) + "\n" \
-                + " ++================== /DEBUG =========================\n" )
+                + " ++================== /DEBUG =========================\n")
 
 
 ##    def checkConfigValues(self):
@@ -54,4 +54,3 @@ class Debug(object):
 ##    def checkCsvFieldAndListSeparatorsAreDifferent(self):
 ##        if config.csvFileFs == config.csvFileParamFs:
 ##            self.die({'exitMessage':'The values for the CSV field separator and the CSV list separator must be different in ' + config.configFile})
-

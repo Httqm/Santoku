@@ -35,18 +35,6 @@ class Fichier(object):
         self.name = params['name']
 
 
-    """
-    def _readWholeContent(self):
-        try:
-            theFile         = open (self.name,'r')
-            fileContents    = theFile.read()
-            theFile.close()
-            return fileContents
-        except:
-            debug.die({ 'exitMessage' : 'File "' + self.name + '" not found'})
-    """
-
-
     def _makeHeaderWithWarningMessage(self):
         """ Generate a basic header for output files showing generation date + a 'do not modify manually' warning """
         import datetime
@@ -132,6 +120,7 @@ class FileCsv(object):
         return self.header.replace('"', '').split(self._fs)
 
 
+
 ########################################## ##########################################################
 # .ini files (input)
 ########################################## ##########################################################
@@ -154,23 +143,10 @@ class FileIni(object):
                 sectionType = self._match.group(1)   # PATTERN|COMMAND
                 if sectionType == config.iniPatternString or sectionType == config.iniCommandString :
                     self._data[sectionType] = ''
-                """
-                elif(sectionType == config.iniVarToTagString):
-                    self._data[sectionType]	= {}
-                """
-
             else:
                 # loading data from section
                 if sectionType == config.iniPatternString or sectionType == config.iniCommandString :
                     self._data[sectionType] += line
-                """
-                elif(sectionType == config.iniVarToTagString) :
-                    line = self.removeWhitespaces(line)
-                    self.checkLineMatchesFormat(line)
-                    match = re.search('^(.+)' + config.iniVarToTagStanzaFs + '(.+)$', line)
-                    if(match):
-                        self._data[sectionType][match.group(2)] = match.group(1)
-                """
         return self._data
 
 
@@ -184,19 +160,11 @@ class FileIni(object):
     def _lineIsAComment(self, line):
         match = re.search('^#', line)
         return 1 if match else 0
-#        if(match):
-#            return 1
-#        else:
-#            return 0
 
 
     def _lineIsBlank(self, line):
         match = re.search('^\n$', line)
         return 1 if match else 0
-#        if(match):
-#            return 1
-#        else:
-#            return 0
 
 
     def _lineIsASectionTitle(self, line):
@@ -204,11 +172,8 @@ class FileIni(object):
         return 1 if self._match else 0
 
 
-
     def searchSection(self, sectionTitle):
-#        debug.show(sectionTitle)
         try:
             self._data[sectionTitle]
         except KeyError:
             debug.die({'exitMessage': 'No "' + sectionTitle + '" section found in "' + self.name + '"'})
-#        debug.show(sectionTitle + ' is OK in ' + self._fileIni.name)
