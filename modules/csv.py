@@ -32,7 +32,7 @@ class Csv(object):
         self._fileName      = params['fileName']
         self.data           = self._loadDataFromFile()
         self._currentRow    = 0
-
+        self.nbLines       = 0
 
     def _loadDataFromFile(self):
         csvFile         = fichier.FileCsv({ 'name': self._fileName })
@@ -42,7 +42,8 @@ class Csv(object):
 
 
     def setCurrentRow(self, rowId):
-        self._currentRow = rowId
+        self._currentRow    = rowId
+        self.nbLines        += 1
 
 
     def getCellFromCurrentRow(self, cellName):

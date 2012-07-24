@@ -143,6 +143,7 @@ outputFileCommands.write(allCommands.getOutput())
 
 summary = summary.Summary()
 print (summary.make({
+    'nbLines'           : csv.nbLines,
     'hostsTotal'        : allHosts.number['valid'] + allHosts.number['ignored'],
     'hostsValid'        : allHosts.number['valid'],
     'hostsIgnored'      : allHosts.number['ignored'],

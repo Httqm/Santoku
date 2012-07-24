@@ -51,6 +51,7 @@ class Summary(object):
 
     def make(self, params):
         return self._summaryPattern.apply({
+            'nbLines'           : params['nbLines'],
             'fileCsv'           : config.configFilesPath + config.csvFileName,
             'fileHosts'         : config.outputPath + config.outputFileHosts,
             'fileServices'      : config.outputPath + config.outputFileServices,
