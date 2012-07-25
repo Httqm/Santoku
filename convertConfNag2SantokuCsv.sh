@@ -18,6 +18,8 @@ from=(	hostName	hostDirectivesList	ipAddress	parent	hostGroupsList\
 	nscaCheck_ServiceDirectivesList	nscaCheck_ServiceDirectivesValues	nscaCheck_Desc	nscaCheck_Warn	nscaCheck_Crit	nscaCheck\
 	fileAgeCheck_description	fileAgeCheck_ServiceDirectivesList	fileAgeCheck_ServiceDirectivesValues	fileAgeCheck_file	fileAgeCheck_maxAgeMinutes	fileAgeCheck\
 	sshFileNumberCheck_folderList	sshFileNumberCheck_warn	sshFileNumberCheck_crit	sshFileNumberCheck\
+
+	App	hostExists	system	HostHideNagvis	snmpCommunity	snmpVersion\
 	)
 
 
@@ -39,13 +41,15 @@ to=(	host_name	hostDirectivesNames	address		parents	hostgroups\
 	check_nsca:serviceDirectivesNames	check_nsca:serviceDirectivesValues	check_nsca:description	check_nsca:warn	check_nsca:crit	check_nsca:do\
 	check_ssh_file_age:description	check_ssh_file_age:serviceDirectivesNames	check_ssh_file_age:serviceDirectivesValues	check_ssh_file_age:file	check_ssh_file_age:maxAgeMinutes	check_ssh_file_age:do\
 	check_ssh_file_number:folder	check_ssh_file_number:warn	check_ssh_file_number:crit	check_ssh_file_number:do\
+
+	App_DELETED hostExists_DELETED system_DELETED HostHideNagvis_DELETED snmpCommunity_DELETED snmpVersion_DELETED\
 	)
 
-columns2Delete="App system hostExists HostHideNagvis snmpCommunity snmpCommunity "
+columns2Delete="App hostExists system HostHideNagvis snmpCommunity snmpVersion "
 columns2Add="ignore_host check_command use alias"
 
 
-sourceFile="original.csv"
+sourceFile="hosts.csv"
 destFile="new.csv"
 
 # ARGS :
