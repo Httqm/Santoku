@@ -17,6 +17,7 @@ from=(	hostName	hostDirectivesList	ipAddress	parent	hostGroupsList\
 	sshFileNumberCheck_folderList	sshFileNumberCheck_warn	sshFileNumberCheck_crit	sshFileNumberCheck\
 	App	hostExists	system	HostHideNagvis	snmpCommunity	snmpVersion\
 	sshFsWarn	sshFsCrit	sshFsList	sshFsCheck\
+	sshSnmpFsCheck_ServiceDirectivesList	sshSnmpFsCheck_ServiceDirectivesValues	sshSnmpFsCheck_Target	sshSnmpFsCheck_Warn	sshSnmpFsCheck_Crit	sshSnmpFsCheck_FsList	sshSnmpFsCheck\
 	)
 
 
@@ -38,7 +39,7 @@ to=(	host_name	hostDirectivesNames	address		parents	hostgroups\
 	check_ssh_file_number:folder	check_ssh_file_number:warn	check_ssh_file_number:crit	check_ssh_file_number:do\
 	App_DELETED	hostExists_DELETED	system_DELETED	HostHideNagvis_DELETED	snmpCommunity_DELETED	snmpVersion_DELETED\
 	check_ssh_fs:warn	check_ssh_fs:crit	check_ssh_fs:fsList	check_ssh_fs:do\
-	)
+	check_ssh_snmp_fs:serviceDirectivesNames	check_ssh_snmp_fs:serviceDirectivesValues	check_ssh_snmp_fs:target	check_ssh_snmp_fs:warn	check_ssh_snmp_fs:crit	check_ssh_snmp_fs:fsList	check_ssh_snmp_fs:do\	)
 
 columns2Delete="App hostExists system HostHideNagvis snmpCommunity snmpVersion "
 columns2Add="ignore_host check_command alias"
