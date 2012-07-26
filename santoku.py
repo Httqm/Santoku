@@ -31,9 +31,9 @@ from modules import summary
 from modules import timer
 
 
-############################################ ##########################################################
-### main()
-############################################ ##########################################################
+########################################## ##########################################################
+# main()
+########################################## ##########################################################
 allCommands = commands.AllCommands()
 debug       = debug.Debug()
 
@@ -72,6 +72,16 @@ for hostId in csv.data:
     else:
         allHosts.incrementCountOf('valid')
         csv.setHostDirectives({'hostDirectives': host.loadDirectives() })
+
+        # calculating the number of checks per hour for host checks
+#        debug.show(csv.getCellFromCurrentRow('hostDirectives'))
+        if host.hasCheckCommand():
+            debug.show('HAS CHECK COMMAND   '+ str(host.getCheckInterval()))
+        else:
+            debug.show('NO CHECK COMMAND')
+
+
+
         allHosts.output += host.applyHostPattern()
 
         hostgroups.addHostToGroups({

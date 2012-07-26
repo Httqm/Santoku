@@ -106,7 +106,6 @@ class Host(object):
         As a host_name may also appear as a parent, we only try to match the specified host_name
         with all the known host_names.
         """
-        import re
         match = re.search(config.csvHeaderHostName \
             + '\s*' \
             + self._csv.getCellFromCurrentRow(config.csvHeaderHostName) \
@@ -134,16 +133,18 @@ class Host(object):
 
     def loadDirectives(self):
         self._checkCsvHostDirectivesExist()
-        directives          = ''
-        directivesNames     = self._csv.getCellFromCurrentRow(config.csvHostDirectivesNames).split(config.csvMultiValuedCellFS)
-        directivesValues    = self._csv.getCellFromCurrentRow(config.csvHostDirectivesValues).split(config.csvMultiValuedCellFS)
+        self._directives          = ''
+        self._directivesNames     = self._csv.getCellFromCurrentRow(config.csvHostDirectivesNames).split(config.csvMultiValuedCellFS)
+        self._directivesValues    = self._csv.getCellFromCurrentRow(config.csvHostDirectivesValues).split(config.csvMultiValuedCellFS)
 
-        for index,value in enumerate(directivesNames):
-            directives += self._allHosts.patternDirectives.apply({
-                'directiveName'     : directivesNames[index],
-                'directiveValue'    : directivesValues[index]
+#        debug.show(self._directivesNames)
+
+        for index,value in enumerate(self._directivesNames):
+            self._directives += self._allHosts.patternDirectives.apply({
+                'directiveName'     : self._directivesNames[index],
+                'directiveValue'    : self._directivesValues[index]
                 })
-        return directives
+        return self._directives
 
 
     def _checkCsvHostDirectivesExist(self):
@@ -173,3 +174,18 @@ class Host(object):
             'serviceName'       : checkCommandName,
             'serviceCommand'    : hostCheckFileIni.loadData()[config.iniCommandString]
             }
+
+
+    def hasCheckCommand(self):
+        # TODO : fails if trailing space is found after 'check_command'	
+        return 1 if config.commandDirectiveInServiceDefinition in self._directivesNames else 0
+
+
+    def getCheckInterval(self):
+        try:
+            index = self._directivesNames.index(config.checkIntervalDirective)
+        except ValueError:
+            return config.defaultHostCheckInterval
+        else:
+#            debug.show('index : '+str(index)+' , '+self._directivesValues[3])
+            return self._directivesValues[index]

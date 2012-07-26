@@ -80,7 +80,7 @@ csvServiceDirectivesValues  = 'serviceDirectivesValues'
 # But just in case you don't like the way they are (cosmetics) or need a workaround for any reason :
 # HAVE FUN !
 ########################################## ##########################################################
-iniPatternString    = 'PATTERN'
+iniPatternString    = 'PATTERN' # bla
 iniCommandString    = 'COMMAND'
 iniTagChar          = '$'
 
@@ -90,8 +90,12 @@ iniTagChar          = '$'
 #
 # DON'T CHANGE THIS !
 ########################################## ##########################################################
-commandDirectiveInServiceDefinition	= 'check_command'
-commandDirectiveInCommandDefinition	= 'command_name'
+commandDirectiveInServiceDefinition = 'check_command'
+commandDirectiveInCommandDefinition = 'command_name'
+checkIntervalDirective              = 'check_interval'
+defaultHostCheckInterval            = 5 # For stats only : used to determine the number of checks per hour
+defaultServiceCheckInterval         = 5 # For stats only : used to determine the number of checks per hour
+
 ##defaultCommands="""
 ##define command {
 ##	command_name	notify-host-by-email
