@@ -146,9 +146,8 @@ class Host(object):
 
 
     def _compareNumberOfNamesAndValues(self):
-        truc = (len(self._directivesNames)) == (len(self._directivesValues))
-#        debug.show(truc)
-        if (not truc):
+        sameNumberOfNamesAndValues = (len(self._directivesNames)) == (len(self._directivesValues))
+        if (not sameNumberOfNamesAndValues):
             csvErrorLine = str(self._csv.nbLines + 1)   # adding 1 (csv header) to the CSV line count
             debug.die({'exitMessage': 'Error in source file "' + config.csvFileName + '" for host "' \
                 + self._csv.getCellFromCurrentRow(config.csvHeaderHostName) + '" (line ' + csvErrorLine + ') : columns "' \
@@ -178,7 +177,7 @@ class Host(object):
 
     def getCheckCommand(self):
         checkCommandName = self._csv.getCellFromCurrentRow(config.csvHeaderCheckCommand)
-        debug.show(checkCommandName)
+#        debug.show(checkCommandName)
         hostCheckFileIni = fichier.FileIni({'name': config.configFilesPath + checkCommandName + '.ini'})
         hostCheckFileIni.loadData()
         return {
@@ -187,7 +186,7 @@ class Host(object):
             }
 
 
-    def _getIndexOfCheckIntervalInHostDirectives(self):
+    def _getIndexOfCheckIntervalInHostDirectivesNames(self):
         try:
             index = self._directivesNames.index(config.checkIntervalDirective)
         except ValueError:
@@ -197,18 +196,8 @@ class Host(object):
 
 
     def getCheckInterval(self):
-        index = self._getIndexOfCheckIntervalInHostDirectives()
-        if (index >= 0 ):
-#        try:
-            return int(self._directivesValues[index])
-        else:
-#       except IndexError:
-            return config.defaultHostCheckInterval
-        """
+        index = self._getIndexOfCheckIntervalInHostDirectivesNames()
         try:
-            index = self._directivesNames.index(config.checkIntervalDirective)
-        except ValueError:
-            return config.defaultHostCheckInterval
-        else:
             return int(self._directivesValues[index])
-        """
+        except TypeError:
+            return config.defaultHostCheckInterval

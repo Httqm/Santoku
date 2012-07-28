@@ -80,19 +80,8 @@ for hostId in csv.data:
 
     if(csv.currentRowHasCheckCommand()):
         allCommands.add(host.getCheckCommand())
-
-        # calculating the number of checks per hour for host checks
-#        debug.show('HAS CHECK COMMAND   '+ str(host.getCheckInterval()))
         allServices.countChecksPerHour(host.getCheckInterval())
-#    else:
-#        debug.show('NO CHECK COMMAND')
-
-
-
-
-
         allHosts.output += host.applyHostPattern()
-
         hostgroups.addHostToGroups({
             'host'      : csv.getCellFromCurrentRow(config.csvHeaderHostName),
             'groups'    : host.loadHostGroupsFromCsv()
@@ -114,6 +103,10 @@ for hostId in csv.data:
 
         if service.isEnabled():
             allCommands.add(service.getCommand())
+
+            # compute checks / hour
+
+
 
             serviceName         = service.getName()
             serviceDirectives   = ''
