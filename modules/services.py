@@ -36,6 +36,7 @@ class AllServices(object):
     def __init__(self):
         self.output = ''
         self.number = 0
+        self.nbChecksPerHour = 0
 
 
     def getList(self, csvHeaders):
@@ -49,6 +50,12 @@ class AllServices(object):
 
     def count(self):
         self.number += 1
+
+
+    def countChecksPerHour(self, checkInterval):
+        minutesPerHour = 60
+        self.nbChecksPerHour += (minutesPerHour / float(checkInterval))
+#        debug.show('nb checks so far = ' + str(self.nbChecksPerHour))
 
 
 class Service(object):

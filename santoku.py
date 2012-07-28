@@ -62,8 +62,9 @@ for hostId in csv.data:
 
 #    debug.show(csv.getCellFromCurrentRow('host_name'))
 
-    if(csv.currentRowHasCheckCommand()):
-        allCommands.add(host.getCheckCommand())
+
+
+
 
 
     # TODO / BUG ? : if a host is duplicated, only the values on its 1st host definition will be considered
@@ -73,12 +74,20 @@ for hostId in csv.data:
         allHosts.incrementCountOf('valid')
         csv.setHostDirectives({'hostDirectives': host.loadDirectives() })
 
+
+
+
+
+    if(csv.currentRowHasCheckCommand()):
+        allCommands.add(host.getCheckCommand())
+
         # calculating the number of checks per hour for host checks
-#        debug.show(csv.getCellFromCurrentRow('hostDirectives'))
-        if host.hasCheckCommand():
-            debug.show('HAS CHECK COMMAND   '+ str(host.getCheckInterval()))
-        else:
-            debug.show('NO CHECK COMMAND')
+#        debug.show('HAS CHECK COMMAND   '+ str(host.getCheckInterval()))
+        allServices.countChecksPerHour(host.getCheckInterval())
+#    else:
+#        debug.show('NO CHECK COMMAND')
+
+
 
 
 
@@ -159,7 +168,8 @@ print (summary.make({
     'hostsIgnored'      : allHosts.number['ignored'],
     'hostsDuplicated'   : allHosts.number['duplicated'],
     'servicesTotal'     : allServices.number,
-    'commandsTotal'     : allCommands.number
+    'commandsTotal'     : allCommands.number,
+    'nbChecksPerHour'   : allServices.nbChecksPerHour
     }))
 
 ########################################## ##########################################################

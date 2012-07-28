@@ -62,4 +62,5 @@ class Summary(object):
             'nbHostsDuplicated' : params['hostsDuplicated'],
             'nbServicesTotal'   : params['servicesTotal'],
             'nbCommandsTotal'   : params['commandsTotal'],
+            'nbChecksPerHour'   : params['nbChecksPerHour']
             })

@@ -137,8 +137,6 @@ class Host(object):
         self._directivesNames     = self._csv.getCellFromCurrentRow(config.csvHostDirectivesNames).split(config.csvMultiValuedCellFS)
         self._directivesValues    = self._csv.getCellFromCurrentRow(config.csvHostDirectivesValues).split(config.csvMultiValuedCellFS)
 
-#        debug.show(self._directivesNames)
-
         for index,value in enumerate(self._directivesNames):
             self._directives += self._allHosts.patternDirectives.apply({
                 'directiveName'     : self._directivesNames[index],
@@ -168,6 +166,7 @@ class Host(object):
 
     def getCheckCommand(self):
         checkCommandName = self._csv.getCellFromCurrentRow(config.csvHeaderCheckCommand)
+        debug.show(checkCommandName)
         hostCheckFileIni = fichier.FileIni({'name': config.configFilesPath + checkCommandName + '.ini'})
         hostCheckFileIni.loadData()
         return {
@@ -176,9 +175,11 @@ class Host(object):
             }
 
 
-    def hasCheckCommand(self):
-        lengthOfCheckCommandValue = self._csv.getCellFromCurrentRow(config.commandDirectiveInServiceDefinition).__len__()
-        return 1 if lengthOfCheckCommandValue else 0
+#    def hasCheckCommand(self):
+#        lengthOfCheckCommandValue = self._csv.getCellFromCurrentRow(config.csvHeaderCheckCommand).__len__()
+#        lengthOfCheckCommandValue = checkCommandName.__len__()
+
+#        return 1 if lengthOfCheckCommandValue else 0
 
 
     def getCheckInterval(self):
@@ -187,5 +188,4 @@ class Host(object):
         except ValueError:
             return config.defaultHostCheckInterval
         else:
-#            debug.show('index : '+str(index)+' , '+self._directivesValues[3])
-            return self._directivesValues[index]
+            return int(self._directivesValues[index])
