@@ -204,6 +204,12 @@ class Service(object):
         for i in range(self._result['maxRounds']):
             tmp += self._patternService.apply(self._result['champsValeurs'][i]) + "\n"
             self._allServices.count()
+
+            # must compute poller duty here !
+            # compute checks / hour
+            self._allServices.countChecksPerHour(self.getCheckInterval())
+
+
         return tmp
 
 

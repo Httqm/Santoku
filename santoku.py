@@ -104,7 +104,6 @@ for hostId in csv.data:
         if service.isEnabled():
             allCommands.add(service.getCommand())
 
-
             serviceName         = service.getName()
             serviceDirectives   = ''
 
@@ -122,8 +121,6 @@ for hostId in csv.data:
             allServices.output += service.make()
 
 
-            # compute checks / hour
-            allServices.countChecksPerHour(service.getCheckInterval())
 
 
 
