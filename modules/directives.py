@@ -20,14 +20,21 @@
 
 
 from modules import config
-from modules import fichier
+from modules import debug
+
+
+debug = debug.Debug()
 
 
 class Directives(object):
 
-    def loadIniFile(self):
-        fileIniDirectives = fichier.FileIni({
-            'name': config.configFilesPath + config.fileHostIni
-            })
-        self.iniFileData = fileIniDirectives.getData()
+    def compareNumberOfNamesAndValues(self, params):
+        sameNumberOfNamesAndValues = (len(params['names'])) == (len(params['values']))
+        if (not sameNumberOfNamesAndValues):
+            debug.die({'exitMessage': 'Error in source file "' + config.csvFileName + '" for host "' + params['hostName'] \
+                + '" (line ' + str(params['csvLineNumber']) + ') : columns "' \
+                + config.csvHostDirectivesNames + '" and "' + config.csvHostDirectivesValues \
+                + '" don\'t have the same number of parameters.'
+                })
+
 

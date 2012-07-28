@@ -21,12 +21,14 @@
 
 import re
 from modules import config
+from modules import directives
+from modules import debug
 from modules import fichier
 from modules import pattern
-from modules import debug
 
 
 debug = debug.Debug()
+directives = directives.Directives()
 
 
 class AllHosts(object):
@@ -136,7 +138,16 @@ class Host(object):
         self._directives          = ''
         self._directivesNames     = self._csv.getCellFromCurrentRow(config.csvHostDirectivesNames).split(config.csvMultiValuedCellFS)
         self._directivesValues    = self._csv.getCellFromCurrentRow(config.csvHostDirectivesValues).split(config.csvMultiValuedCellFS)
-        self._compareNumberOfNamesAndValues()
+
+#        self._compareNumberOfNamesAndValues()
+#        directives = directives.Directives()
+        directives.compareNumberOfNamesAndValues({
+                'names'         : self._directivesNames,
+                'values'        : self._directivesValues,
+                'hostName'      : self._csv.getCellFromCurrentRow(config.csvHeaderHostName),
+                'csvLineNumber' : self._csv.nbLines + 1
+                })
+
         for index,value in enumerate(self._directivesNames):
             self._directives += self._allHosts.patternDirectives.apply({
                 'directiveName'     : self._directivesNames[index],
@@ -145,15 +156,15 @@ class Host(object):
         return self._directives
 
 
-    def _compareNumberOfNamesAndValues(self):
-        sameNumberOfNamesAndValues = (len(self._directivesNames)) == (len(self._directivesValues))
-        if (not sameNumberOfNamesAndValues):
-            csvErrorLine = str(self._csv.nbLines + 1)   # adding 1 (csv header) to the CSV line count
-            debug.die({'exitMessage': 'Error in source file "' + config.csvFileName + '" for host "' \
-                + self._csv.getCellFromCurrentRow(config.csvHeaderHostName) + '" (line ' + csvErrorLine + ') : columns "' \
-                + config.csvHostDirectivesNames + '" and "' + config.csvHostDirectivesValues \
-                + '" don\'t have the same number of parameters.'
-                })
+#    def _compareNumberOfNamesAndValues(self):
+#        sameNumberOfNamesAndValues = (len(self._directivesNames)) == (len(self._directivesValues))
+#        if (not sameNumberOfNamesAndValues):
+#            csvErrorLine = str(self._csv.nbLines + 1)   # adding 1 (csv header) to the CSV line count
+#            debug.die({'exitMessage': 'Error in source file "' + config.csvFileName + '" for host "' \
+#                + self._csv.getCellFromCurrentRow(config.csvHeaderHostName) + '" (line ' + csvErrorLine + ') : columns "' \
+#                + config.csvHostDirectivesNames + '" and "' + config.csvHostDirectivesValues \
+#                + '" don\'t have the same number of parameters.'
+#                })
 
 
     def _checkCsvHostDirectivesExist(self):
