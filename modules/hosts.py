@@ -136,13 +136,25 @@ class Host(object):
         self._directives          = ''
         self._directivesNames     = self._csv.getCellFromCurrentRow(config.csvHostDirectivesNames).split(config.csvMultiValuedCellFS)
         self._directivesValues    = self._csv.getCellFromCurrentRow(config.csvHostDirectivesValues).split(config.csvMultiValuedCellFS)
-
+        self._compareNumberOfNamesAndValues()
         for index,value in enumerate(self._directivesNames):
             self._directives += self._allHosts.patternDirectives.apply({
                 'directiveName'     : self._directivesNames[index],
                 'directiveValue'    : self._directivesValues[index]
                 })
         return self._directives
+
+
+    def _compareNumberOfNamesAndValues(self):
+        truc = (len(self._directivesNames)) == (len(self._directivesValues))
+#        debug.show(truc)
+        if (not truc):
+            csvErrorLine = str(self._csv.nbLines + 1)   # adding 1 (csv header) to the CSV line count
+            debug.die({'exitMessage': 'Error in source file "' + config.csvFileName + '" for host "' \
+                + self._csv.getCellFromCurrentRow(config.csvHeaderHostName) + '" (line ' + csvErrorLine + ') : columns "' \
+                + config.csvHostDirectivesNames + '" and "' + config.csvHostDirectivesValues \
+                + '" don\'t have the same number of parameters.'
+                })
 
 
     def _checkCsvHostDirectivesExist(self):
@@ -175,17 +187,28 @@ class Host(object):
             }
 
 
-#    def hasCheckCommand(self):
-#        lengthOfCheckCommandValue = self._csv.getCellFromCurrentRow(config.csvHeaderCheckCommand).__len__()
-#        lengthOfCheckCommandValue = checkCommandName.__len__()
-
-#        return 1 if lengthOfCheckCommandValue else 0
+    def _getIndexOfCheckIntervalInHostDirectives(self):
+        try:
+            index = self._directivesNames.index(config.checkIntervalDirective)
+        except ValueError:
+            return None
+        else:
+            return index
 
 
     def getCheckInterval(self):
+        index = self._getIndexOfCheckIntervalInHostDirectives()
+        if (index >= 0 ):
+#        try:
+            return int(self._directivesValues[index])
+        else:
+#       except IndexError:
+            return config.defaultHostCheckInterval
+        """
         try:
             index = self._directivesNames.index(config.checkIntervalDirective)
         except ValueError:
             return config.defaultHostCheckInterval
         else:
             return int(self._directivesValues[index])
+        """
