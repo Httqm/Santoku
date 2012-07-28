@@ -177,8 +177,8 @@ class Host(object):
 
 
     def hasCheckCommand(self):
-        # TODO : fails if trailing space is found after 'check_command'	
-        return 1 if config.commandDirectiveInServiceDefinition in self._directivesNames else 0
+        lengthOfCheckCommandValue = self._csv.getCellFromCurrentRow(config.commandDirectiveInServiceDefinition).__len__()
+        return 1 if lengthOfCheckCommandValue else 0
 
 
     def getCheckInterval(self):
