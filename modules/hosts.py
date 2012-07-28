@@ -27,8 +27,8 @@ from modules import fichier
 from modules import pattern
 
 
-debug = debug.Debug()
-directives = directives.Directives()
+debug       = debug.Debug()
+directives  = directives.Directives()
 
 
 class AllHosts(object):
@@ -50,8 +50,9 @@ class AllHosts(object):
 
     def _loadIniFiles(self):
         self._loadIniFile()
-        self._loadDirectives()
-
+#        self._loadContentsOfDirectivesDotIniFile()
+        self._directives = directives.loadContentsOfDirectivesDotIniFile()
+#        debug.show(self._directives)
 
     def _loadIniFile(self):
         self._fileIniHost   = fichier.FileIni({'name': config.configFilesPath + config.fileHostIni})
@@ -59,9 +60,10 @@ class AllHosts(object):
         self.checkIniFile()
 
 
-    def _loadDirectives(self):
-        fileIniDirectives   = fichier.FileIni({'name': config.configFilesPath + config.fileDirectivesIni})
-        self._directives    = fileIniDirectives.loadData()
+#    def _loadContentsOfDirectivesDotIniFile(self):
+#        loadContentsOfDirectivesIniFile
+#        fileIniDirectives   = fichier.FileIni({'name': config.configFilesPath + config.fileDirectivesIni})
+#        self._directives    = fileIniDirectives.loadData()
 
 
     def _loadPatterns(self):
@@ -138,10 +140,7 @@ class Host(object):
         self._directives          = ''
         self._directivesNames     = self._csv.getCellFromCurrentRow(config.csvHostDirectivesNames).split(config.csvMultiValuedCellFS)
         self._directivesValues    = self._csv.getCellFromCurrentRow(config.csvHostDirectivesValues).split(config.csvMultiValuedCellFS)
-
-#        self._compareNumberOfNamesAndValues()
-#        directives = directives.Directives()
-        directives.compareNumberOfNamesAndValues({
+        directives.compareNumberOfNamesAndValues({  # TODO : instanciate here ?
                 'names'         : self._directivesNames,
                 'values'        : self._directivesValues,
                 'hostName'      : self._csv.getCellFromCurrentRow(config.csvHeaderHostName),
@@ -154,17 +153,6 @@ class Host(object):
                 'directiveValue'    : self._directivesValues[index]
                 })
         return self._directives
-
-
-#    def _compareNumberOfNamesAndValues(self):
-#        sameNumberOfNamesAndValues = (len(self._directivesNames)) == (len(self._directivesValues))
-#        if (not sameNumberOfNamesAndValues):
-#            csvErrorLine = str(self._csv.nbLines + 1)   # adding 1 (csv header) to the CSV line count
-#            debug.die({'exitMessage': 'Error in source file "' + config.csvFileName + '" for host "' \
-#                + self._csv.getCellFromCurrentRow(config.csvHeaderHostName) + '" (line ' + csvErrorLine + ') : columns "' \
-#                + config.csvHostDirectivesNames + '" and "' + config.csvHostDirectivesValues \
-#                + '" don\'t have the same number of parameters.'
-#                })
 
 
     def _checkCsvHostDirectivesExist(self):
@@ -188,7 +176,6 @@ class Host(object):
 
     def getCheckCommand(self):
         checkCommandName = self._csv.getCellFromCurrentRow(config.csvHeaderCheckCommand)
-#        debug.show(checkCommandName)
         hostCheckFileIni = fichier.FileIni({'name': config.configFilesPath + checkCommandName + '.ini'})
         hostCheckFileIni.loadData()
         return {
@@ -197,18 +184,18 @@ class Host(object):
             }
 
 
-    def _getIndexOfCheckIntervalInHostDirectivesNames(self):
-        try:
-            index = self._directivesNames.index(config.checkIntervalDirective)
-        except ValueError:
-            return None
-        else:
-            return index
+#    def _getIndexOfCheckIntervalInHostDirectivesNames(self):
+#        try:
+#            index = self._directivesNames.index(config.checkIntervalDirective)
+#        except ValueError:
+#            return None
+#        else:
+#            return index
 
 
     def getCheckInterval(self):
-        index = self._getIndexOfCheckIntervalInHostDirectivesNames()
-        try:
-            return int(self._directivesValues[index])
-        except TypeError:
-            return config.defaultHostCheckInterval
+        self._directives = {
+            'names'     : self._directivesNames,
+            'values'    : self._directivesValues
+            }
+        return directives.getCheckInterval(self._directives)

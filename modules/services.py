@@ -20,15 +20,17 @@
 
 
 from modules import config
+from modules import debug
+from modules import directives
 from modules import fichier
 from modules import pattern
-from modules import debug
 import re
 
 
-Pattern     = pattern.Pattern
-FileIni     = fichier.FileIni
 debug       = debug.Debug()
+directives  = directives.Directives()
+FileIni     = fichier.FileIni
+Pattern     = pattern.Pattern
 
 
 class AllServices(object):
@@ -54,7 +56,8 @@ class AllServices(object):
 
     def countChecksPerHour(self, checkInterval):
         minutesPerHour = 60
-        self.nbChecksPerHour += (minutesPerHour / float(checkInterval))
+        if(checkInterval):  # avoid division by 0
+            self.nbChecksPerHour += (minutesPerHour / float(checkInterval))
 #        debug.show('nb checks so far = ' + str(self.nbChecksPerHour))
 
 
@@ -72,7 +75,9 @@ class Service(object):
 
     def _loadIniFiles(self):
         self._loadIniFile()
-        self._loadDirectivesIni()
+#        self._loadContentsOfDirectivesDotIniFile()
+	self._directives = directives.loadContentsOfDirectivesDotIniFile()
+        # TODO : this is repeated for every service. Once is enough. fix it !
 
 
     def _loadIniFile(self):
@@ -105,13 +110,15 @@ class Service(object):
             })
         self._patternDirectives = pattern.Pattern({
             'file'      : config.configFilesPath + config.fileDirectivesIni,
-            'pattern'   : self._cfgHostDirectives[config.iniPatternString],
+            'pattern'   : self._directives[config.iniPatternString],
             })
 
 
-    def _loadDirectivesIni(self):
-        fileDirectivesIni       = FileIni({ 'name': config.configFilesPath + config.fileDirectivesIni })
-        self._cfgHostDirectives = fileDirectivesIni.loadData()
+#    def _loadContentsOfDirectivesDotIniFile(self):
+#        fileDirectivesIni       = FileIni({ 'name': config.configFilesPath + config.fileDirectivesIni })
+#        self._directives = fileDirectivesIni.loadData()
+#        debug.show(self._directives)
+#        debug.show(config.configFilesPath + config.fileDirectivesIni)
 
 
     def isEnabled(self):
@@ -123,15 +130,15 @@ class Service(object):
 
 
     def hasDirectives(self):
-        hasDirectives = 1
-        self._nameOfColumnHavingServiceDirectivesNames    = self._cleanName + config.csvHeaderFs + config.csvServiceDirectivesNames
-        self._nameOfColumnHavingServiceDirectivesValues   = self._cleanName + config.csvHeaderFs + config.csvServiceDirectivesValues
-        for columnName in [self._nameOfColumnHavingServiceDirectivesNames, self._nameOfColumnHavingServiceDirectivesValues]:
+        self._hasDirectives = 1
+        self._csvColumnHavingServiceDirectivesNames    = self._cleanName + config.csvHeaderFs + config.csvServiceDirectivesNames
+        self._csvColumnHavingServiceDirectivesValues   = self._cleanName + config.csvHeaderFs + config.csvServiceDirectivesValues
+        for columnName in [self._csvColumnHavingServiceDirectivesNames, self._csvColumnHavingServiceDirectivesValues]:
             if(self._csv.columnExists(columnName)):
-                hasDirectives = hasDirectives and self._csv.getCellFromCurrentRow(columnName)
+                self._hasDirectives = self._hasDirectives and self._csv.getCellFromCurrentRow(columnName)
             else:
-                hasDirectives = 0
-        return hasDirectives
+                self._hasDirectives = 0
+        return self._hasDirectives
 
 
     def buildArrayOfServices(self, params):
@@ -183,7 +190,7 @@ class Service(object):
             match = re.search(self._cleanName + config.csvHeaderFs + '.*', field)
             if(match):
                 # parsing all CSV columns related to this service
-                serviceCsvData[field.replace(self._cleanName + config.csvHeaderFs,'')] = params['csvDataLine'][field]
+                serviceCsvData[field.replace(self._cleanName + config.csvHeaderFs, '')] = params['csvDataLine'][field]
 
         # appending 'serviceDirectives'
         # serviceCsvData contains 2 useless keys : 'serviceDirectivesNames' and 'serviceDirectivesValues'
@@ -201,18 +208,18 @@ class Service(object):
 
 
     def loadDirectivesFromCsvData(self):
-        self.directives	= {
-            'names'  : self._csv.getCellFromCurrentRow(self._nameOfColumnHavingServiceDirectivesNames).split(config.csvMultiValuedCellFS),
-            'values' : self._csv.getCellFromCurrentRow(self._nameOfColumnHavingServiceDirectivesValues).split(config.csvMultiValuedCellFS),
+        self._directives	= {
+            'names'  : self._csv.getCellFromCurrentRow(self._csvColumnHavingServiceDirectivesNames).split(config.csvMultiValuedCellFS),
+            'values' : self._csv.getCellFromCurrentRow(self._csvColumnHavingServiceDirectivesValues).split(config.csvMultiValuedCellFS)
             }
 
 
     def applyServiceDirectivesPattern(self):
         self.serviceDirectives = ''
-        for name,value in enumerate(self.directives['names']):
+        for name, value in enumerate(self._directives['names']):
             self.serviceDirectives += self._patternDirectives.apply({
-                'directiveName'     : self.directives['names'][name],
-                'directiveValue'    : self.directives['values'][name]
+                'directiveName'     : self._directives['names'][name],
+                'directiveValue'    : self._directives['values'][name]
                 })
         return self.serviceDirectives
 
@@ -225,12 +232,12 @@ class Service(object):
 
 
     def _checkFileIniCommandNamesMatch(self):
-        commandInPatternSection = self.getCommandValueFromSection({
+        commandInPatternSection = self._getCommandValueFromSection({
             'directive'     : config.commandDirectiveInServiceDefinition,
             'sectionTitle'  : config.iniPatternString
             })
 
-        commandInCommandSection = self.getCommandValueFromSection({
+        commandInCommandSection = self._getCommandValueFromSection({
             'directive'     : config.commandDirectiveInCommandDefinition,
             'sectionTitle'  : config.iniCommandString
             })
@@ -244,7 +251,7 @@ class Service(object):
                 })
 
 
-    def getCommandValueFromSection(self, params):
+    def _getCommandValueFromSection(self, params):
         match = re.search('\s' + params['directive'] + '\s + (\w*)', self._fileIniData[params['sectionTitle']])
         if match:
             return match.group(1)
@@ -252,3 +259,11 @@ class Service(object):
             debug.die({'exitMessage': '"' + params['directive'] + '" directive not found in "' \
                 + params['sectionTitle'] + '" section of config file "' + self._iniFileName + '"'
                 })
+
+
+    def getCheckInterval(self):
+        if self._hasDirectives:
+            return directives.getCheckInterval(self._directives)
+        else:
+            return config.defaultHostCheckInterval
+

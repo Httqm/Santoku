@@ -21,12 +21,19 @@
 
 from modules import config
 from modules import debug
+from modules import fichier
 
 
 debug = debug.Debug()
 
 
 class Directives(object):
+
+    def loadContentsOfDirectivesDotIniFile(self):
+        fileIniDirectives   = fichier.FileIni({'name': config.configFilesPath + config.fileDirectivesIni})
+#        self._directives    = fileIniDirectives.loadData()
+        return fileIniDirectives.loadData()
+
 
     def compareNumberOfNamesAndValues(self, params):
         sameNumberOfNamesAndValues = (len(params['names'])) == (len(params['values']))
@@ -38,3 +45,21 @@ class Directives(object):
                 })
 
 
+    def _getIndexOfCheckIntervalInDirectivesNames(self, directives):
+        try:
+#            index = self._directivesNames.index(config.checkIntervalDirective)
+            index = directives['names'].index(config.checkIntervalDirective)
+        except ValueError:
+            return None
+        else:
+            return index
+
+
+# need param : all directives
+    def getCheckInterval(self, directives):
+        index = self._getIndexOfCheckIntervalInDirectivesNames(directives)
+        try:
+#            return int(self._directivesValues[index])
+            return int(directives['values'][index])
+        except TypeError:
+            return config.defaultHostCheckInterval
