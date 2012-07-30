@@ -66,6 +66,7 @@ csvHeaderIgnoreHost         = 'ignore_host'
 csvHeaderCheckCommand       = 'check_command'
 csvHeaderUse                = 'use'
 csvHeaderHostgroups         = 'hostgroups'
+csvHeaderParents            = 'parents'
 csvGenericService           = 'generic_service'
 csvHostDirectivesNames      = 'hostDirectivesNames'
 csvHostDirectivesValues     = 'hostDirectivesValues'
@@ -80,7 +81,7 @@ csvServiceDirectivesValues  = 'serviceDirectivesValues'
 # But just in case you don't like the way they are (cosmetics) or need a workaround for any reason :
 # HAVE FUN !
 ########################################## ##########################################################
-iniPatternString    = 'PATTERN' # bla
+iniPatternString    = 'PATTERN'
 iniCommandString    = 'COMMAND'
 iniTagChar          = '$'
 

@@ -82,7 +82,11 @@ class AllHosts(object):
 
 
     def _removeDirectivesHavingNoValue(self):
-        directivesList = ['check_command', 'parents', '_SSHLOGIN']	# <== hardcoded stuff. TODO : fix this !
+        directivesList = [
+            config.csvHeaderCheckCommand,
+            config.csvHeaderParents,
+            '_SSHLOGIN'	# /!\ hardcoded stuff. "_SSHLOGIN" is defined in config/host.ini
+            ]
         for directive in directivesList:
             self.output = re.sub(r'\s+' + directive + '\s+\n', r'\n', self.output)
 
