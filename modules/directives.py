@@ -29,9 +29,16 @@ debug = debug.Debug()
 
 class Directives(object):
 
+#    def __init__(self):
+#        self.compteurALC=0
+
+
     def loadContentsOfDirectivesDotIniFile(self):
         fileIniDirectives   = fichier.FileIni({'name': config.configFilesPath + config.fileDirectivesIni})
-#        self._directives    = fileIniDirectives.loadData()
+#        # DEBUG !!!
+#        self.compteurALC+=1
+#        debug.show(self.compteurALC)
+#        # /DEBUG !!!
         return fileIniDirectives.loadData()
 
 
@@ -47,7 +54,6 @@ class Directives(object):
 
     def _getIndexOfCheckIntervalInDirectivesNames(self, directives):
         try:
-#            index = self._directivesNames.index(config.checkIntervalDirective)
             index = directives['names'].index(config.checkIntervalDirective)
         except ValueError:
             return None
@@ -55,11 +61,9 @@ class Directives(object):
             return index
 
 
-# need param : all directives
     def getCheckInterval(self, directives):
         index = self._getIndexOfCheckIntervalInDirectivesNames(directives)
         try:
-#            return int(self._directivesValues[index])
             return int(directives['values'][index])
         except TypeError:
             return config.defaultHostCheckInterval

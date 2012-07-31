@@ -23,6 +23,7 @@ from modules import commands
 from modules import config
 from modules import csv
 from modules import debug
+#from modules import directives
 from modules import fichier
 from modules import hostgroups
 from modules import hosts
@@ -37,7 +38,14 @@ from modules import timer
 allCommands = commands.AllCommands()
 debug       = debug.Debug()
 
+#directives  = directives.Directives()
+#directivesIni = directives.loadContentsOfDirectivesDotIniFile()
+#debug.show(directives.loadContentsOfDirectivesDotIniFile())
+#allHosts    = hosts.AllHosts({
+#        'directivesIni': directives.loadContentsOfDirectivesDotIniFile()
+#        })
 allHosts    = hosts.AllHosts()
+
 hostgroups  = hostgroups.Hostgroups()
 
 csv         = csv.Csv({'fileName': config.csvFileName})
@@ -48,6 +56,7 @@ host        = hosts.Host({
 
 allServices = services.AllServices()
 serviceList = allServices.getList(csv.header)
+
 
 ########################################## ##########################################################
 # Looping on hosts

@@ -38,7 +38,8 @@ class AllServices(object):
     def __init__(self):
         self.output = ''
         self.number = 0
-        self.nbChecksPerHour = 0
+        self.nbChecksPerHour    = 0
+	self.directivesIni      = directives.loadContentsOfDirectivesDotIniFile()
 
 
     def getList(self, csvHeaders):
@@ -75,13 +76,13 @@ class Service(object):
 
     def _loadIniFiles(self):
         self._loadIniFile()
-#        self._loadContentsOfDirectivesDotIniFile()
-	self._directives = directives.loadContentsOfDirectivesDotIniFile()
+	self._directivesIni = self._allServices.directivesIni
+#	self._directivesIni = directives.loadContentsOfDirectivesDotIniFile()
         # TODO : this is repeated for every service. Once is enough. fix it !
 
 
     def _loadIniFile(self):
-        self._fileIni       = FileIni({ 'name': self._iniFileName })
+        self._fileIni       = FileIni({'name': self._iniFileName})
         self._fileIniData   = self._fileIni.loadData()
         self._checkFileIni()
 
@@ -100,7 +101,7 @@ class Service(object):
                 }
         except KeyError:
             debug.die({'exitMessage': 'No command specified for service "' + self._cleanName \
-                + '" in config file "' + self._fileIni.name + '"' })
+                + '" in config file "' + self._fileIni.name + '"'})
 
 
     def _loadPatterns(self):
@@ -110,15 +111,8 @@ class Service(object):
             })
         self._patternDirectives = pattern.Pattern({
             'file'      : config.configFilesPath + config.fileDirectivesIni,
-            'pattern'   : self._directives[config.iniPatternString],
+            'pattern'   : self._directivesIni[config.iniPatternString],
             })
-
-
-#    def _loadContentsOfDirectivesDotIniFile(self):
-#        fileDirectivesIni       = FileIni({ 'name': config.configFilesPath + config.fileDirectivesIni })
-#        self._directives = fileDirectivesIni.loadData()
-#        debug.show(self._directives)
-#        debug.show(config.configFilesPath + config.fileDirectivesIni)
 
 
     def isEnabled(self):
@@ -205,16 +199,13 @@ class Service(object):
             tmp += self._patternService.apply(self._result['champsValeurs'][i]) + "\n"
             self._allServices.count()
 
-            # must compute poller duty here !
-            # compute checks / hour
             self._allServices.countChecksPerHour(self.getCheckInterval())
-
 
         return tmp
 
 
     def loadDirectivesFromCsvData(self):
-        self._directives	= {
+        self._directivesCsv	= {
             'names'  : self._csv.getCellFromCurrentRow(self._csvColumnHavingServiceDirectivesNames).split(config.csvMultiValuedCellFS),
             'values' : self._csv.getCellFromCurrentRow(self._csvColumnHavingServiceDirectivesValues).split(config.csvMultiValuedCellFS)
             }
@@ -222,10 +213,10 @@ class Service(object):
 
     def applyServiceDirectivesPattern(self):
         self.serviceDirectives = ''
-        for name, value in enumerate(self._directives['names']):
+        for name, value in enumerate(self._directivesCsv['names']):
             self.serviceDirectives += self._patternDirectives.apply({
-                'directiveName'     : self._directives['names'][name],
-                'directiveValue'    : self._directives['values'][name]
+                'directiveName'     : self._directivesCsv['names'][name],
+                'directiveValue'    : self._directivesCsv['values'][name]
                 })
         return self.serviceDirectives
 
@@ -269,7 +260,7 @@ class Service(object):
 
     def getCheckInterval(self):
         if self._hasDirectives:
-            return directives.getCheckInterval(self._directives)
+            return directives.getCheckInterval(self._directivesCsv)
         else:
             return config.defaultHostCheckInterval
 

@@ -34,8 +34,14 @@ directives  = directives.Directives()
 class AllHosts(object):
 
     def __init__(self):
+#    def __init__(self, params):
+#        debug.show('IN INIT !!!!!!!')
+#        self._directives    = params['directivesIni']
+        self._directives = directives.loadContentsOfDirectivesDotIniFile()
         self._loadIniFiles()
         self._loadPatterns()
+
+#        debug.show(self._directives)
         self.output = ''
         self.number = {
             'valid'         : 0,
@@ -50,20 +56,13 @@ class AllHosts(object):
 
     def _loadIniFiles(self):
         self._loadIniFile()
-#        self._loadContentsOfDirectivesDotIniFile()
-        self._directives = directives.loadContentsOfDirectivesDotIniFile()
-#        debug.show(self._directives)
+#        self._directives = directives.loadContentsOfDirectivesDotIniFile()
+
 
     def _loadIniFile(self):
         self._fileIniHost   = fichier.FileIni({'name': config.configFilesPath + config.fileHostIni})
         self._iniFileData   = self._fileIniHost.loadData()
         self.checkIniFile()
-
-
-#    def _loadContentsOfDirectivesDotIniFile(self):
-#        loadContentsOfDirectivesIniFile
-#        fileIniDirectives   = fichier.FileIni({'name': config.configFilesPath + config.fileDirectivesIni})
-#        self._directives    = fileIniDirectives.loadData()
 
 
     def _loadPatterns(self):
@@ -186,15 +185,6 @@ class Host(object):
             'serviceName'       : checkCommandName,
             'serviceCommand'    : hostCheckFileIni.loadData()[config.iniCommandString]
             }
-
-
-#    def _getIndexOfCheckIntervalInHostDirectivesNames(self):
-#        try:
-#            index = self._directivesNames.index(config.checkIntervalDirective)
-#        except ValueError:
-#            return None
-#        else:
-#            return index
 
 
     def getCheckInterval(self):
