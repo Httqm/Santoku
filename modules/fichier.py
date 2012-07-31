@@ -68,7 +68,6 @@ class FileCsv(object):
 
 
     def _loadContentIntoDict(self):
-        """ Load data from CSV file into a dictionary """
         self._getColumnNumbers()
         return self._readCsvDataIgnoringHeaders()
 
@@ -86,11 +85,11 @@ class FileCsv(object):
             debug.die({'exitMessage': 'Source CSV file "' + self.name + '" declared in "' + config.configFile + '" not found.'})
 
         self._columNumberToText = {}
-        champs                  = self.header.split(self._fs)
-        columnNumber            = 0
+        fields = self.header.split(self._fs)
+        columnNumber = 0
 
-        for champ in champs:
-            tmp = champ.strip('"')
+        for field in fields:
+            tmp = field.strip('"')
             self._columNumberToText[columnNumber] = tmp
             columnNumber += 1
 
@@ -107,8 +106,8 @@ class FileCsv(object):
             ligne       = line.split(self._fs)
             hostFields  = {}
 
-            for clefs in self._columNumberToText.keys():
-                hostFields[self._columNumberToText[clefs]] = ligne[clefs].strip('"')
+            for key in self._columNumberToText.keys():
+                hostFields[self._columNumberToText[key]] = ligne[key].strip('"')
 
             csvData[lineNb] = hostFields
 

@@ -64,3 +64,7 @@ for key in ${!from[*]};do
 	convert ${from[$key]} ${to[$key]} $destFile
 #	echo
 done
+
+echo "Now delete columns : "$columns2Delete
+echo "Now create columns : "$columns2Add
+echo "Move check_command definitions from host_directive to the dedicated column."

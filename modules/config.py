@@ -29,8 +29,6 @@ configFilesPath     = './config/'
 # CSV file
 #csvFileName     = 'confNag.csv'
 csvFileName     = 'new.csv'
-csvFileFs       = ';'   # CSV field separator. Must be different from the CSV list separator below.
-##csvFileParamFs  = '|'   # CSV list separator. This is used when a CSV cell contains several values
 
 # INI files
 fileHostIni         = 'host.ini'
@@ -58,6 +56,7 @@ debug       = 1 # 0|1, enable output of debug.show()
 # But just in case you don't like the way they are (cosmetics) or need a workaround for any reason :
 # HAVE FUN !
 ########################################## ##########################################################
+csvFileFs                   = ';'   # CSV field separator. Must be different from the CSV list separator below.
 csvMultiValuedCellFS        = '|'
 csvHeaderDo                 = 'do'
 csvHeaderFs                 = ':'
@@ -97,14 +96,14 @@ checkIntervalDirective              = 'check_interval'
 defaultHostCheckInterval            = 5 # For stats only : used to determine the number of checks per hour
 defaultServiceCheckInterval         = 5 # For stats only : used to determine the number of checks per hour
 
-##defaultCommands="""
-##define command {
-##	command_name	notify-host-by-email
-##	command_line	/usr/bin/printf "%b" "Shinken Notification\n\nType:$NOTIFICATIONTYPE$\nHost: $HOSTNAME$\nState: $HOSTSTATE$\nAddress: $HOSTADDRESS$\nInfo: $HOSTOUTPUT$\nDate/Time: $SHORTDATETIME$" | /usr/bin/mail -s "Host $HOSTNAME$	is	$HOSTSTATE$" $CONTACTEMAIL$
-##	}
-##
-##define command {
-##	command_name	notify-service-by-email
-##	command_line	/usr/bin/printf "%b" "Shinken Notification\n\nNotification Type: $NOTIFICATIONTYPE$\n\nService: $SERVICEDESC$\nHost: $HOSTALIAS$\nAddress: $HOSTADDRESS$\nState: $SERVICESTATE$\n\nDate/Time: $SHORTDATETIME$ Additional Info : $SERVICEOUTPUT$" | /usr/bin/mail -s "$NOTIFICATIONTYPE$	$HOSTALIAS$ / $SERVICEDESC$	$SERVICESTATE$" $CONTACTEMAIL$
-##	}
-##"""
+#defaultCommands="""
+#define command {
+#	command_name	notify-host-by-email
+#	command_line	/usr/bin/printf "%b" "Shinken Notification\n\nType:$NOTIFICATIONTYPE$\nHost: $HOSTNAME$\nState: $HOSTSTATE$\nAddress: $HOSTADDRESS$\nInfo: $HOSTOUTPUT$\nDate/Time: $SHORTDATETIME$" | /usr/bin/mail -s "Host $HOSTNAME$	is	$HOSTSTATE$" $CONTACTEMAIL$
+#	}
+#
+#define command {
+#	command_name	notify-service-by-email
+#	command_line	/usr/bin/printf "%b" "Shinken Notification\n\nNotification Type: $NOTIFICATIONTYPE$\n\nService: $SERVICEDESC$\nHost: $HOSTALIAS$\nAddress: $HOSTADDRESS$\nState: $SERVICESTATE$\n\nDate/Time: $SHORTDATETIME$ Additional Info : $SERVICEOUTPUT$" | /usr/bin/mail -s "$NOTIFICATIONTYPE$	$HOSTALIAS$ / $SERVICEDESC$	$SERVICESTATE$" $CONTACTEMAIL$
+#	}
+#"""

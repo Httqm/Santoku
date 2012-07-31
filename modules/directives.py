@@ -29,16 +29,8 @@ debug = debug.Debug()
 
 class Directives(object):
 
-#    def __init__(self):
-#        self.compteurALC=0
-
-
     def loadContentsOfDirectivesDotIniFile(self):
         fileIniDirectives   = fichier.FileIni({'name': config.configFilesPath + config.fileDirectivesIni})
-#        # DEBUG !!!
-#        self.compteurALC+=1
-#        debug.show(self.compteurALC)
-#        # /DEBUG !!!
         return fileIniDirectives.loadData()
 
 

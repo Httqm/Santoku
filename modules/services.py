@@ -39,7 +39,7 @@ class AllServices(object):
         self.output = ''
         self.number = 0
         self.nbChecksPerHour    = 0
-	self.directivesIni      = directives.loadContentsOfDirectivesDotIniFile()
+        self.directivesIni      = directives.loadContentsOfDirectivesDotIniFile()
 
 
     def getList(self, csvHeaders):
@@ -57,9 +57,9 @@ class AllServices(object):
 
     def countChecksPerHour(self, checkInterval):
         minutesPerHour = 60
-        if(checkInterval):  # avoid division by 0
+        if(checkInterval):  # to avoid division by 0
             self.nbChecksPerHour += (minutesPerHour / float(checkInterval))
-#        debug.show('nb checks so far = ' + str(self.nbChecksPerHour))
+
 
 
 class Service(object):
@@ -75,13 +75,11 @@ class Service(object):
 
 
     def _loadIniFiles(self):
-        self._loadIniFile()
-	self._directivesIni = self._allServices.directivesIni
-#	self._directivesIni = directives.loadContentsOfDirectivesDotIniFile()
-        # TODO : this is repeated for every service. Once is enough. fix it !
+        self._directivesIni = self._allServices.directivesIni
+        self._loadPluginIniFile()
 
 
-    def _loadIniFile(self):
+    def _loadPluginIniFile(self):
         self._fileIni       = FileIni({'name': self._iniFileName})
         self._fileIniData   = self._fileIni.loadData()
         self._checkFileIni()
@@ -107,11 +105,11 @@ class Service(object):
     def _loadPatterns(self):
         self._patternService = pattern.Pattern({
             'file'      : self._iniFileName,
-            'pattern'   : self._fileIniData[config.iniPatternString],
+            'pattern'   : self._fileIniData[config.iniPatternString]
             })
         self._patternDirectives = pattern.Pattern({
             'file'      : config.configFilesPath + config.fileDirectivesIni,
-            'pattern'   : self._directivesIni[config.iniPatternString],
+            'pattern'   : self._directivesIni[config.iniPatternString]
             })
 
 
@@ -141,34 +139,39 @@ class Service(object):
         This method handles multi-valued CSV cells
         """
         serviceCsvData  = self._loadServiceData(params)
-        champsValeurs   = {}
+        serviceData     = {}
 
         # Parsing data stored in dict to register as many services as the number of values in multi-valued cells
         maxRounds       = 1
         currentRound    = 0
 
         while currentRound < maxRounds:
-            champsValeurs[currentRound]	= {
+            serviceData[currentRound] = {
                 config.csvHeaderHostName    : params['hostName'],
                 config.csvHeaderUse         : config.csvGenericService
                 }
             for serviceField in serviceCsvData:
-                valuesOfMultiValuedCell	= serviceCsvData[serviceField].split(config.csvMultiValuedCellFS)
+                valuesOfMultiValuedCell = serviceCsvData[serviceField].split(config.csvMultiValuedCellFS)
 
                 # Excluding the service directives columns here to avoid duplicating the service definition
-                if((serviceField != config.csvServiceDirectivesNames) and (serviceField != config.csvServiceDirectivesValues)):
+                if(not self._isAServiceDirectiveField(serviceField)):
                     maxRounds = len(valuesOfMultiValuedCell) if (len(valuesOfMultiValuedCell)>maxRounds) else maxRounds
+                    # TODO : this is ugly ! -----^
 
                 try:
                     tmpValue = valuesOfMultiValuedCell[currentRound]
                 except IndexError:
                     tmpValue = valuesOfMultiValuedCell[0]
 
-                champsValeurs[currentRound][serviceField] = tmpValue
+                serviceData[currentRound][serviceField] = tmpValue
 
             currentRound += 1
 
-        self._result	= { 'champsValeurs': champsValeurs, 'maxRounds': maxRounds }
+        self._result = {'serviceData': serviceData, 'maxRounds': maxRounds}
+
+
+    def _isAServiceDirectiveField(self, fieldName):
+        return ((config.csvServiceDirectivesNames == fieldName) or (config.csvServiceDirectivesValues == fieldName))
 
 
     def _loadServiceData(self, params):
@@ -196,16 +199,14 @@ class Service(object):
     def make(self):
         tmp = ''    # must be an empty string to allow '+=' below
         for i in range(self._result['maxRounds']):
-            tmp += self._patternService.apply(self._result['champsValeurs'][i]) + "\n"
+            tmp += self._patternService.apply(self._result['serviceData'][i]) + "\n"
             self._allServices.count()
-
             self._allServices.countChecksPerHour(self.getCheckInterval())
-
         return tmp
 
 
     def loadDirectivesFromCsvData(self):
-        self._directivesCsv	= {
+        self._directivesCsv = {
             'names'  : self._csv.getCellFromCurrentRow(self._csvColumnHavingServiceDirectivesNames).split(config.csvMultiValuedCellFS),
             'values' : self._csv.getCellFromCurrentRow(self._csvColumnHavingServiceDirectivesValues).split(config.csvMultiValuedCellFS)
             }
@@ -221,24 +222,15 @@ class Service(object):
         return self.serviceDirectives
 
 
-##    def _checkFileIniBothTagSurroundingCharsAreThere(self):
-##        for sectionTitle in self._fileIniData:
-##            match = re.search('(("|\s)\$[a-zA-Z_:]*("|\s|/))|(("|\s)[a-zA-Z_:]*\$("|\s|/))', str(self._fileIniData[sectionTitle]))
-##            if(match):
-##                debug.die({ 'exitMessage' : 'Missing leading/trailing "$" in expression "' + match.group(0) + '" in the "[' + sectionTitle + ']" section of "' + self._fileIni.name + '"'})
-
-
     def _checkFileIniCommandNamesMatch(self):
         commandInPatternSection = self._getCommandValueFromSection({
             'directive'     : config.commandDirectiveInServiceDefinition,
             'sectionTitle'  : config.iniPatternString
             })
-
         commandInCommandSection = self._getCommandValueFromSection({
             'directive'     : config.commandDirectiveInCommandDefinition,
             'sectionTitle'  : config.iniCommandString
             })
-
         if commandInPatternSection != commandInCommandSection:
             debug.die({'exitMessage': 'Commands don\'t match between the "' \
                 + config.iniPatternString + '" (' + config.commandDirectiveInServiceDefinition \
@@ -263,4 +255,3 @@ class Service(object):
             return directives.getCheckInterval(self._directivesCsv)
         else:
             return config.defaultHostCheckInterval
-

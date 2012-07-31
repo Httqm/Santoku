@@ -34,14 +34,9 @@ directives  = directives.Directives()
 class AllHosts(object):
 
     def __init__(self):
-#    def __init__(self, params):
-#        debug.show('IN INIT !!!!!!!')
-#        self._directives    = params['directivesIni']
         self._directives = directives.loadContentsOfDirectivesDotIniFile()
         self._loadIniFiles()
         self._loadPatterns()
-
-#        debug.show(self._directives)
         self.output = ''
         self.number = {
             'valid'         : 0,
@@ -56,7 +51,6 @@ class AllHosts(object):
 
     def _loadIniFiles(self):
         self._loadIniFile()
-#        self._directives = directives.loadContentsOfDirectivesDotIniFile()
 
 
     def _loadIniFile(self):
@@ -84,7 +78,7 @@ class AllHosts(object):
         directivesList = [
             config.csvHeaderCheckCommand,
             config.csvHeaderParents,
-            '_SSHLOGIN'	# /!\ hardcoded stuff. "_SSHLOGIN" is defined in config/host.ini
+            '_SSHLOGIN' # /!\ hardcoded stuff. "_SSHLOGIN" is defined in config/host.ini
             ]
         for directive in directivesList:
             self.output = re.sub(r'\s+' + directive + '\s+\n', r'\n', self.output)
@@ -117,8 +111,6 @@ class Host(object):
             + '\s*' \
             + self._csv.getCellFromCurrentRow(config.csvHeaderHostName) \
             , self._allHosts.output)
-#        if match:
-#            debug.show(self._csv.getCellFromCurrentRow(config.csvHeaderHostName)+' IS DUPLICATED')
         return 1 if match else 0
 
 
@@ -143,7 +135,7 @@ class Host(object):
         self._directives          = ''
         self._directivesNames     = self._csv.getCellFromCurrentRow(config.csvHostDirectivesNames).split(config.csvMultiValuedCellFS)
         self._directivesValues    = self._csv.getCellFromCurrentRow(config.csvHostDirectivesValues).split(config.csvMultiValuedCellFS)
-        directives.compareNumberOfNamesAndValues({  # TODO : instanciate here ?
+        directives.compareNumberOfNamesAndValues({
                 'names'         : self._directivesNames,
                 'values'        : self._directivesValues,
                 'hostName'      : self._csv.getCellFromCurrentRow(config.csvHeaderHostName),

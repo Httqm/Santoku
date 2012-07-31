@@ -33,8 +33,8 @@ class AllCommands(object):
 
 
     def add(self, commandData):
-        self._commands[commandData['serviceName']]  = commandData['serviceCommand']
-        self.number                                 = len(self._commands)
+        self._commands[commandData['serviceName']] = commandData['serviceCommand']
+        self.number = len(self._commands)
 
 
     def getOutput(self):

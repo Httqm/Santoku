@@ -23,7 +23,6 @@ from modules import commands
 from modules import config
 from modules import csv
 from modules import debug
-#from modules import directives
 from modules import fichier
 from modules import hostgroups
 from modules import hosts
@@ -38,12 +37,6 @@ from modules import timer
 allCommands = commands.AllCommands()
 debug       = debug.Debug()
 
-#directives  = directives.Directives()
-#directivesIni = directives.loadContentsOfDirectivesDotIniFile()
-#debug.show(directives.loadContentsOfDirectivesDotIniFile())
-#allHosts    = hosts.AllHosts({
-#        'directivesIni': directives.loadContentsOfDirectivesDotIniFile()
-#        })
 allHosts    = hosts.AllHosts()
 
 hostgroups  = hostgroups.Hostgroups()
@@ -69,32 +62,21 @@ for hostId in csv.data:
         allHosts.incrementCountOf('ignored')
         continue
 
-#    debug.show(csv.getCellFromCurrentRow('host_name'))
-
-
-
-
-
-
     # TODO / BUG ? : if a host is duplicated, only the values on its 1st host definition will be considered
     if host.isAlreadyRegisteredInHostsCfg():
         allHosts.incrementCountOf('duplicated')
     else:
         allHosts.incrementCountOf('valid')
         csv.setHostDirectives({'hostDirectives': host.loadDirectives() })
-
-
-
-
-
-    if(csv.currentRowHasCheckCommand()):
-        allCommands.add(host.getCheckCommand())
-        allServices.countChecksPerHour(host.getCheckInterval())
         allHosts.output += host.applyHostPattern()
         hostgroups.addHostToGroups({
             'host'      : csv.getCellFromCurrentRow(config.csvHeaderHostName),
             'groups'    : host.loadHostGroupsFromCsv()
             })
+
+    if(csv.currentRowHasCheckCommand()):
+        allCommands.add(host.getCheckCommand())
+        allServices.countChecksPerHour(host.getCheckInterval())
 
     ###################################### ##########################################################
     # Looping on services
@@ -128,9 +110,6 @@ for hostId in csv.data:
                 })
 
             allServices.output += service.make()
-
-
-
 
 
     ###################################### ##########################################################

@@ -34,6 +34,7 @@ class Csv(object):
         self._currentRow    = 0
         self.nbLines        = 0
 
+
     def _loadDataFromFile(self):
         csvFile         = fichier.FileCsv({ 'name': self._fileName })
         csvFileContents = csvFile.contents
