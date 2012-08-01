@@ -31,6 +31,7 @@ class Csv(object):
     def __init__(self, params):
         self._fileName      = params['fileName']
         self.data           = self._loadDataFromFile()
+        self._checkAllColumnHeadersAreUnique()
         self._currentRow    = 0
         self.nbLines        = 0
 
@@ -42,6 +43,16 @@ class Csv(object):
         return csvFileContents
 
 
+    def _checkAllColumnHeadersAreUnique(self):
+        knownHeaders = []
+        for header in self.header:
+            if header in knownHeaders:
+                debug.die({'exitMessage': 'The column "' + header + '" appears twice in the CSV file "' \
+                    + config.csvFileName + '"'})
+            else:
+                knownHeaders.append(header)
+            
+
     def setCurrentRow(self, rowId):
         self._currentRow    = rowId
         self.nbLines        += 1
@@ -52,7 +63,7 @@ class Csv(object):
             return self.data[self._currentRow][cellName]
         except KeyError:
             debug.die({'exitMessage': 'No column "' + cellName + '" (CaSe SeNsItIvE !) found in "' \
-                + config.configFilesPath + config.csvFileName + "\".\nThis is either caused by : \n" \
+                + config.csvFileName + "\".\nThis is either caused by : \n" \
                 + " - wrong column name in the CSV file\n" \
                 + ' - OR by an error in a .ini file. Find files where \"' + cellName + "\" is refered to with : grep -r \"" \
                 + cellName + "\" *"
