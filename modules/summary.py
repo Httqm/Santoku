@@ -35,14 +35,14 @@ class Summary(object):
 
 
     def _loadFileIni(self):
-        self._fileIni       = fichier.FileIni({'name': config.configFilesPath + config.fileSummaryIni})
+        self._fileIni       = fichier.FileIni({'name': config.iniFolderGeneric + config.fileSummaryIni})
         self._fileIniData   = self._fileIni.loadData()
 
 
     def _loadPattern(self):
         try:
             self._summaryPattern = pattern.Pattern({
-                'file'      : config.configFilesPath + config.fileSummaryIni,
+                'file'      : config.iniFolderGeneric + config.fileSummaryIni,
                 'pattern'   : self._fileIniData[config.iniPatternString],
                 })
         except KeyError:
@@ -52,7 +52,7 @@ class Summary(object):
     def make(self, params):
         return self._summaryPattern.apply({
             'nbLines'           : params['nbLines'],
-            'fileCsv'           : config.configFilesPath + config.csvFileName,
+            'fileCsv'           : config.csvFileName,
             'fileHosts'         : config.outputPath + config.outputFileHosts,
             'fileServices'      : config.outputPath + config.outputFileServices,
             'fileCommands'      : config.outputPath + config.outputFileCommands,

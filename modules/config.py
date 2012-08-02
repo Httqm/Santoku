@@ -24,7 +24,10 @@
 ########################################## ##########################################################
 # common
 configFile          = __file__  # This is used to point to THIS file in error messages. DON'T CHANGE THIS !
-configFilesPath     = './config/'
+iniFolderBase       = './config/'
+iniFolderGeneric    = iniFolderBase + 'GENERIC/'
+iniFolderPlugins    = iniFolderBase + 'plugins/'
+#configFilePath
 
 # CSV file
 #csvFileName     = 'confNag.csv'

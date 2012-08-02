@@ -69,7 +69,7 @@ class Service(object):
         self._csvServiceName    = params['serviceCsvName']
         self._allServices       = params['allServices']
         self._cleanName         = self._csvServiceName.replace(config.csvHeaderFs + config.csvHeaderDo,'')
-        self._iniFileName       = config.configFilesPath + self._cleanName + '.ini'
+        self._iniFileName       = config.iniFolderPlugins + self._cleanName + '.ini'
         self._loadIniFiles()
         self._loadPatterns()
 
@@ -108,7 +108,7 @@ class Service(object):
             'pattern'   : self._fileIniData[config.iniPatternString]
             })
         self._patternDirectives = pattern.Pattern({
-            'file'      : config.configFilesPath + config.fileDirectivesIni,
+            'file'      : config.iniFolderGeneric + config.fileDirectivesIni,
             'pattern'   : self._directivesIni[config.iniPatternString]
             })
 

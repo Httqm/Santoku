@@ -54,18 +54,18 @@ class AllHosts(object):
 
 
     def _loadIniFile(self):
-        self._fileIniHost   = fichier.FileIni({'name': config.configFilesPath + config.fileHostIni})
+        self._fileIniHost   = fichier.FileIni({'name': config.iniFolderGeneric + config.fileHostIni})
         self._iniFileData   = self._fileIniHost.loadData()
         self.checkIniFile()
 
 
     def _loadPatterns(self):
         self.patternHost = pattern.Pattern({
-            'file'      : config.configFilesPath + config.fileHostIni,
+            'file'      : config.iniFolderGeneric + config.fileHostIni,
             'pattern'   : self._iniFileData[config.iniPatternString],
             })
         self.patternDirectives = pattern.Pattern({
-            'file'      : config.configFilesPath + config.fileDirectivesIni,
+            'file'      : config.iniFolderGeneric + config.fileDirectivesIni,
             'pattern'   : self._directives[config.iniPatternString],
             })
 
@@ -171,7 +171,7 @@ class Host(object):
 
     def getCheckCommand(self):
         checkCommandName = self._csv.getCellFromCurrentRow(config.csvHeaderCheckCommand)
-        hostCheckFileIni = fichier.FileIni({'name': config.configFilesPath + checkCommandName + '.ini'})
+        hostCheckFileIni = fichier.FileIni({'name': config.iniFolderPlugins + checkCommandName + '.ini'})
         hostCheckFileIni.loadData()
         return {
             'serviceName'       : checkCommandName,

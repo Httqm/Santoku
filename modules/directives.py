@@ -30,7 +30,7 @@ debug = debug.Debug()
 class Directives(object):
 
     def loadContentsOfDirectivesDotIniFile(self):
-        fileIniDirectives   = fichier.FileIni({'name': config.configFilesPath + config.fileDirectivesIni})
+        fileIniDirectives   = fichier.FileIni({'name': config.iniFolderGeneric + config.fileDirectivesIni})
         return fileIniDirectives.loadData()
 
 
