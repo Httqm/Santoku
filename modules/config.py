@@ -27,11 +27,9 @@ configFile          = __file__  # This is used to point to THIS file in error me
 iniFolderBase       = './config/'
 iniFolderGeneric    = iniFolderBase + 'GENERIC/'
 iniFolderPlugins    = iniFolderBase + 'plugins/'
-#configFilePath
 
 # CSV file
-#csvFileName     = 'confNag.csv'
-csvFileName     = 'new.csv'
+csvFileName         = 'example.csv'
 
 # INI files
 fileHostIni         = 'host.ini'
