@@ -47,7 +47,7 @@ div.chapter { border-style:solid;border-color:red;border-width:0 0 2px 0; font-w
 .command { background-color:black;color:white; }
 .confoption, .example { padding:0 0.3em 0 0.3em; }
 
-.confoption { padding:0 0.3em 0 0.3em; }
+.confoption { font-style:italic;background-color:#6666aa;color:#ffffff; }
 
 
 .code { background-color:#002222;color:#ffffaa; }
@@ -193,6 +193,7 @@ So I started developping <span class="sw">Santoku</span> :
 <p><span class="sw">Santoku</span> has no command-line flag since every option it requires is stored in its configuration file <span class="file">modules/config.py</span>.<br />To run <span class="sw">Santoku</span>, just type <span class="command">./santoku.py</span></p>
 <p>But before running it, you'll have to :</p>
 <ul>
+	<li>Make backup copies of the <span class="file">hosts.cfg</span>, <span class="file">services.cfg</span> and <span class="file">commands.cfg</span> files as they will be overwritten by versions created by <span class="sw">Santoku</span>.</li>
 	<li>Define hosts and services in the CSV file</li>
 	<li>Setup a <span class="file">.ini</span> file for each plugin you use</li>
 </ul>
@@ -245,7 +246,7 @@ So I started developping <span class="sw">Santoku</span> :
 	<li>In the <span class="file">commands.cfg</span> file, <span class="sw">Santoku</span> writes the host checks and service checks commands. In a <span class="sw">Nagios</span> / <span class="sw">Shinken</span> fresh install, the <span class="file">commands.cfg</span> file not only stores these commands, but also the notification commands. So overwriting the default <span class="file">commands.cfg</span> will erase the notification commands. To fix this :
 		<ol>
 			<li>create a <span class="file">commands_notification.cfg</span> file in the folder containing the <span class="file">commands.cfg</span> file on the host running <span class="sw">Shinken</span></li>
-			<li>save the notification commands "notify-host-by-email" and "notify-service-by-email" in <span class="file">commands_notification.cfg</span></li>
+			<li>save the notification commands <span class="confoption">notify-host-by-email</span> and <span class="confoption">notify-service-by-email</span> in <span class="file">commands_notification.cfg</span></li>
 			<li>register <span class="file">commands_notification.cfg</span> in <span class="file">nagios.cfg</span> by declaring it like <span class="file">commands.cfg</span> : <span class="code">cfg_file = commands_notification.cfg</span></li>
 		</ol>
 	</li>
