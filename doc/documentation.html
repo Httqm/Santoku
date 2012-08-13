@@ -243,7 +243,7 @@ So I started developping <span class="sw">Santoku</span> :
 <h4 class="section" id="knownBugsAndLimitations">Known bugs and limitations</h4>
 <p>Since <span class="sw">Santoku</span> is in its early version, few bugs and limitations are known so far. Here are some important notices :</p>
 <ul>
-	<li>In the <span class="file">commands.cfg</span> file, <span class="sw">Santoku</span> writes the host checks and service checks commands. In a <span class="sw">Nagios</span> / <span class="sw">Shinken</span> fresh install, the <span class="file">commands.cfg</span> file not only stores these commands, but also the notification commands. So overwriting the default <span class="file">commands.cfg</span> will erase the notification commands. To fix this :
+	<li><span class="warning">OBSOLETE !</span> In the <span class="file">commands.cfg</span> file, <span class="sw">Santoku</span> writes the host checks and service checks commands. In a <span class="sw">Nagios</span> / <span class="sw">Shinken</span> fresh install, the <span class="file">commands.cfg</span> file not only stores these commands, but also the notification commands. So overwriting the default <span class="file">commands.cfg</span> will erase the notification commands. To fix this :
 		<ol>
 			<li>create a <span class="file">commands_notification.cfg</span> file in the folder containing the <span class="file">commands.cfg</span> file on the host running <span class="sw">Shinken</span></li>
 			<li>save the notification commands <span class="confoption">notify-host-by-email</span> and <span class="confoption">notify-service-by-email</span> in <span class="file">commands_notification.cfg</span></li>

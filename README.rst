@@ -4,6 +4,7 @@ Presentation of the Santoku project
 
 Santoku is a utility designed to generate configuration files for Shinken and Nagios from data provided in a CSV file. The CSV file is expected to have a specific format (described in the documentation).
 The generated files are :
+
 - hosts.cfg, including host groups
 - services.cfg
 - commands.cfg
@@ -16,4 +17,4 @@ This is why I started developping Santoku : I wanted like to build a modular too
 Need more details ?
 =========================
 
-Please have a look at the documentation.
+Please have a look at "doc/documentation.html".
