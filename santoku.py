@@ -28,7 +28,7 @@ from modules import hostgroups
 from modules import hosts
 from modules import services
 from modules import summary
-from modules import timer
+#from modules import timer
 
 
 ########################################## ##########################################################
