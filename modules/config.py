@@ -85,6 +85,7 @@ iniPatternString    = 'PATTERN'
 iniCommandString    = 'COMMAND'
 iniTagChar          = '$'
 
+
 ########################################## ##########################################################
 # NAGIOS / SHINKEN .cfg DIRECTIVES
 # Values below are there just to avoid hardcoding.
@@ -97,12 +98,18 @@ checkIntervalDirective              = 'check_interval'
 defaultHostCheckInterval            = 5 # For stats only : used to determine the number of checks per hour
 defaultServiceCheckInterval         = 5 # For stats only : used to determine the number of checks per hour
 
-#defaultCommands="""
+
+########################################## ##########################################################
+# NOTIFICATION COMMANDS
+# This is not the cleanest way to do this, but the _PERFECT_ solution doesn't seem to exist :-(
+# You may edit the commands below to fit your needs.
+########################################## ##########################################################
+#notificationCommands="""
 #define command {
 #	command_name	notify-host-by-email
 #	command_line	/usr/bin/printf "%b" "Shinken Notification\n\nType:$NOTIFICATIONTYPE$\nHost: $HOSTNAME$\nState: $HOSTSTATE$\nAddress: $HOSTADDRESS$\nInfo: $HOSTOUTPUT$\nDate/Time: $SHORTDATETIME$" | /usr/bin/mail -s "Host $HOSTNAME$	is	$HOSTSTATE$" $CONTACTEMAIL$
 #	}
-#
+
 #define command {
 #	command_name	notify-service-by-email
 #	command_line	/usr/bin/printf "%b" "Shinken Notification\n\nNotification Type: $NOTIFICATIONTYPE$\n\nService: $SERVICEDESC$\nHost: $HOSTALIAS$\nAddress: $HOSTADDRESS$\nState: $SERVICESTATE$\n\nDate/Time: $SHORTDATETIME$ Additional Info : $SERVICEOUTPUT$" | /usr/bin/mail -s "$NOTIFICATIONTYPE$	$HOSTALIAS$ / $SERVICEDESC$	$SERVICESTATE$" $CONTACTEMAIL$

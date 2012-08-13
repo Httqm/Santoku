@@ -28,7 +28,6 @@ from modules import hostgroups
 from modules import hosts
 from modules import services
 from modules import summary
-#from modules import timer
 
 
 ########################################## ##########################################################
@@ -121,7 +120,7 @@ for hostId in csv.data:
 ########################################## ##########################################################
 
 allHosts.output += hostgroups.make()
-
+allCommands.addCustomCommands()
 
 ########################################## ##########################################################
 # Write results to files

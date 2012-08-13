@@ -20,6 +20,7 @@
 
 
 from modules import debug
+from modules import services
 
 debug = debug.Debug()
 
@@ -35,6 +36,22 @@ class AllCommands(object):
     def add(self, commandData):
         self._commands[commandData['serviceName']] = commandData['serviceCommand']
         self.number = len(self._commands)
+
+
+    def addCustomCommands(self):
+	customCommands = ['notify-host-by-email', 'notify-service-by-email']
+        for customCommand in customCommands:
+            self._addCustomCommand(customCommand)
+
+
+    def _addCustomCommand(self, commandName):
+        customService = services.Service({
+            'csv'               : None,
+            'currentCsvLine'    : None,
+            'serviceCsvName'    : commandName,
+            'allServices'       : services.AllServices()
+            })
+        self.add(customService.getCommand())
 
 
     def getOutput(self):
