@@ -102,8 +102,7 @@ function checkShinkenConfig {
 #		echo 'COMMAND : ' "ssh $shinkenSshUser@$shinkenHost" "$command"
 		ssh $shinkenSshUser@$shinkenHost "$command" >$logFile
 	else
-		# TODO : test/fix this
-		echo $command
+#		echo $command
 		$(command)
 	fi
 	}
