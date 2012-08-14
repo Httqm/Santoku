@@ -27,13 +27,15 @@ trap "echo;echo 'Interrupted by CTRL-c.';exit 1;" INT
 ########################################## ##########################################################
 useSsh=1                                                # If 1, deliver files through SSH. Otherwise simply 'cp' them.
 
+
 # config values for local host
 sourceFolder='./output/'                                # final '/' expected
 logFile='./checkConf.log'
 
+
 # config values for Shinken host
-shinkenHost='192.168.1.101'                             # unused if Shinken host == localhost
-shinkenSshUser='root'                                   # unused if Shinken host == localhost
+shinkenHost='192.168.1.101'                             # used when useSsh == 1 (this parameter is for SSH only)
+shinkenSshUser='root'                                   # used when useSsh == 1 (this parameter is for SSH only)
 
 shinkenFolderBase='/usr/local/shinken/'                 # final '/' expected
 shinkenFolderEtc=$shinkenFolderBase'etc/'               # final '/' expected
@@ -48,7 +50,7 @@ shinkenRestartCmd='/etc/init.d/shinken restart'
 shinkenConfigFile=$shinkenFolderEtc'nagios.cfg'
 
 
-# misc
+# misc / cosmetics
 stringOk='[ OK ]'
 stringKo='[ KO ]'
 
