@@ -46,9 +46,9 @@ class Fichier(object):
 
 
     def write(self, data):
+        data = self._makeHeaderWithWarningMessage() + data
         try:
             outFile = open(self.name, 'w')
-            outFile.write(self._makeHeaderWithWarningMessage())
             outFile.write(data)
             outFile.close()
         except IOError as e :
