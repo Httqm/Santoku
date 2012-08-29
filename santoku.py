@@ -130,6 +130,7 @@ allHosts.clean()
 outputFileHosts     = fichier.Fichier({'name': config.outputPath+config.outputFileHosts})
 outputFileHosts.write(allHosts.output)
 
+allServices.checkUniqueness()
 outputFileServices  = fichier.Fichier({'name': config.outputPath+config.outputFileServices})
 outputFileServices.write(allServices.output)
 
