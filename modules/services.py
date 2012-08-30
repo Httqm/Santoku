@@ -62,9 +62,7 @@ class AllServices(object):
 
 
     def checkUniqueness(self):
-        #debug.show(self.output)
-#        myRegExp = re.compile('\{\s*host_name\s*(\w*)\s+.*?service_description\s*(\w*(\s\w*)*).*?}')
-        myRegExp = re.compile('\{\s*host_name\s*(\w*)\s+.*?service_description\s*([\w\s]*?)\s{2,}.*?}')
+        myRegExp = re.compile('\{\s*host_name\s*([\w\.\-]*?)\s+.*?service_description\s*([\w\s\-\./\[\]]*?)\s{2,}.*?}')
         """
         The 'magic' in this RegExp was the 'lazy star' : .*? forcing the RegExp engine
         to match 'a series of any character that is AS SHORT AS POSSIBLE'.
@@ -82,14 +80,14 @@ class AllServices(object):
                 matchedHostName             = item[0]
                 matchedServiceDescription   = item[1]
                 concatenatedHostNameAndServiceDescription = matchedHostName + matchedServiceDescription
-                #print concatenatedHostNameAndServiceDescription
+#                print '"' + concatenatedHostNameAndServiceDescription + '"'
+#                debug.show('host_name : "' + matchedHostName + '"\n' + 'service_description : "' + matchedServiceDescription + '"')
+
                 if concatenatedHostNameAndServiceDescription in myList:
-                    #print 'found in list'
                     debug.die({'exitMessage' : 'The service description "' + matchedServiceDescription \
                         + '" is not unique for host "' + matchedHostName + '".\nInvestigate "' \
                         + config.outputPath + config.outputFileServices + '" for details.'})
                 else:
-                    #print 'not in list'
                     myList.append(concatenatedHostNameAndServiceDescription)
 
 
