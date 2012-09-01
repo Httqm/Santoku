@@ -185,9 +185,15 @@ So I started developping <span class="sw">Santoku</span> :
 
 <h5 class="subsection" id="howToGetSantoku">How to get <span class="sw">Santoku</span> ?</h5>
 <p class="command">git clone https://github.com/Httqm/Santoku.git</p>
+<p>This will create a <span class="file"><span class="sw">Santoku</span></span> subfolder in the current folder.</p>
 
 <h5 class="subsection" id="installation">Installation</h5>
-<p>Simply move the <span class="file">Santoku</span> folder you got with <span class="command">git clone</span> to the desired location. You're done !</p>
+<ol>
+
+    <li>copy <span class="file">deployToShinken.sh-dist</span> into <span class="file">deployToShinken.sh</span>. This will prevent you from overwriting your local settings if you <span class="command">git pull</span> for <span class="sw">Santoku</span> updates.</li>
+    <li>copy <span class="file">modules/config.py-dist</span> into <span class="file">modules/config.py</span></li>
+    <li>you can move the <span class="file">Santoku</span> folder around to any desired location.</li>
+</ol>
 
 <h5 class="subsection" id="runningSantoku">Running <span class="sw">Santoku</span></h5>
 <p><span class="sw">Santoku</span> has no command-line flag since every option it requires is stored in its configuration file <span class="file">modules/config.py</span>.<br />To run <span class="sw">Santoku</span>, just type <span class="command">./santoku.py</span></p>
