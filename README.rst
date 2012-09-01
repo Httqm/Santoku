@@ -5,13 +5,18 @@ Presentation of the Santoku project
 Santoku is a utility designed to generate configuration files for Shinken and Nagios from data provided in a CSV file. The CSV file is expected to have a specific format (described in the documentation).
 The generated files are :
 
-- hosts.cfg, including host groups
+- hosts.cfg, including host groups and service groups
 - services.cfg
 - commands.cfg
-- and a very basic tabular-presented Nagvis map showing ALL hosts listed in the CSV file (0% done)
+- and a very basic tabular-presented Nagvis map showing ALL hosts listed in the CSV file (not done yet)
 
-At a previous position, I wrote a PERL script doing all this (except the commands.cfg part). This script still works very well, but because of the numerous plugins / environments / usages it handles, it's now a 60KBytes cluttered script and debugging/updating it has become a nightmare. So I can't even share it with the community.
-This is why I started developping Santoku : I wanted like to build a modular tool that others could benefit from, without being developers themselves.
+
+Setup :
+=========================
+1. git clone https://github.com/Httqm/Santoku.git
+2. copy ./deployToShinken.sh-dist into deployToShinken.sh
+3. copy modules/config.py-dist into modules/config.py
+4. create the ./output folder (if not already there)
 
 
 Need more details ?
