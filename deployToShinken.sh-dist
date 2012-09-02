@@ -42,11 +42,7 @@ shinkenFolderEtc=$shinkenFolderBase'etc/'               # final '/' expected
 shinkenFolderEtcHosts=$shinkenFolderEtc'hosts/'         # final '/' expected
 shinkenFolderEtcServices=$shinkenFolderEtc'services/'   # final '/' expected
 
-backupSuffix='_PREVIOUS_VERSION'
-
-
 shinkenCheckBin=$shinkenFolderBase'bin/shinken-arbiter'
-# try : shinkenCheckBin=$(which shinken-arbiter)
 shinkenRestartCmd='/etc/init.d/shinken restart'
 shinkenConfigFile=$shinkenFolderEtc'nagios.cfg'
 
@@ -54,6 +50,7 @@ shinkenConfigFile=$shinkenFolderEtc'nagios.cfg'
 # misc / cosmetics
 stringOk='[ OK ]'
 stringKo='[ KO ]'
+backupSuffix='_PREVIOUS_VERSION'
 
 
 ########################################## ##########################################################
