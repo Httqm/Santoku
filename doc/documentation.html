@@ -45,19 +45,22 @@ div.chapter { border-style:solid;border-color:red;border-width:0 0 2px 0; font-w
 .command, .code {font-family:helvetica;padding:0.1em;font-family:courier; }
 
 .command { background-color:black;color:white; }
+
 .confoption, .example { padding:0 0.3em 0 0.3em; }
 
 .confoption { font-style:italic;background-color:#6666aa;color:#ffffff; }
 
-
 .code { background-color:#002222;color:#ffffaa; }
 
 .csvColumnName { color:#2222ff;font-style:italic; }
+
 .file { font-family:"freemono";font-weight:bold;color:#88a; }
 
 .example {background-color: #ccccff;font-weight:bold; }
-.section, .subsection { font-weight:bold;text-decoration:underline; }
 
+.output { background-color:#000033;color:#ffff88; }
+
+.section, .subsection { font-weight:bold;text-decoration:underline; }
 .section { padding-left:1em; }
 .subsection { padding-left:2em; }
 
@@ -191,9 +194,19 @@ So I started developping <span class="sw">Santoku</span> :
 <ol>
 
     <li>copy <span class="file">deployToShinken.sh-dist</span> into <span class="file">deployToShinken.sh</span>. This will prevent you from overwriting your local settings if you <span class="command">git pull</span> for <span class="sw">Santoku</span> updates.</li>
-    <li>copy <span class="file">modules/config.py-dist</span> into <span class="file">modules/config.py</span></li>
+    <li>copy <span class="file">modules/config.py-dist</span> into <span class="file">modules/config.py</span>. Skipping this step will cause the error :
+
+<pre class="output">
+File "[your installation path]/Santoku/modules/debug.py", line 22, in &lt;module&gt;
+    from modules import config
+ImportError: cannot import name config
+</pre>
+		since the expected file <span class="file">modules/config.py</span> can not be imported by <span class="file">modules/debug.py</span> as it doesn't exist.
+	</li>
     <li>you can move the <span class="file">Santoku</span> folder around to any desired location.</li>
 </ol>
+
+<p class="warning">For the impatients : the 'cp' operations above can be performed by executing the <span class="file">RUN_ME_AFTER_GIT_CLONE.sh</span> script.</p>
 
 <h5 class="subsection" id="runningSantoku">Running <span class="sw">Santoku</span></h5>
 <p><span class="sw">Santoku</span> has no command-line flag since every option it requires is stored in its configuration file <span class="file">modules/config.py</span>.<br />To run <span class="sw">Santoku</span>, just type <span class="command">./santoku.py</span></p>

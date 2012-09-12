@@ -14,9 +14,7 @@ The generated files are :
 Setup :
 =========================
 1. git clone https://github.com/Httqm/Santoku.git
-2. copy ./deployToShinken.sh-dist into deployToShinken.sh
-3. copy modules/config.py-dist into modules/config.py
-4. create the ./output folder (if not already there)
+2. execute the RUN_ME_AFTER_GIT_CLONE.sh script
 
 
 Need more details ?
