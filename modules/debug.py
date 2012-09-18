@@ -40,10 +40,10 @@ class Debug(object):
             import inspect
             print ("\n" \
                 + " ++=================== DEBUG =========================\n" \
-                + ' || FILE    : ' + str(inspect.stack()[1][1]) + "\n" \
-                + ' || LINE    : ' + str(inspect.stack()[1][2]) + "\n" \
-                + ' || CALLER  : ' + str(inspect.stack()[1][3]) + "\n" \
-                + ' || MESSAGE : ' + str(message) + "\n" \
+                + ' || FILE    : ' + `inspect.stack()[1][1]` + "\n" \
+                + ' || LINE    : ' + `inspect.stack()[1][2]` + "\n" \
+                + ' || CALLER  : ' + `inspect.stack()[1][3]` + "\n" \
+                + ' || MESSAGE : ' + `message` + "\n" \
                 + " ++================== /DEBUG =========================\n")
 
 
