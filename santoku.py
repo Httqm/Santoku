@@ -61,16 +61,26 @@ for hostId in csv.data:
         continue
 
     # TODO / BUG ? : if a host is duplicated, only the values on its 1st host definition will be considered
+    # possibly BUG :-(
+    # for hostgroups : FIXED
+    # for anything else (host directives) : TO BE CHECKED
     if host.isAlreadyRegisteredInHostsCfg():
         allHosts.incrementCountOf('duplicated')
     else:
         allHosts.incrementCountOf('valid')
         csv.setHostDirectives({'hostDirectives': host.loadDirectives() })
         allHosts.output += host.applyHostPattern()
-        hostgroups.addHostToGroups({
-            'host'      : csv.getCellFromCurrentRow(config.csvHeaderHostName),
-            'groups'    : host.loadHostGroupsFromCsv()
-            })
+
+    """
+    This piece of code, outside of the "if host.isAlreadyRegisteredInHostsCfg()" structure, allows having
+    a duplicated host belonging to several hostgroups : same host on 2 CSV lines with different set of
+    parameters / services / ... This happens especially with virtual hosts.
+    """
+    hostgroups.addHostToGroups({
+        'host'      : csv.getCellFromCurrentRow(config.csvHeaderHostName),
+        'groups'    : host.loadHostGroupsFromCsv()
+        })
+
 
     if(csv.currentRowHasCheckCommand()):
         allCommands.add(host.getCheckCommand())
