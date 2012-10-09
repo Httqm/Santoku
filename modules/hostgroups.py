@@ -35,9 +35,10 @@ class Hostgroups(object):
 
     def addHostToGroups(self, params):
         for group in params['groups']:
-            if not group in self._hostGroupToMembers:                 # if 'hostGroups[group]' doesn't exist yet, create it.
+            if not group in self._hostGroupToMembers:                   # if 'hostGroups[group]' doesn't exist yet, create it.
                 self._hostGroupToMembers[group] = []
-            self._hostGroupToMembers[group].append(params['host'])    # then store 'host' in it !
+            if params['host'] not in self._hostGroupToMembers[group]:
+                self._hostGroupToMembers[group].append(params['host'])  # then store 'host' in it (unless it's already there)
 
 
     def _loadFileIni(self):
