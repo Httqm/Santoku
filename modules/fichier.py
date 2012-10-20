@@ -31,8 +31,8 @@ debug = debug.Debug()
 ########################################## ##########################################################
 class Fichier(object):
 
-    def __init__(self, params):
-        self.name = params['name']
+    def __init__(self, fileName):
+        self.name = fileName
 
 
     def _makeHeaderWithWarningMessage(self):
@@ -61,8 +61,8 @@ class Fichier(object):
 ########################################## ##########################################################
 class FileCsv(object):
 
-    def __init__(self, params):
-        self.name       = params['name']
+    def __init__(self, fileName):
+        self.name       = fileName
         self._fs        = config.csvFileFs
         self.contents   = self._loadContentIntoDict()
 
@@ -125,8 +125,8 @@ class FileCsv(object):
 ########################################## ##########################################################
 class FileIni(object):
 
-    def __init__(self, params):
-        self.name = params['name']
+    def __init__(self, fileName):
+        self.name = fileName
 
 
     def loadData(self):

@@ -136,14 +136,14 @@ allCommands.addCustomCommands()
 ########################################## ##########################################################
 
 allHosts.clean()
-outputFileHosts     = fichier.Fichier({'name': config.outputPath+config.outputFileHosts})
+outputFileHosts     = fichier.Fichier(fileName = config.outputPath+config.outputFileHosts)
 outputFileHosts.write(allHosts.output)
 
-outputFileServices  = fichier.Fichier({'name': config.outputPath+config.outputFileServices})
+outputFileServices  = fichier.Fichier(fileName = config.outputPath+config.outputFileServices)
 outputFileServices.write(allServices.output)
 allServices.checkUniqueness()
 
-outputFileCommands  = fichier.Fichier({'name': config.outputPath+config.outputFileCommands})
+outputFileCommands  = fichier.Fichier(fileName = config.outputPath+config.outputFileCommands)
 outputFileCommands.write(allCommands.getOutput())
 
 ########################################## ##########################################################

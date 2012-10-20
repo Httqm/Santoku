@@ -110,7 +110,7 @@ class Service(object):
 
 
     def _loadPluginIniFile(self):
-        self._fileIni       = FileIni({'name': self._iniFileName})
+        self._fileIni       = FileIni(fileName = self._iniFileName)
         self._fileIniData   = self._fileIni.loadData()
         self._checkFileIni()
 

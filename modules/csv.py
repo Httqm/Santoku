@@ -37,7 +37,7 @@ class Csv(object):
 
 
     def _loadDataFromFile(self):
-        csvFile         = fichier.FileCsv({ 'name': self._fileName })
+        csvFile         = fichier.FileCsv(fileName = self._fileName)
         csvFileContents = csvFile.contents
         self.header     = csvFile.getHeader()
         return csvFileContents

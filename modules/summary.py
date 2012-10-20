@@ -35,7 +35,7 @@ class Summary(object):
 
 
     def _loadFileIni(self):
-        self._fileIni       = fichier.FileIni({'name': config.iniFolderGeneric + config.fileSummaryIni})
+        self._fileIni       = fichier.FileIni(fileName = config.iniFolderGeneric + config.fileSummaryIni)
         self._fileIniData   = self._fileIni.loadData()
 
 
