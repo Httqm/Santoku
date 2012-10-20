@@ -28,8 +28,8 @@ debug  = debug.Debug()
 
 class Csv(object):
 
-    def __init__(self, params):
-        self._fileName      = params['fileName']
+    def __init__(self, fileName):
+        self._fileName      = fileName
         self.data           = self._loadDataFromFile()
         self._checkAllColumnHeadersAreUnique()
         self._currentRow    = 0
@@ -82,8 +82,8 @@ class Csv(object):
         return self.data[self._currentRow]
 
 
-    def setHostDirectives(self, params):
-        self.data[self._currentRow]['hostDirectives'] = params['hostDirectives']
+    def setHostDirectives(self, hostDirectives):
+        self.data[self._currentRow]['hostDirectives'] = hostDirectives
 
 
     def columnExists(self, columnHeader):

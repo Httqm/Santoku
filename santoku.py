@@ -40,7 +40,7 @@ allHosts    = hosts.AllHosts()
 
 hostgroups  = hostgroups.Hostgroups()
 
-csv         = csv.Csv({'fileName': config.csvFileName})
+csv         = csv.Csv(fileName = config.csvFileName)
 host        = hosts.Host({
                 'csv'       : csv,
                 'allHosts'  : allHosts
@@ -68,7 +68,7 @@ for hostId in csv.data:
         allHosts.incrementCountOf('duplicated')
     else:
         allHosts.incrementCountOf('valid')
-        csv.setHostDirectives({'hostDirectives': host.loadDirectives() })
+        csv.setHostDirectives(hostDirectives = host.loadDirectives())
         allHosts.output += host.applyHostPattern()
 
     """
