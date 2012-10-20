@@ -34,11 +34,11 @@ class Directives(object):
         return fileIniDirectives.loadData()
 
 
-    def compareNumberOfNamesAndValues(self, params):
-        sameNumberOfNamesAndValues = (len(params['names'])) == (len(params['values']))
+    def compareNumberOfNamesAndValues(self, names, values, hostName, csvLineNumber):
+        sameNumberOfNamesAndValues = (len(names)) == (len(values))
         if (not sameNumberOfNamesAndValues):
-            debug.die(exitMessage = 'Error in source file "' + config.csvFileName + '" for host "' + params['hostName'] \
-                + '" (line ' + str(params['csvLineNumber']) + ') : columns "' \
+            debug.die(exitMessage = 'Error in source file "' + config.csvFileName + '" for host "' + hostName \
+                + '" (line ' + str(csvLineNumber) + ') : columns "' \
                 + config.csvHostDirectivesNames + '" and "' + config.csvHostDirectivesValues \
                 + '" don\'t have the same number of parameters.'
                 )

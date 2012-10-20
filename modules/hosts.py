@@ -135,12 +135,13 @@ class Host(object):
         self._directives          = ''
         self._directivesNames     = self._csv.getCellFromCurrentRow(config.csvHostDirectivesNames).split(config.csvMultiValuedCellFS)
         self._directivesValues    = self._csv.getCellFromCurrentRow(config.csvHostDirectivesValues).split(config.csvMultiValuedCellFS)
-        directives.compareNumberOfNamesAndValues({
-                'names'         : self._directivesNames,
-                'values'        : self._directivesValues,
-                'hostName'      : self._csv.getCellFromCurrentRow(config.csvHeaderHostName),
-                'csvLineNumber' : self._csv.nbLines + 1
-                })
+
+        directives.compareNumberOfNamesAndValues(
+                names           = self._directivesNames,
+                values          = self._directivesValues,
+                hostName        = self._csv.getCellFromCurrentRow(config.csvHeaderHostName),
+                csvLineNumber   = self._csv.nbLines + 1
+                )
 
         for index,value in enumerate(self._directivesNames):
             self._directives += self._allHosts.patternDirectives.apply({
