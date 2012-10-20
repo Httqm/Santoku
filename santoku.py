@@ -93,12 +93,11 @@ for hostId in csv.data:
     # serviceList is the list of all '*:do' CSV columns : ['check_something:do', 'check_somestuff:do', ...]
     for singleServiceCsvName in serviceList:
 
-        service = services.Service({
-            'csv'               : csv,
-            'currentCsvLine'    : csv.getCurrentRow(),
-            'serviceCsvName'    : singleServiceCsvName,
-            'allServices'       : allServices
-            })
+        service = services.Service(
+            csv             = csv,
+            serviceCsvName  = singleServiceCsvName,
+            allServices     = allServices
+            )
 
         if service.isEnabled():
             allCommands.add(service.getCommand())
@@ -110,12 +109,11 @@ for hostId in csv.data:
                 service.loadDirectivesFromCsvData()
                 serviceDirectives = service.applyServiceDirectivesPattern()
 
-            service.buildArrayOfServices({
-                'name'              : serviceName,
-                'hostName'          : csv.getCellFromCurrentRow('host_name'),
-                'csvDataLine'       : csv.getCurrentRow(),
-                'serviceDirectives' : serviceDirectives
-                })
+            service.buildArrayOfServices(
+                hostName            = csv.getCellFromCurrentRow('host_name'),
+                csvDataLine         = csv.getCurrentRow(),
+                serviceDirectives   = serviceDirectives
+                )
 
             allServices.output += service.make()
 

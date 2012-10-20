@@ -72,7 +72,6 @@ class AllServices(object):
 
         import string
         singleLineOutput = string.replace(self.output, '\n', '')
-        #print singleLineOutput
         match = myRegExp.findall(singleLineOutput)
         if(match):
             myList = []
@@ -80,8 +79,6 @@ class AllServices(object):
                 matchedHostName             = item[0]
                 matchedServiceDescription   = item[1]
                 concatenatedHostNameAndServiceDescription = matchedHostName + matchedServiceDescription
-#                print '"' + concatenatedHostNameAndServiceDescription + '"'
-#                debug.show('host_name : "' + matchedHostName + '"\n' + 'service_description : "' + matchedServiceDescription + '"')
 
                 if concatenatedHostNameAndServiceDescription in myList:
                     debug.die(exitMessage = 'The service description "' + matchedServiceDescription \
@@ -94,10 +91,10 @@ class AllServices(object):
 
 class Service(object):
 
-    def __init__(self, params):
-        self._csv               = params['csv']
-        self._csvServiceName    = params['serviceCsvName']
-        self._allServices       = params['allServices']
+    def __init__(self, csv, serviceCsvName, allServices):
+        self._csv               = csv
+        self._csvServiceName    = serviceCsvName
+        self._allServices       = allServices
         self._cleanName         = self._csvServiceName.replace(config.csvHeaderFs + config.csvHeaderDo,'')
         self._iniFileName       = config.iniFolderPlugins + self._cleanName + '.ini'
         self._loadIniFiles()
@@ -163,12 +160,12 @@ class Service(object):
         return self._hasDirectives
 
 
-    def buildArrayOfServices(self, params):
+    def buildArrayOfServices(self, hostName, csvDataLine, serviceDirectives):
         """
         Return an associative array containing all service(s) data ready to be injected into pattern.
         This method handles multi-valued CSV cells
         """
-        serviceCsvData  = self._loadServiceData(params)
+        serviceCsvData  = self._loadServiceData(csvDataLine, serviceDirectives)
         serviceData     = {}
 
         # Parsing data stored in dict to register as many services as the number of values in multi-valued cells
@@ -177,7 +174,7 @@ class Service(object):
 
         while currentRound < maxRounds:
             serviceData[currentRound] = {
-                config.csvHeaderHostName    : params['hostName'],
+                config.csvHeaderHostName    : hostName,
                 config.csvHeaderUse         : config.csvGenericService
                 }
             for serviceField in serviceCsvData:
@@ -204,7 +201,7 @@ class Service(object):
         return ((config.csvServiceDirectivesNames == fieldName) or (config.csvServiceDirectivesValues == fieldName))
 
 
-    def _loadServiceData(self, params):
+    def _loadServiceData(self, csvDataLine, serviceDirectives):
         """
         For the current host and the current service, return :
         - 'clean' CSV header lines (without the 'serviceName:')
@@ -217,11 +214,11 @@ class Service(object):
             match = re.search(self._cleanName + config.csvHeaderFs + '.*', field)
             if(match):
                 # parsing all CSV columns related to this service
-                serviceCsvData[field.replace(self._cleanName + config.csvHeaderFs, '')] = params['csvDataLine'][field]
+                serviceCsvData[field.replace(self._cleanName + config.csvHeaderFs, '')] = csvDataLine[field]
 
         # appending 'serviceDirectives'
         # serviceCsvData contains 2 useless keys : 'serviceDirectivesNames' and 'serviceDirectivesValues'
-        serviceCsvData['serviceDirectives'] = params['serviceDirectives']
+        serviceCsvData['serviceDirectives'] = serviceDirectives
 
         return serviceCsvData
 
@@ -253,14 +250,14 @@ class Service(object):
 
 
     def _checkFileIniCommandNamesMatch(self):
-        commandInPatternSection = self._getCommandValueFromSection({
-            'directive'     : config.commandDirectiveInServiceDefinition,
-            'sectionTitle'  : config.iniPatternString
-            })
-        commandInCommandSection = self._getCommandValueFromSection({
-            'directive'     : config.commandDirectiveInCommandDefinition,
-            'sectionTitle'  : config.iniCommandString
-            })
+        commandInPatternSection = self._getCommandValueFromSection(
+            directive       = config.commandDirectiveInServiceDefinition,
+            sectionTitle    = config.iniPatternString
+            )
+        commandInCommandSection = self._getCommandValueFromSection(
+            directive       = config.commandDirectiveInCommandDefinition,
+            sectionTitle    = config.iniCommandString
+            )
         if commandInPatternSection != commandInCommandSection:
             debug.die(exitMessage = 'Commands don\'t match between the "' \
                 + config.iniPatternString + '" (' + config.commandDirectiveInServiceDefinition \
@@ -270,13 +267,13 @@ class Service(object):
                 )
 
 
-    def _getCommandValueFromSection(self, params):
-        match = re.search('\s' + params['directive'] + '\s + (\w*)', self._fileIniData[params['sectionTitle']])
+    def _getCommandValueFromSection(self, directive, sectionTitle):
+        match = re.search('\s' + directive + '\s + (\w*)', self._fileIniData[sectionTitle])
         if match:
             return match.group(1)
         else:
-            debug.die(exitMessage = '"' + params['directive'] + '" directive not found in "' \
-                + params['sectionTitle'] + '" section of config file "' + self._iniFileName + '"'
+            debug.die(exitMessage = '"' + directive + '" directive not found in "' \
+                + sectionTitle + '" section of config file "' + self._iniFileName + '"'
                 )
 
 

@@ -45,12 +45,11 @@ class AllCommands(object):
 
 
     def _addCustomCommand(self, commandName):
-        customService = services.Service({
-            'csv'               : None,
-            'currentCsvLine'    : None,
-            'serviceCsvName'    : commandName,
-            'allServices'       : services.AllServices()
-            })
+        customService = services.Service(
+            csv             = None,
+            serviceCsvName  = commandName,
+            allServices     = services.AllServices()
+            )
         self.add(customService.getCommand())
 
 
