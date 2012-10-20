@@ -41,10 +41,10 @@ allHosts    = hosts.AllHosts()
 hostgroups  = hostgroups.Hostgroups()
 
 csv         = csv.Csv(fileName = config.csvFileName)
-host        = hosts.Host({
-                'csv'       : csv,
-                'allHosts'  : allHosts
-                })
+host        = hosts.Host(
+                csv         = csv,
+                allHosts    = allHosts
+                )
 
 allServices = services.AllServices()
 serviceList = allServices.getList(csv.header)

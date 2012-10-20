@@ -90,9 +90,10 @@ class AllHosts(object):
 
 
 class Host(object):
-    def __init__(self, params):
-        self._csv        = params['csv']
-        self._allHosts   = params['allHosts']
+
+    def __init__(self, csv, allHosts):
+        self._csv        = csv
+        self._allHosts   = allHosts
 
 
     def isMarkedToBeIgnored(self):
