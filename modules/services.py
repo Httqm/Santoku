@@ -133,14 +133,14 @@ class Service(object):
 
 
     def _loadPatterns(self):
-        self._patternService = pattern.Pattern({
-            'file'      : self._iniFileName,
-            'pattern'   : self._fileIniData[config.iniPatternString]
-            })
-        self._patternDirectives = pattern.Pattern({
-            'file'      : config.iniFolderGeneric + config.fileDirectivesIni,
-            'pattern'   : self._directivesIni[config.iniPatternString]
-            })
+        self._patternService = pattern.Pattern(
+            fileName    = self._iniFileName,
+            pattern     = self._fileIniData[config.iniPatternString]
+            )
+        self._patternDirectives = pattern.Pattern(
+            fileName    = config.iniFolderGeneric + config.fileDirectivesIni,
+            pattern     = self._directivesIni[config.iniPatternString]
+            )
 
 
     def isEnabled(self):

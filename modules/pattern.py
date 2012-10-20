@@ -26,15 +26,14 @@ debug = debug.Debug()
 
 class Pattern(object):
 
-    def __init__(self, params):
+    def __init__(self, fileName, pattern):
         """
         A pattern is used to substitute tags with values and build .cfg files.
 
-        - pattern is a block of text containing tags identified by special chars. ex : $TAG$. Patterns and tags are defined in .ini files.
-        - values : dictionary with key = variable name, and value = ... value ;-)
+        A pattern is a block of text containing tags identified by special chars. ex : $TAG$. Patterns and tags are defined in .ini files.
         """
-        self._file      = params['file']    # used in debug messages only
-        self._pattern   = params['pattern']
+        self._file      = fileName    # used in debug messages only
+        self._pattern   = pattern
         self.searchTags()
 
 

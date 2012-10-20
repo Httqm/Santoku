@@ -60,14 +60,14 @@ class AllHosts(object):
 
 
     def _loadPatterns(self):
-        self.patternHost = pattern.Pattern({
-            'file'      : config.iniFolderGeneric + config.fileHostIni,
-            'pattern'   : self._iniFileData[config.iniPatternString],
-            })
-        self.patternDirectives = pattern.Pattern({
-            'file'      : config.iniFolderGeneric + config.fileDirectivesIni,
-            'pattern'   : self._directives[config.iniPatternString],
-            })
+        self.patternHost = pattern.Pattern(
+            fileName    = config.iniFolderGeneric + config.fileHostIni,
+            pattern     = self._iniFileData[config.iniPatternString],
+            )
+        self.patternDirectives = pattern.Pattern(
+            fileName    = config.iniFolderGeneric + config.fileDirectivesIni,
+            pattern     = self._directives[config.iniPatternString],
+            )
 
 
     def clean(self):

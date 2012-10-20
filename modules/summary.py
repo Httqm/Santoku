@@ -41,10 +41,10 @@ class Summary(object):
 
     def _loadPattern(self):
         try:
-            self._summaryPattern = pattern.Pattern({
-                'file'      : config.iniFolderGeneric + config.fileSummaryIni,
-                'pattern'   : self._fileIniData[config.iniPatternString],
-                })
+            self._summaryPattern = pattern.Pattern(
+                fileName    = config.iniFolderGeneric + config.fileSummaryIni,
+                pattern     = self._fileIniData[config.iniPatternString]
+                )
         except KeyError:
             debug.die(exitMessage = 'Key error  : key "' + config.iniPatternString + '" doesn\'t exist in "' + self._fileIni.name + '"')
 
