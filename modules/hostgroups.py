@@ -33,12 +33,12 @@ class Hostgroups(object):
         self._loadPattern()
 
 
-    def addHostToGroups(self, params):
-        for group in params['groups']:
+    def addHostToGroups(self, host, groups):
+        for group in groups:
             if not group in self._hostGroupToMembers:                   # if 'hostGroups[group]' doesn't exist yet, create it.
                 self._hostGroupToMembers[group] = []
-            if params['host'] not in self._hostGroupToMembers[group]:
-                self._hostGroupToMembers[group].append(params['host'])  # then store 'host' in it (unless it's already there)
+            if host not in self._hostGroupToMembers[group]:
+                self._hostGroupToMembers[group].append(host)  # then store 'host' in it (unless it's already there)
 
 
     def _loadFileIni(self):

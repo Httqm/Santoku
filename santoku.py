@@ -76,10 +76,10 @@ for hostId in csv.data:
     a duplicated host belonging to several hostgroups : same host on 2 CSV lines with different set of
     parameters / services / ... This happens especially with virtual hosts.
     """
-    hostgroups.addHostToGroups({
-        'host'      : csv.getCellFromCurrentRow(config.csvHeaderHostName),
-        'groups'    : host.loadHostGroupsFromCsv()
-        })
+    hostgroups.addHostToGroups(
+        host    = csv.getCellFromCurrentRow(config.csvHeaderHostName),
+        groups  = host.loadHostGroupsFromCsv()
+        )
 
 
     if(csv.currentRowHasCheckCommand()):
