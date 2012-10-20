@@ -43,7 +43,7 @@ class Pattern(object):
         tagRegExp   = '\\' + config.iniTagChar + '(.*)\\b'
         tagList     = re.findall(tagRegExp, self._pattern)
         if(not tagList):
-            debug.die({'exitMessage': 'No tag matching pattern "' + tagRegExp + '" found in "' + self._file + '"'})
+            debug.die(exitMessage = 'No tag matching pattern "' + tagRegExp + '" found in "' + self._file + '"')
         return tagList
 
 
@@ -56,7 +56,7 @@ class Pattern(object):
             return patternWithSubstitutedValues
         # TODO : exceptions below are not optimal :-(
         except NameError as e:
-            debug.die({'exitMessage': '(pattern.py) key error : ' + str(e) })
+            debug.die(exitMessage = '(pattern.py) key error : ' + str(e))
         except KeyError as e:
             debug.show('key error : ' + e.strerror)
             return None

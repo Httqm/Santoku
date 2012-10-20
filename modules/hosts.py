@@ -159,14 +159,14 @@ class Host(object):
         try:
             self._csv.getCellFromCurrentRow(config.csvHostDirectivesNames)
         except KeyError:
-            debug.die({'exitMessage': 'Key error : key "' + config.csvHostDirectivesNames + '" not found in "' + config.csvFileName + '"'})
+            debug.die(exitMessage = 'Key error : key "' + config.csvHostDirectivesNames + '" not found in "' + config.csvFileName + '"')
 
 
     def _searchCsvHostDirectivesValues(self):
         try:
             self._csv.getCellFromCurrentRow(config.csvHostDirectivesValues)
         except KeyError:
-            debug.die({'exitMessage': 'Key error : key "' + config.csvHostDirectivesValues + '" not found in "' + config.csvFileName + '"'})
+            debug.die(exitMessage = 'Key error : key "' + config.csvHostDirectivesValues + '" not found in "' + config.csvFileName + '"')
 
 
     def getCheckCommand(self):

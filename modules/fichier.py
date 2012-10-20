@@ -52,7 +52,7 @@ class Fichier(object):
             outFile.write(data)
             outFile.close()
         except IOError as e :
-            debug.die({'exitMessage': 'Can not write results to "' + self.name + '" : ' + e.strerror})
+            debug.die(exitMessage = 'Can not write results to "' + self.name + '" : ' + e.strerror)
 
 
 
@@ -82,7 +82,7 @@ class FileCsv(object):
             self.header = inputFile.readline()
             inputFile.close()
         except IOError:
-            debug.die({'exitMessage': 'Source CSV file "' + self.name + '" declared in "' + config.configFile + '" not found.'})
+            debug.die(exitMessage = 'Source CSV file "' + self.name + '" declared in "' + config.configFile + '" not found.')
 
         self._columNumberToText = {}
         fields = self.header.split(self._fs)
@@ -153,7 +153,7 @@ class FileIni(object):
         try:
             self._iniFile = open(self.name, 'r')
         except IOError:
-            debug.die({'exitMessage': 'Expected file "' + self.name + '" not found.'})
+            debug.die(exitMessage = 'Expected file "' + self.name + '" not found.')
 
 
     def _lineIsAComment(self, line):
@@ -175,4 +175,4 @@ class FileIni(object):
         try:
             self._data[sectionTitle]
         except KeyError:
-            debug.die({'exitMessage': 'No "' + sectionTitle + '" section found in "' + self.name + '"'})
+            debug.die(exitMessage = 'No "' + sectionTitle + '" section found in "' + self.name + '"')

@@ -28,11 +28,15 @@ class Debug(object):
         self._mySys = __import__('sys')
 
 
-    def die(self, params):
-        """ Display an error message and leave the program. """
-        print (params['exitMessage'])
+    def die(self, exitMessage, exitCode=2):
+        """
+        Display an error message and leave the program.
+
+        The defaut exit code is 2 to identify cases when a script was terminated through this function.
+        """
+        print (exitMessage)
         print (config.messageDie)
-        self._mySys.exit(2)
+        self._mySys.exit(exitCode)
 
 
     def show(self, message):
@@ -45,12 +49,3 @@ class Debug(object):
                 + ' || CALLER  : ' + `inspect.stack()[1][3]` + "\n" \
                 + ' || MESSAGE : ' + `message` + "\n" \
                 + " ++================== /DEBUG =========================\n")
-
-
-##    def checkConfigValues(self):
-##        self.checkCsvFieldAndListSeparatorsAreDifferent()
-##
-##
-##    def checkCsvFieldAndListSeparatorsAreDifferent(self):
-##        if config.csvFileFs == config.csvFileParamFs:
-##            self.die({'exitMessage':'The values for the CSV field separator and the CSV list separator must be different in ' + config.configFile})

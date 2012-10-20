@@ -46,7 +46,7 @@ class Summary(object):
                 'pattern'   : self._fileIniData[config.iniPatternString],
                 })
         except KeyError:
-            debug.die({'exitMessage': 'Key error  : key "' + config.iniPatternString + '" doesn\'t exist in "' + self._fileIni.name + '"'})
+            debug.die(exitMessage = 'Key error  : key "' + config.iniPatternString + '" doesn\'t exist in "' + self._fileIni.name + '"')
 
 
     def make(self, params):

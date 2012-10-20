@@ -1,7 +1,6 @@
 *.log
 *.pyc
 *~
-2011 10 31 - refonte Nagios - Shinken/*
 *.odg
 Poubelle/*
-.gitignore
+

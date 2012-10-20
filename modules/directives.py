@@ -37,11 +37,11 @@ class Directives(object):
     def compareNumberOfNamesAndValues(self, params):
         sameNumberOfNamesAndValues = (len(params['names'])) == (len(params['values']))
         if (not sameNumberOfNamesAndValues):
-            debug.die({'exitMessage': 'Error in source file "' + config.csvFileName + '" for host "' + params['hostName'] \
+            debug.die(exitMessage = 'Error in source file "' + config.csvFileName + '" for host "' + params['hostName'] \
                 + '" (line ' + str(params['csvLineNumber']) + ') : columns "' \
                 + config.csvHostDirectivesNames + '" and "' + config.csvHostDirectivesValues \
                 + '" don\'t have the same number of parameters.'
-                })
+                )
 
 
     def _getIndexOfCheckIntervalInDirectivesNames(self, directives):

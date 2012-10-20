@@ -84,9 +84,9 @@ class AllServices(object):
 #                debug.show('host_name : "' + matchedHostName + '"\n' + 'service_description : "' + matchedServiceDescription + '"')
 
                 if concatenatedHostNameAndServiceDescription in myList:
-                    debug.die({'exitMessage' : 'The service description "' + matchedServiceDescription \
+                    debug.die(exitMessage = 'The service description "' + matchedServiceDescription \
                         + '" is not unique for host "' + matchedHostName + '".\nInvestigate "' \
-                        + config.outputPath + config.outputFileServices + '" for details.'})
+                        + config.outputPath + config.outputFileServices + '" for details.')
                 else:
                     myList.append(concatenatedHostNameAndServiceDescription)
 
@@ -128,8 +128,8 @@ class Service(object):
                 'serviceCommand'    : self._fileIniData[config.iniCommandString]
                 }
         except KeyError:
-            debug.die({'exitMessage': 'No command specified for service "' + self._cleanName \
-                + '" in config file "' + self._fileIni.name + '"'})
+            debug.die(exitMessage = 'No command specified for service "' + self._cleanName \
+                + '" in config file "' + self._fileIni.name + '"')
 
 
     def _loadPatterns(self):
@@ -262,12 +262,12 @@ class Service(object):
             'sectionTitle'  : config.iniCommandString
             })
         if commandInPatternSection != commandInCommandSection:
-            debug.die({'exitMessage': 'Commands don\'t match between the "' \
+            debug.die(exitMessage = 'Commands don\'t match between the "' \
                 + config.iniPatternString + '" (' + config.commandDirectiveInServiceDefinition \
                 + ' ' + commandInPatternSection + ') and the "' + config.iniCommandString \
                 + '" (' + config.commandDirectiveInCommandDefinition + ' ' \
                 + commandInCommandSection + ') sections of config file "' + self._iniFileName + '"'
-                })
+                )
 
 
     def _getCommandValueFromSection(self, params):
@@ -275,9 +275,9 @@ class Service(object):
         if match:
             return match.group(1)
         else:
-            debug.die({'exitMessage': '"' + params['directive'] + '" directive not found in "' \
+            debug.die(exitMessage = '"' + params['directive'] + '" directive not found in "' \
                 + params['sectionTitle'] + '" section of config file "' + self._iniFileName + '"'
-                })
+                )
 
 
     def getCheckInterval(self):
