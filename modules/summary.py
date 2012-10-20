@@ -49,18 +49,18 @@ class Summary(object):
             debug.die(exitMessage = 'Key error  : key "' + config.iniPatternString + '" doesn\'t exist in "' + self._fileIni.name + '"')
 
 
-    def make(self, params):
+    def make(self, summaryData):
         return self._summaryPattern.apply({
-            'nbLines'           : params['nbLines'],
+            'nbLines'           : summaryData['nbLines'],
             'fileCsv'           : config.csvFileName,
             'fileHosts'         : config.outputPath + config.outputFileHosts,
             'fileServices'      : config.outputPath + config.outputFileServices,
             'fileCommands'      : config.outputPath + config.outputFileCommands,
-            'nbHostsTotal'      : params['hostsTotal'],
-            'nbHostsValid'      : params['hostsValid'],
-            'nbHostsIgnored'    : params['hostsIgnored'],
-            'nbHostsDuplicated' : params['hostsDuplicated'],
-            'nbServicesTotal'   : params['servicesTotal'],
-            'nbCommandsTotal'   : params['commandsTotal'],
-            'nbChecksPerHour'   : params['nbChecksPerHour']
+            'nbHostsTotal'      : summaryData['hostsTotal'],
+            'nbHostsValid'      : summaryData['hostsValid'],
+            'nbHostsIgnored'    : summaryData['hostsIgnored'],
+            'nbHostsDuplicated' : summaryData['hostsDuplicated'],
+            'nbServicesTotal'   : summaryData['servicesTotal'],
+            'nbCommandsTotal'   : summaryData['commandsTotal'],
+            'nbChecksPerHour'   : summaryData['nbChecksPerHour']
             })
