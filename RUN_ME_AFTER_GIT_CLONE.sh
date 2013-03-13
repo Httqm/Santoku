@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copyright (C) 2012 Matthieu FOURNET, fournet.matthieu@gmail.com
+# Copyright (C) 2013 Matthieu FOURNET, fournet.matthieu@gmail.com
 #
 # This file is part of Santoku.
 #
