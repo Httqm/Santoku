@@ -158,7 +158,7 @@ print (summary.make({
     'hostsDuplicated'   : allHosts.number['duplicated'],
     'servicesTotal'     : allServices.number,
     'commandsTotal'     : allCommands.number,
-    'nbChecksPerHour'   : allServices.nbChecksPerHour
+    'nbChecksPerHour'   : int(round(allServices.nbChecksPerHour))
     }))
 
 ########################################## ##########################################################
