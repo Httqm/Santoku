@@ -31,7 +31,7 @@ useSsh=1                                                # If 1, deliver files th
 # config values for local host
 sourceFolder='./output/'                                # final '/' expected
 logFile='./checkConf.log'
-
+filesToBackup='example.csv deployToShinken.sh modules/config.py'	# change 'example.csv' into your CSV config file name
 
 # config values for Shinken host
 shinkenHost='192.168.1.101'                             # used when useSsh == 1 (this parameter is for SSH only)
@@ -89,7 +89,7 @@ function backupFile {
 	if [ $useSsh -eq 1 ]; then
 		ssh $shinkenSshUser@$shinkenHost "$command"
 	else
-		$(command)
+		eval $command
 	fi
 	}
 
@@ -97,11 +97,9 @@ function backupFile {
 function checkShinkenConfig {
 	command="$shinkenCheckBin -v -c $shinkenConfigFile"
 	if [ $useSsh -eq 1 ]; then
-#		echo 'COMMAND : ' "ssh $shinkenSshUser@$shinkenHost" "$command"
 		ssh $shinkenSshUser@$shinkenHost "$command" >$logFile
 	else
-#		echo $command
-		$(command)
+		eval $command >$logFile
 	fi
 	}
 
@@ -110,7 +108,7 @@ function restartShinken {
 	if [ $useSsh -eq 1 ]; then
 		ssh $shinkenSshUser@$shinkenHost "$shinkenRestartCmd"
 	else
-		$shinkenRestartCmd
+		eval $shinkenRestartCmd
 	fi
 	}
 
@@ -126,6 +124,14 @@ function showCheckConfLog {
 ########################################## ##########################################################
 # main()
 ########################################## ##########################################################
+
+echo -n ' Backuping files ............. '
+for file in $filesToBackup;do
+	fileWithAbsolutePath="$(pwd)/$file"	# since 'backupFile' expects absolute paths
+	backupFile $fileWithAbsolutePath
+done
+echo $stringOk	# TODO : manage return status
+
 
 for fileOrFolder in "$shinkenFolderEtc" "$shinkenFolderEtcHosts" "$shinkenFolderEtcServices" "$shinkenCheckBin" "$shinkenConfigFile";do
 	checkFileOrFolderExists "$fileOrFolder"
@@ -143,7 +149,7 @@ echo -n ' Checking configuration ...... '
 checkShinkenConfig && echo $stringOk || { showCheckConfLog;exit 1; }
 
 
-echo -n ' Restarting Shinken .......... '
+echo ' Restarting Shinken .......... ...'
 restartShinken && echo $stringOk || echo $stringKo
 
 ########################################## ##########################################################
