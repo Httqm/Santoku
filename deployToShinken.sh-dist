@@ -25,8 +25,8 @@ trap "echo;echo 'Interrupted by CTRL-c.';exit 1;" INT
 ########################################## ##########################################################
 # CONFIG
 ########################################## ##########################################################
-useSsh=1                                                # If 1, deliver files through SSH. Otherwise simply 'cp' them.
-
+useSsh=true                                             # true|false. If true, deliver files through SSH using 'scp'.
+                                                        # Otherwise simply 'cp' them.
 
 # config values for local host
 sourceFolder='./output/'                                # final '/' expected
@@ -34,8 +34,8 @@ logFile='./checkConf.log'
 filesToBackup='example.csv deployToShinken.sh modules/config.py' # change 'example.csv' into your CSV config file name.
 
 # config values for Shinken host
-shinkenHost='192.168.1.101'                             # used when useSsh == 1 (this parameter is for SSH only)
-shinkenSshUser='root'                                   # used when useSsh == 1 (this parameter is for SSH only)
+shinkenHost='192.168.1.101'                             # used when useSsh is true (this parameter is for SSH only)
+shinkenSshUser='root'                                   # used when useSsh is true (this parameter is for SSH only)
 
 shinkenFolderBase='/usr/local/shinken/'                 # final '/' expected
 shinkenFolderEtc=$shinkenFolderBase'etc/'               # final '/' expected
@@ -60,7 +60,7 @@ backupSuffix='_PREVIOUS_VERSION'
 # Args :
 # $1 : file or folder to check
 function checkFileOrFolderExists {
-	if [ $useSsh -eq 1 ]; then
+	if $useSsh; then
 		ssh $shinkenSshUser@$shinkenHost "[ -e \"$1\" ]" && : || { echo " $stringKo : the remote file or folder \"$1\" doesn't exist.";exit 1; }
 	else
 		[ -e "$1" ] && : || { echo " $stringKo : the local file or folder \"$1\" doesn't exist.";exit 1; }
@@ -74,7 +74,7 @@ function checkFileOrFolderExists {
 function copyFileToShinkenFileTree {
 	backupFile $2$(basename $1)
 
-	if [ $useSsh -eq 1 ]; then
+	if $useSsh; then
 		scp -q "$1" $shinkenSshUser@$shinkenHost:"$2" 1>/dev/null 2>&1 || { echo "Can not copy \"$1\" to $shinkenHost";exit 1; }
 	else
 		cp $1 $2
@@ -86,7 +86,7 @@ function copyFileToShinkenFileTree {
 # $1 : absolute path to file to backup
 function backupFile {
 	command="[ -f \"$1\" ] && cp \"$1\" \"$1$backupSuffix\""
-	if [ $useSsh -eq 1 ]; then
+	if $useSsh; then
 		ssh $shinkenSshUser@$shinkenHost "$command"
 	else
 		eval $command
@@ -96,7 +96,7 @@ function backupFile {
 
 function checkShinkenConfig {
 	command="$shinkenCheckBin -v -c $shinkenConfigFile"
-	if [ $useSsh -eq 1 ]; then
+	if $useSsh; then
 		ssh $shinkenSshUser@$shinkenHost "$command" >$logFile
 	else
 		eval $command >$logFile
@@ -105,7 +105,7 @@ function checkShinkenConfig {
 
 
 function restartShinken {
-	if [ $useSsh -eq 1 ]; then
+	if $useSsh; then
 		ssh $shinkenSshUser@$shinkenHost "$shinkenRestartCmd"
 	else
 		eval $shinkenRestartCmd
