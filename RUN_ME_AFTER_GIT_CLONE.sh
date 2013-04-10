@@ -18,6 +18,17 @@
 # along with Santoku.  If not, see <http://www.gnu.org/licenses/>
 #
 
+########################################## RUN_ME_AFTER_GIT_CLONE.sh ################################
+# The files $configFile and $deploymentScript (see below) are necessary for Santoku and to deploy the
+# generated configuration to Shinken. Skeleton of these files are provided with Santoku in GitHub,
+# but since they must be modified locally, I don't want them to be overwritten on the next
+# 'git clone'.
+# This is why they are provided as 'filename$extension' (see $extension below).
+#
+# This script, run after 'git clone', copies the '*$extension' files into their local name so that
+# they can be edited locally.
+# If one of the files already exists, it won't be overwritten.
+########################################## ##########################################################
 
 extension='-dist'
 

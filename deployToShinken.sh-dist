@@ -31,7 +31,7 @@ useSsh=1                                                # If 1, deliver files th
 # config values for local host
 sourceFolder='./output/'                                # final '/' expected
 logFile='./checkConf.log'
-filesToBackup='example.csv deployToShinken.sh modules/config.py'	# change 'example.csv' into your CSV config file name
+filesToBackup='example.csv deployToShinken.sh modules/config.py' # change 'example.csv' into your CSV config file name.
 
 # config values for Shinken host
 shinkenHost='192.168.1.101'                             # used when useSsh == 1 (this parameter is for SSH only)
