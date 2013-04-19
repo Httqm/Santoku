@@ -28,14 +28,20 @@ trap "echo;echo 'Interrupted by CTRL-c.';exit 1;" INT
 useSsh=true                                             # true|false. If true, deliver files through SSH using 'scp'.
                                                         # Otherwise simply 'cp' them.
 
+# config values for Shinken host
+# These settings are used only if useSsh is true
+shinkenHost='192.168.1.101'
+shinkenSshUser='root'
+# /config values for Shinken host
+
+
 # config values for local host
+# These settings are used only if useSsh is false
 sourceFolder='./output/'                                # final '/' expected
 logFile='./checkConf.log'
 filesToBackup='example.csv deployToShinken.sh modules/config.py' # change 'example.csv' into your CSV config file name.
+# /config values for local host
 
-# config values for Shinken host
-shinkenHost='192.168.1.101'                             # used when useSsh is true (this parameter is for SSH only)
-shinkenSshUser='root'                                   # used when useSsh is true (this parameter is for SSH only)
 
 shinkenFolderBase='/usr/local/shinken/'                 # final '/' expected
 shinkenFolderEtc=$shinkenFolderBase'etc/'               # final '/' expected
