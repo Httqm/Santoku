@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 # Copyright (C) 2013 Matthieu FOURNET, fournet.matthieu@gmail.com
@@ -71,14 +71,13 @@ class AllServices(object):
             http://www.regular-expressions.info/repeat.html#greedy
         """
 
-        import string
-        singleLineOutput = string.replace(self.output, '\n', '')
+        singleLineOutput = self.output.replace('\n', '')
         match = myRegExp.findall(singleLineOutput)
         if(match):
             myList = []
             for item in match:
-                matchedHostName             = item[0]
-                matchedServiceDescription   = item[1]
+                matchedHostName = item[0]
+                matchedServiceDescription = item[1]
                 concatenatedHostNameAndServiceDescription = matchedHostName + matchedServiceDescription
 
                 if concatenatedHostNameAndServiceDescription in myList:
@@ -96,7 +95,7 @@ class Service(object):
         self._csv               = csv
         self._csvServiceName    = serviceCsvName
         self._allServices       = allServices
-        self._cleanName         = self._csvServiceName.replace(config.csvHeaderFs + config.csvHeaderDo,'')
+        self._cleanName         = self._csvServiceName.replace(config.csvHeaderFs + config.csvHeaderDo, '')
         self._iniFileName       = config.iniFolderPlugins + self._cleanName + '.ini'
         self._loadIniFiles()
         self._loadPatterns()

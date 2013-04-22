@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 # Copyright (C) 2013 Matthieu FOURNET, fournet.matthieu@gmail.com
@@ -40,7 +40,7 @@ class AllCommands(object):
 
 
     def addCustomCommands(self):
-	customCommands = ['notify-host-by-email', 'notify-service-by-email']
+        customCommands = ['notify-host-by-email', 'notify-service-by-email']
         for customCommand in customCommands:
             self._addCustomCommand(customCommand)
 
