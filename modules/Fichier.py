@@ -65,7 +65,10 @@ class FileCsv(object):
     def __init__(self, fileName):
         self.name       = fileName
         self._fs        = config.csvFileFs
-        self.contents   = self._loadContentIntoDict()
+        try:
+            self.contents   = self._loadContentIntoDict()
+        except(UnicodeDecodeError):
+            debug.die(exitMessage = 'The file "%s" is not a valid UTF8 file.' % self.name )
 
 
     def _loadContentIntoDict(self):
