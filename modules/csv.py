@@ -22,7 +22,7 @@
 
 from modules import config
 from modules import debug
-from modules import fichier
+from modules import Fichier
 
 debug  = debug.Debug()
 
@@ -38,7 +38,7 @@ class Csv(object):
 
 
     def _loadDataFromFile(self):
-        csvFile         = fichier.FileCsv(fileName = self._fileName)
+        csvFile         = Fichier.FileCsv(fileName = self._fileName)
         csvFileContents = csvFile.contents
         self.header     = csvFile.getHeader()
         return csvFileContents

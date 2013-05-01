@@ -24,7 +24,7 @@ import re
 from modules import config
 from modules import directives
 from modules import debug
-from modules import fichier
+from modules import Fichier
 from modules import pattern
 
 
@@ -55,7 +55,7 @@ class AllHosts(object):
 
 
     def _loadIniFile(self):
-        self._fileIniHost   = fichier.FileIni(fileName = config.iniFolderGeneric + config.fileHostIni)
+        self._fileIniHost   = Fichier.FileIni(fileName = config.iniFolderGeneric + config.fileHostIni)
         self._iniFileData   = self._fileIniHost.loadData()
         self.checkIniFile()
 
@@ -174,7 +174,7 @@ class Host(object):
 
     def getCheckCommand(self):
         checkCommandName = self._csv.getCellFromCurrentRow(config.csvHeaderCheckCommand)
-        hostCheckFileIni = fichier.FileIni(fileName = config.iniFolderPlugins + checkCommandName + '.ini')
+        hostCheckFileIni = Fichier.FileIni(fileName = config.iniFolderPlugins + checkCommandName + '.ini')
         hostCheckFileIni.loadData()
         return {
             'serviceName'       : checkCommandName,

@@ -22,7 +22,7 @@
 
 from modules import config
 from modules import debug
-from modules import fichier
+from modules import Fichier
 
 
 debug = debug.Debug()
@@ -31,7 +31,7 @@ debug = debug.Debug()
 class Directives(object):
 
     def loadContentsOfDirectivesDotIniFile(self):
-        fileIniDirectives = fichier.FileIni(fileName = config.iniFolderGeneric + config.fileDirectivesIni)
+        fileIniDirectives = Fichier.FileIni(fileName = config.iniFolderGeneric + config.fileDirectivesIni)
         return fileIniDirectives.loadData()
 
 

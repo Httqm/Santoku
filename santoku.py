@@ -24,7 +24,7 @@ from modules import commands
 from modules import config
 from modules import csv
 from modules import debug
-from modules import fichier
+from modules import Fichier
 from modules import hostgroups
 from modules import hosts
 from modules import services
@@ -135,14 +135,14 @@ allCommands.addCustomCommands()
 ########################################## ##########################################################
 
 allHosts.clean()
-outputFileHosts     = fichier.Fichier(fileName = config.outputPath+config.outputFileHosts)
+outputFileHosts     = Fichier.Fichier(fileName = config.outputPath+config.outputFileHosts)
 outputFileHosts.write(allHosts.output)
 
-outputFileServices  = fichier.Fichier(fileName = config.outputPath+config.outputFileServices)
+outputFileServices  = Fichier.Fichier(fileName = config.outputPath+config.outputFileServices)
 outputFileServices.write(allServices.output)
 allServices.checkUniqueness()
 
-outputFileCommands  = fichier.Fichier(fileName = config.outputPath+config.outputFileCommands)
+outputFileCommands  = Fichier.Fichier(fileName = config.outputPath+config.outputFileCommands)
 outputFileCommands.write(allCommands.getOutput())
 
 ########################################## ##########################################################

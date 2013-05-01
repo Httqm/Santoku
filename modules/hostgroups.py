@@ -21,7 +21,7 @@
 
 
 from modules import pattern
-from modules import fichier
+from modules import Fichier
 from modules import config
 from modules import debug
 
@@ -43,7 +43,7 @@ class Hostgroups(object):
 
 
     def _loadFileIni(self):
-        self._fileIni       = fichier.FileIni(fileName = config.iniFolderGeneric + config.fileHostgroupIni)
+        self._fileIni       = Fichier.FileIni(fileName = config.iniFolderGeneric + config.fileHostgroupIni)
         self._fileIniData   = self._fileIni.loadData()
 
 

@@ -21,7 +21,7 @@
 
 
 from modules import pattern
-from modules import fichier
+from modules import Fichier
 from modules import config
 from modules import debug
 
@@ -36,7 +36,7 @@ class Summary(object):
 
 
     def _loadFileIni(self):
-        self._fileIni       = fichier.FileIni(fileName = config.iniFolderGeneric + config.fileSummaryIni)
+        self._fileIni       = Fichier.FileIni(fileName = config.iniFolderGeneric + config.fileSummaryIni)
         self._fileIniData   = self._fileIni.loadData()
 
 
