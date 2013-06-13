@@ -20,10 +20,10 @@
 #
 
 
-from modules import debug
+from modules import Debug
 from modules import services
 
-debug = debug.Debug()
+debug = Debug.Debug()
 
 
 class AllCommands(object):

@@ -21,11 +21,11 @@
 
 
 from modules import config
-from modules import debug
+from modules import Debug
 from modules import Fichier
 
 
-debug = debug.Debug()
+debug = Debug.Debug()
 
 
 class Directives(object):

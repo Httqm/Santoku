@@ -23,9 +23,9 @@
 from modules import pattern
 from modules import Fichier
 from modules import config
-from modules import debug
+from modules import Debug
 
-debug = debug.Debug()
+debug = Debug.Debug()
 
 
 class Summary(object):

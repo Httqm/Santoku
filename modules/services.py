@@ -21,14 +21,14 @@
 
 
 from modules import config
-from modules import debug
+from modules import Debug
 from modules import directives
 from modules import Fichier
 from modules import pattern
 import re
 
 
-debug       = debug.Debug()
+debug       = Debug.Debug()
 directives  = directives.Directives()
 FileIni     = Fichier.FileIni
 Pattern     = pattern.Pattern

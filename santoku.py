@@ -23,7 +23,7 @@
 from modules import commands
 from modules import config
 from modules import csv
-from modules import debug
+from modules import Debug
 from modules import Fichier
 from modules import hostgroups
 from modules import hosts
@@ -35,7 +35,7 @@ from modules import summary
 # main()
 ########################################## ##########################################################
 allCommands = commands.AllCommands()
-debug       = debug.Debug()
+debug       = Debug.Debug()
 
 allHosts    = hosts.AllHosts()
 

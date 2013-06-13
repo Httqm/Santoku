@@ -13,11 +13,11 @@ os.sys.path.insert(0,parentdir)
 ########################################## ##########################################################
 
 
-from modules import debug
+from modules import Debug
 from modules import Fichier
 import os
 
-debug = debug.Debug()
+debug = Debug.Debug()
 
 class test_Fichier(unittest.TestCase):
 

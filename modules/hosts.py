@@ -23,12 +23,12 @@
 import re
 from modules import config
 from modules import directives
-from modules import debug
+from modules import Debug
 from modules import Fichier
 from modules import pattern
 
 
-debug       = debug.Debug()
+debug       = Debug.Debug()
 directives  = directives.Directives()
 
 

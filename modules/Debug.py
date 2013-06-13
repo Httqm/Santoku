@@ -50,3 +50,6 @@ class Debug(object):
                 + ' || CALLER  : ' + str(inspect.stack()[1][3]) + "\n" \
                 + ' || MESSAGE : ' + str(message) + "\n" \
                 + " ++================== /DEBUG =========================\n")
+
+    #TODO :
+    # 1. add an 'enable' method to toggle display of debug messages
