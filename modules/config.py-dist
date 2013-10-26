@@ -51,6 +51,7 @@ outputFileCommands  = 'commands.cfg'
 messageDie  = 'Tenno Heika Banzai !!! (seppuku...)'
 debug       = 1 # 0|1, enable output of debug.show()
 
+
 ########################################## ##########################################################
 # CSV COSMETICS
 # You needn't change these values : Santoku works fine as is.
@@ -58,8 +59,8 @@ debug       = 1 # 0|1, enable output of debug.show()
 # But just in case you don't like the way they are (cosmetics) or need a workaround for any reason :
 # HAVE FUN !
 ########################################## ##########################################################
-csvFileFs                   = ';'   # CSV field separator. Must be different from the CSV list separator below.
-csvMultiValuedCellFS        = '|'
+csvFileFs                   = ';'   # CSV field separator. Must be different from the CSV multi-valued-cells field separator below.
+csvMultiValuedCellFs        = '|'
 csvHeaderDo                 = 'do'
 csvHeaderFs                 = ':'
 csvHeaderHostName           = 'host_name'

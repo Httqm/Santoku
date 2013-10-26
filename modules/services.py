@@ -178,7 +178,7 @@ class Service(object):
                 config.csvHeaderUse         : config.csvGenericService
                 }
             for serviceField in serviceCsvData:
-                valuesOfMultiValuedCell = serviceCsvData[serviceField].split(config.csvMultiValuedCellFS)
+                valuesOfMultiValuedCell = serviceCsvData[serviceField].split(config.csvMultiValuedCellFs)
 
                 # Excluding the service directives columns here to avoid duplicating the service definition
                 if(not self._isAServiceDirectiveField(serviceField)):
@@ -234,8 +234,8 @@ class Service(object):
 
     def loadDirectivesFromCsvData(self):
         self._directivesCsv = {
-            'names'  : self._csv.getCellFromCurrentRow(self._csvColumnHavingServiceDirectivesNames).split(config.csvMultiValuedCellFS),
-            'values' : self._csv.getCellFromCurrentRow(self._csvColumnHavingServiceDirectivesValues).split(config.csvMultiValuedCellFS)
+            'names'  : self._csv.getCellFromCurrentRow(self._csvColumnHavingServiceDirectivesNames).split(config.csvMultiValuedCellFs),
+            'values' : self._csv.getCellFromCurrentRow(self._csvColumnHavingServiceDirectivesValues).split(config.csvMultiValuedCellFs)
             }
 
 

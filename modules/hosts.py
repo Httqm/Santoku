@@ -129,14 +129,14 @@ class Host(object):
 
 
     def loadHostGroupsFromCsv(self):
-        return self._csv.getCellFromCurrentRow(config.csvHeaderHostgroups).split(config.csvMultiValuedCellFS)
+        return self._csv.getCellFromCurrentRow(config.csvHeaderHostgroups).split(config.csvMultiValuedCellFs)
 
 
     def loadDirectives(self):
         self._checkCsvHostDirectivesExist()
         self._directives          = ''
-        self._directivesNames     = self._csv.getCellFromCurrentRow(config.csvHostDirectivesNames).split(config.csvMultiValuedCellFS)
-        self._directivesValues    = self._csv.getCellFromCurrentRow(config.csvHostDirectivesValues).split(config.csvMultiValuedCellFS)
+        self._directivesNames     = self._csv.getCellFromCurrentRow(config.csvHostDirectivesNames).split(config.csvMultiValuedCellFs)
+        self._directivesValues    = self._csv.getCellFromCurrentRow(config.csvHostDirectivesValues).split(config.csvMultiValuedCellFs)
 
         directives.compareNumberOfNamesAndValues(
                 names           = self._directivesNames,
