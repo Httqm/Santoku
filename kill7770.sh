@@ -9,7 +9,7 @@
 
 pidOfPythonProcessListeningOnPort7770=$(netstat -laputen | grep ":7770" | awk '{ print $9}' | cut -d '/' -f 1);
 
-[ "$pidOfPythonProcessListeningOnPort7770" != "" -a -d "/proc/$pidOfPythonProcessListeningOnPort7770" ] && {
-	echo -n "Killing PID $pidOfPythonProcessListeningOnPort7770 ... "
-	kill -1 $pidOfPythonProcessListeningOnPort7770 && echo 'OK' || echo 'KO';
+[ -n "$pidOfPythonProcessListeningOnPort7770" -a -d "/proc/$pidOfPythonProcessListeningOnPort7770" ] && {
+	echo -n "Killing PID '$pidOfPythonProcessListeningOnPort7770' ... "
+	kill -1 "$pidOfPythonProcessListeningOnPort7770" && echo 'OK' || echo 'KO';
 	} || echo 'No PID to kill.'

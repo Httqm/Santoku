@@ -63,65 +63,62 @@ backupSuffix='_PREVIOUS_VERSION'
 # FUNCTIONS
 ########################################## ##########################################################
 
-# Args :
-# $1 : file or folder to check
-function checkFileOrFolderExists {
-	if $useSsh; then
-		ssh $shinkenSshUser@$shinkenHost "[ -e \"$1\" ]" && : || { echo " $stringKo : the remote file or folder \"$1\" doesn't exist.";exit 1; }
+checkFileOrDirectoryExists() {
+	local fileOrDirToCheck=$1
+	if "$useSsh"; then
+		ssh "$shinkenSshUser"@"$shinkenHost" "[ -e \"$fileOrDirToCheck\" ]" && : || { echo " $stringKo : the remote file or directory \"$fileOrDirToCheck\" doesn't exist."; exit 1; }
 	else
-		[ -e "$1" ] && : || { echo " $stringKo : the local file or folder \"$1\" doesn't exist.";exit 1; }
+		[ -e "$fileOrDirToCheck" ] && : || { echo " $stringKo : the local file or directory \"$1\" doesn't exist."; exit 1; }
 	fi
 	}
 
 
-# Args :
-# $1 : file to copy
-# $2 : destination folder (either on localhost or on Shinken host)
-function copyFileToShinkenFileTree {
-	backupFile $2$(basename $1)
+copyFileToShinkenFileTree() {
+	local fileToCopy=$1
+	local destinationDir=$2		# this can be either on localhost or on "$shinkenHost"
+	backupFile "$destinationDir"$(basename "$fileToCopy")
 
-	if $useSsh; then
-		scp -q "$1" $shinkenSshUser@$shinkenHost:"$2" 1>/dev/null 2>&1 || { echo "Can not copy \"$1\" to $shinkenHost";exit 1; }
+	if "$useSsh"; then
+		scp -q "$fileToCopy" "$shinkenSshUser"@"$shinkenHost":"$destinationDir" 1>/dev/null 2>&1 || { echo "Can not copy '$fileToCopy' to '$shinkenHost'"; exit 1; }
 	else
-		cp $1 $2
+		cp "$fileToCopy" "$destinationDir"
 	fi
 	}
 
 
-# Args :
-# $1 : absolute path to file to backup
-function backupFile {
-	command="[ -f \"$1\" ] && cp \"$1\" \"$1$backupSuffix\""
-	if $useSsh; then
-		ssh $shinkenSshUser@$shinkenHost "$command"
+backupFile() {
+	local absolutePathToFileToBackup=$1
+	command="[ -f \"$absolutePathToFileToBackup\" ] && cp \"$absolutePathToFileToBackup\" \"$absolutePathToFileToBackup$backupSuffix\""
+	if "$useSsh"; then
+		ssh "$shinkenSshUser"@"$shinkenHost" "$command"
 	else
-		eval $command
+		eval "$command"
 	fi
 	}
 
 
-function checkShinkenConfig {
+checkShinkenConfig() {
 	command="$shinkenCheckBin -v -c $shinkenConfigFile"
-	if $useSsh; then
-		ssh $shinkenSshUser@$shinkenHost "$command" >$logFile
+	if "$useSsh"; then
+		ssh "$shinkenSshUser"@"$shinkenHost" "$command" > "$logFile"
 	else
-		eval $command >$logFile
+		eval "$command" > "$logFile"
 	fi
 	}
 
 
-function restartShinken {
-	if $useSsh; then
-		ssh $shinkenSshUser@$shinkenHost "$shinkenRestartCmd"
+restartShinken() {
+	if "$useSsh"; then
+		ssh "$shinkenSshUser"@"$shinkenHost" "$shinkenRestartCmd"
 	else
-		eval $shinkenRestartCmd
+		eval "$shinkenRestartCmd"
 	fi
 	}
 
 
-function showCheckConfLog {
-	echo $stringKo
-	grep -i "error\s*:" $logFile
+showCheckConfLog() {
+	echo "$stringKo"
+	grep -i "error\s*:" "$logFile"
 	echo
 	echo "Read full details in $logFile"
 	}

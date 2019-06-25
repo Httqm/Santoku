@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 from=(	hostName	hostDirectivesList	ipAddress	parent	hostGroupsList\
 	cpuCheck	cpuWarn	cpuCrit\
@@ -41,30 +41,27 @@ to=(	host_name	hostDirectivesNames	address		parents	hostgroups\
 	check_ssh_fs:warn	check_ssh_fs:crit	check_ssh_fs:fsList	check_ssh_fs:do\
 	check_ssh_snmp_fs:serviceDirectivesNames	check_ssh_snmp_fs:serviceDirectivesValues	check_ssh_snmp_fs:target	check_ssh_snmp_fs:warn	check_ssh_snmp_fs:crit	check_ssh_snmp_fs:fsList	check_ssh_snmp_fs:do\	)
 
-columns2Delete="App hostExists system HostHideNagvis snmpCommunity snmpVersion "
-columns2Add="ignore_host check_command alias"
+columnsToDelete='App hostExists system HostHideNagvis snmpCommunity snmpVersion '
+columnsToAdd='ignore_host check_command alias'
 
 
-sourceFile="hosts.csv"
-destFile="new.csv"
+sourceFile='hosts.csv'
+destFile='new.csv'
 
-# ARGS :
-# $1 : from
-# $2 : to
-# $3 : file 
-function convert {
-#	echo $1 $2 $3
-	sed -i "s/$1/$2/g" $3
+convert() {
+	local needle=$1
+	local replacement=$2
+	local haystack=$3
+	sed -i "s/$needle/$replacement/g" "$haystack"
 	}
 
-cp $sourceFile $destFile
+cp "$sourceFile" "$destFile"
 
 for key in ${!from[*]};do
 	echo Changing \"${from[$key]}\" into \"${to[$key]}\"...
 	convert ${from[$key]} ${to[$key]} $destFile
-#	echo
 done
 
-echo "Now delete columns : "$columns2Delete
-echo "Now create columns : "$columns2Add
-echo "Move check_command definitions from host_directive to the dedicated column."
+echo "Now delete columns : '$columnsToDelete'"
+echo "Now create columns : '$columnsToAdd'"
+echo "Move check_command definitions from host_directive to the dedicated column.'

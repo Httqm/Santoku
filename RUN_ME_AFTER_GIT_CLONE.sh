@@ -35,7 +35,6 @@ extension='-dist'
 configFile='./modules/config.py'
 deploymentScript='./deployToShinken.sh'
 
-for fileName in $configFile $deploymentScript
-do
-    [ ! -f $fileName ] && cp $fileName$extension $fileName
+for fileName in "$configFile" "$deploymentScript"; do
+    [ -f "$fileName" ] || cp "$fileName$extension" "$fileName"
 done
