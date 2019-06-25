@@ -1,9 +1,9 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 ######################################### kill7770.sh ###############################################
 # Sometimes, the Python process listening on port 7770 doesn't stop when required to do so. (WHY ???)
 # Thus, Shinken can not restart since there's already someone listening on port 7770.
-# 
+#
 # This script is to automate the killing of this process.
 ######################################### ###########################################################
 

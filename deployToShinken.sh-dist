@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Copyright (C) 2013 Matthieu FOURNET, fournet.matthieu@gmail.com
 #
@@ -25,32 +25,35 @@ trap "echo;echo 'Interrupted by CTRL-c.';exit 1;" INT
 ########################################## ##########################################################
 # CONFIG
 ########################################## ##########################################################
-useSsh=true                                             # true|false. If true, deliver files through SSH using 'scp'.
-                                                        # Otherwise simply 'cp' them.
 
-# config values for Shinken host
-# These settings are used only if useSsh is true
+useSsh='true'			# true|false. If true, deliver files through SSH using 'scp'.
+						# Otherwise simply 'cp' them.
+
+
+# Shinken host
+# These settings are used only if $useSsh is true
 shinkenHost='192.168.1.101'
 shinkenSshUser='root'
 # /config values for Shinken host
 
 
-# config values for local host
-# These settings are used only if useSsh is false
-sourceFolder='./output/'                                # final '/' expected
+# local host
+# These settings are used only if $useSsh is false
+sourceDirectory='./output/'										# final '/' expected
 logFile='./checkConf.log'
-filesToBackup='example.csv deployToShinken.sh modules/config.py' # change 'example.csv' into your CSV config file name.
+filesToBackup='example.csv deployToShinken.sh modules/config.py'	# change 'example.csv' into your
+																	# CSV config file name.
 # /config values for local host
 
 
-shinkenFolderBase='/usr/local/shinken/'                 # final '/' expected
-shinkenFolderEtc=$shinkenFolderBase'etc/'               # final '/' expected
-shinkenFolderEtcHosts=$shinkenFolderEtc'hosts/'         # final '/' expected
-shinkenFolderEtcServices=$shinkenFolderEtc'services/'   # final '/' expected
+shinkenDirectoryBase='/usr/local/shinken/'							# final '/' expected
+shinkenDirectoryEtc=$shinkenDirectoryBase'etc/'					# final '/' expected
+shinkenDirectoryEtcHosts=$shinkenDirectoryEtc'hosts/'				# final '/' expected
+shinkenDirectoryEtcServices=$shinkenDirectoryEtc'services/'		# final '/' expected
 
-shinkenCheckBin=$shinkenFolderBase'bin/shinken-arbiter'
+shinkenCheckBin=$shinkenDirectoryBase'bin/shinken-arbiter'
 shinkenRestartCmd='/etc/init.d/shinken restart'
-shinkenConfigFile=$shinkenFolderEtc'nagios.cfg'
+shinkenConfigFile=$shinkenDirectoryEtc'nagios.cfg'
 
 
 # misc / cosmetics
@@ -120,7 +123,7 @@ showCheckConfLog() {
 	echo "$stringKo"
 	grep -i "error\s*:" "$logFile"
 	echo
-	echo "Read full details in $logFile"
+	echo "Read full details in '$logFile'"
 	}
 
 
@@ -131,29 +134,29 @@ showCheckConfLog() {
 echo -n ' Backuping files ............. '
 for file in $filesToBackup;do
 	fileWithAbsolutePath="$(pwd)/$file"	# since 'backupFile' expects absolute paths
-	backupFile $fileWithAbsolutePath
+	backupFile "$fileWithAbsolutePath"
 done
-echo $stringOk	# TODO : manage return status
+echo "$stringOk"	# TODO : manage return status
 
 
-for fileOrFolder in "$shinkenFolderEtc" "$shinkenFolderEtcHosts" "$shinkenFolderEtcServices" "$shinkenCheckBin" "$shinkenConfigFile";do
-	checkFileOrFolderExists "$fileOrFolder"
+for fileOrDirectory in "$shinkenDirectoryEtc" "$shinkenDirectoryEtcHosts" "$shinkenDirectoryEtcServices" "$shinkenCheckBin" "$shinkenConfigFile";do
+	checkFileOrDirectoryExists "$fileOrDirectory"
 done
 
 
 echo -n ' Copying files ............... '
-copyFileToShinkenFileTree ${sourceFolder}commands.cfg $shinkenFolderEtc
-copyFileToShinkenFileTree ${sourceFolder}hosts.cfg $shinkenFolderEtcHosts
-copyFileToShinkenFileTree ${sourceFolder}services.cfg $shinkenFolderEtcServices
-echo $stringOk
+copyFileToShinkenFileTree ${sourceDirectory}commands.cfg "$shinkenDirectoryEtc"
+copyFileToShinkenFileTree ${sourceDirectory}hosts.cfg "$shinkenDirectoryEtcHosts"
+copyFileToShinkenFileTree ${sourceDirectory}services.cfg "$shinkenDirectoryEtcServices"
+echo "$stringOk"
 
 
 echo -n ' Checking configuration ...... '
-checkShinkenConfig && echo $stringOk || { showCheckConfLog;exit 1; }
+checkShinkenConfig && echo "$stringOk" || { showCheckConfLog; exit 1; }
 
 
 echo ' Restarting Shinken .......... ...'
-restartShinken && echo $stringOk || echo $stringKo
+restartShinken && echo "$stringOk" || echo "$stringKo"
 
 ########################################## ##########################################################
 # THE END !
