@@ -7,7 +7,7 @@
 # This script is to automate the killing of this process.
 ######################################### ###########################################################
 
-pidOfPythonProcessListeningOnPort7770=$(netstat -laputen | grep ":7770" | awk '{ print $9}' | cut -d '/' -f 1);
+pidOfPythonProcessListeningOnPort7770=$(netstat -laputen | awk '/:7770/ {print $9}' | cut -d '/' -f 1)
 
 [ -n "$pidOfPythonProcessListeningOnPort7770" -a -d "/proc/$pidOfPythonProcessListeningOnPort7770" ] && {
 	echo -n "Killing PID '$pidOfPythonProcessListeningOnPort7770' ... "
